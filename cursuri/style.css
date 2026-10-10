@@ -48,3 +48,29 @@ footer{padding:34px 0;text-align:center;font-size:0.85rem;color:rgba(23,35,29,0.
 .mod-all a{text-decoration:none;font-weight:700;font-size:0.85rem;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;}
 .mod-all a.on{background:var(--forest);color:var(--paper);}
 .wa-float{position:fixed;right:18px;bottom:18px;width:58px;height:58px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.25);z-index:60;}
+.art{max-width:780px;}
+.art h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.15;margin:10px 0 16px;}
+.art .lead{font-size:1.12rem;opacity:0.85;}
+.art .by{font-size:0.9rem;opacity:0.7;margin:10px 0 24px;}
+.art h2{font-size:1.5rem;margin:38px 0 12px;}
+.art h3{font-size:1.15rem;margin:22px 0 8px;}
+.art p,.art li{font-size:1.04rem;line-height:1.72;}
+.art li{margin:6px 0;}
+.toc{background:#fff;border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:14px;padding:18px 22px;margin:10px 0 8px;}
+.toc ul{margin:8px 0 0;padding-left:20px;}
+.tbl{overflow-x:auto;margin:16px 0;}
+.tbl table{border-collapse:collapse;width:100%;min-width:520px;background:#fff;border-radius:12px;overflow:hidden;font-size:0.95rem;}
+.tbl th{background:var(--forest);color:var(--paper);text-align:left;padding:10px 12px;}
+.tbl td{border-top:1px solid var(--line);padding:10px 12px;vertical-align:top;}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px 0;}
+.faq summary{cursor:pointer;font-weight:700;}
+.faq p{margin:10px 0 0;}
+.art .src{font-size:0.85rem;opacity:0.65;margin-top:26px;}
+.posts{display:grid;gap:22px;margin:10px 0 30px;}
+.post-card{display:grid;grid-template-columns:1fr 1.2fr;gap:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;text-decoration:none;}
+.post-card img{width:100%;height:100%;object-fit:cover;}
+.post-card div{padding:22px;}
+.post-card h2{font-size:1.3rem;margin:8px 0;}
+.post-card p{margin:0 0 12px;opacity:0.8;}
+.post-card .more{font-weight:700;color:var(--brick);}
+@media(max-width:760px){.post-card{grid-template-columns:1fr;}}
