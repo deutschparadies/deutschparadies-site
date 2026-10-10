@@ -1,0 +1,32 @@
+const B64 = `
+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
+`;
+
+export function onRequest() {
+  const bin = Uint8Array.from(atob(B64.replace(/\s+/g, "")), (c) => c.charCodeAt(0));
+  return new Response(bin, {
+    headers: {
+      "content-type": "image/png",
+      "cache-control": "public, max-age=86400",
+    },
+  });
+}
