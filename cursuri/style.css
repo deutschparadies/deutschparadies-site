@@ -74,3 +74,8 @@ footer{padding:34px 0;text-align:center;font-size:0.85rem;color:rgba(23,35,29,0.
 .post-card p{margin:0 0 12px;opacity:0.8;}
 .post-card .more{font-weight:700;color:var(--brick);}
 @media(max-width:760px){.post-card{grid-template-columns:1fr;}}
+.author{display:flex;gap:12px;align-items:center;margin:14px 0 18px;}
+.author img{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:center 18%;border:2px solid var(--gold);flex-shrink:0;}
+.author strong{display:block;}
+.author span{display:block;font-size:0.88rem;opacity:0.7;}
+.hero-img{width:100%;height:auto;border-radius:16px;margin:4px 0 22px;box-shadow:0 10px 30px rgba(23,50,38,0.12);}
