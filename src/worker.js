@@ -1,5 +1,6 @@
 import { onRequest as favicon } from "../functions/favicon.png.js";
 import { onRequest as appleTouchIcon } from "../functions/apple-touch-icon.png.js";
+import { leadBox, contactCardInner } from "./lead-html.js";
 
 const IMAGES = {
   "/favicon.png": favicon,
@@ -29,13 +30,45 @@ export default {
     const res = await env.ASSETS.fetch(request);
     const type = res.headers.get("content-type") || "";
     if (!type.includes("text/html")) return res;
-    // Meta Pixel (loads only after cookie consent) on every page
-    return new HTMLRewriter()
-      .on("head", {
+    const isHome = path === "/" || path === "/index.html" || path === "/index";
+    const m = path.match(/^\/cursuri\/([abc][12])-([12])(\.html)?\/?$/i);
+    const course = m ? `${m[1].toUpperCase()}.${m[2]}` : "";
+    const hasForm = isHome || !!course;
+    let rw = new HTMLRewriter().on("head", {
+      element(el) {
+        // Meta Pixel (loads only after cookie consent) on every page
+        el.append('<script src="/px.js" defer></script>', { html: true });
+        if (hasForm) el.append('<link rel="stylesheet" href="/lead.css">', { html: true });
+      },
+    });
+    if (isHome) {
+      rw = rw
+        .on("section.hero-simple", {
+          element(el) {
+            el.after(`<div class="lead-top">${leadBox("", "h3").replace('id="inscriere"', 'id="inscriere-sus"')}</div>`, { html: true });
+          },
+        })
+        .on("#contact .contact-card", {
+          element(el) {
+            el.setAttribute("id", "inscriere");
+            el.setInnerContent(contactCardInner(), { html: true });
+          },
+        });
+    }
+    if (course) {
+      rw = rw.on("main", {
         element(el) {
-          el.append('<script src="/px.js" defer></script>', { html: true });
+          el.append(leadBox(course, "h2"), { html: true });
         },
-      })
-      .transform(res);
+      });
+    }
+    if (hasForm) {
+      rw = rw.on("body", {
+        element(el) {
+          el.append('<script src="/lead.js" defer></script>', { html: true });
+        },
+      });
+    }
+    return rw.transform(res);
   },
 };

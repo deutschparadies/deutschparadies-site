@@ -1,0 +1,15 @@
+/* Course sign-up form (Deutschparadies) */
+.lead-form{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.lead-form input,.lead-form select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(246,241,230,0.3);background:rgba(246,241,230,0.95);color:#17231d;font:inherit;font-size:16px;box-sizing:border-box;}
+.lead-form label.chk{display:flex;gap:8px;align-items:flex-start;font-size:0.82rem;color:rgba(246,241,230,0.75);line-height:1.4;}
+.lead-form label.chk input{width:18px;height:18px;margin-top:2px;flex-shrink:0;}
+.lead-form label.chk a{color:#f0c66b;}
+.lead-form .hp{position:absolute;left:-9999px;}
+.lead-form button{border:0;border-radius:100px;padding:14px 18px;background:#e3a72e;color:#0d201a;font-weight:700;font-size:1rem;cursor:pointer;width:100%;}
+.lead-msg{margin-top:12px;font-size:0.92rem;font-weight:600;}
+.lead-or{margin-top:16px;font-size:0.85rem;color:rgba(246,241,230,0.6);text-align:center;}
+.lead-or a{color:#f0c66b;font-weight:700;}
+.lead-box{background:linear-gradient(120deg,#173226 0%,#0d201a 100%);color:#f6f1e6;border-radius:22px;padding:28px 22px;margin:28px 0;}
+.lead-box h2,.lead-box h3{color:#fff;font-size:1.35rem;margin:0;}
+.lead-box p{color:rgba(246,241,230,0.72);font-size:0.95rem;margin-top:8px;}
+.lead-top{max-width:640px;margin:28px auto 8px;padding:0 16px;}
