@@ -26,6 +26,16 @@ export default {
     if (path === "/og-image.jpg") return ogImage();
     const image = IMAGES[path];
     if (image) return image();
-    return env.ASSETS.fetch(request);
+    const res = await env.ASSETS.fetch(request);
+    const type = res.headers.get("content-type") || "";
+    if (!type.includes("text/html")) return res;
+    // Meta Pixel (loads only after cookie consent) on every page
+    return new HTMLRewriter()
+      .on("head", {
+        element(el) {
+          el.append('<script src="/px.js" defer></script>', { html: true });
+        },
+      })
+      .transform(res);
   },
 };
