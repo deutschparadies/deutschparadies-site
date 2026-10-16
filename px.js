@@ -17,22 +17,30 @@
     fbq("track", "PageView");
   }
 
-  // WhatsApp clicks -> "Contact" event (only after consent)
+  // WhatsApp clicks -> "Contact" event (only after consent).
+  // The phone opens WhatsApp instantly and the page dies before the event is sent,
+  // so we send the event first and open WhatsApp a moment later.
   document.addEventListener("click", function (ev) {
     var a = ev.target.closest && ev.target.closest('a[href*="wa.me"], a[href*="whatsapp"]');
-    if (a && window.fbq) fbq("track", "Contact");
+    if (!a || !window.fbq) return;
+    fbq("track", "Contact");
+    // New tab: this page stays open, the event gets sent normally.
+    if (a.target === "_blank" || ev.defaultPrevented || ev.button > 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
+    var href = a.href;
+    ev.preventDefault();
+    setTimeout(function () { window.location.href = href; }, 400);
   }, true);
 
   function banner() {
     var d = document.createElement("div");
     d.id = "dp-consent";
     d.setAttribute("role", "dialog");
-    d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:560px;margin:0 auto;background:#173226;color:#fff;border-radius:14px;padding:16px;font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.25)";
-    d.innerHTML = 'Folosim cookie-uri Meta (Facebook) ca să măsurăm eficiența reclamelor noastre. Ești de acord? ' +
-      '<a href="/confidentialitate.html" style="color:#e3a72e">Detalii</a>' +
-      '<div style="display:flex;gap:8px;margin-top:12px">' +
-      '<button id="dp-yes" style="flex:1;border:0;border-radius:100px;padding:10px;background:#e3a72e;color:#17231d;font-weight:700;cursor:pointer">Accept</button>' +
-      '<button id="dp-no" style="flex:1;border:1px solid rgba(255,255,255,.5);border-radius:100px;padding:10px;background:transparent;color:#fff;font-weight:700;cursor:pointer">Refuz</button></div>';
+    d.setAttribute("aria-label", "Cookie-uri");
+    d.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:9999;max-width:520px;margin:0 auto;background:rgba(23,50,38,.96);color:#fff;border-radius:12px;padding:10px 12px;font:13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px";
+    d.innerHTML = '<span style="flex:1">Folosim cookie-uri Meta ca să măsurăm reclamele. ' +
+      '<a href="/confidentialitate.html" style="color:#e3a72e">Detalii</a></span>' +
+      '<button id="dp-no" style="border:1px solid rgba(255,255,255,.45);border-radius:100px;padding:7px 12px;background:transparent;color:#fff;font:inherit;font-weight:600;cursor:pointer">Refuz</button>' +
+      '<button id="dp-yes" style="border:0;border-radius:100px;padding:8px 16px;background:#e3a72e;color:#17231d;font:inherit;font-weight:700;cursor:pointer">Accept</button>';
     document.body.appendChild(d);
     document.getElementById("dp-yes").onclick = function () { set("yes"); d.remove(); loadPixel(); };
     document.getElementById("dp-no").onclick = function () { set("no"); d.remove(); };
