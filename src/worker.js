@@ -10,6 +10,11 @@ const IMAGES = {
 // Share image for the home page (Facebook / WhatsApp preview), hosted on Cloudinary
 const OG_IMAGE_URL = "https://res.cloudinary.com/huqvafro/image/upload/deutschparadies/share-home.jpg";
 
+// Homepage title + description shown in Google search results (and link previews).
+// Overrides the <title>/<meta> in index.html.
+const HOME_TITLE = "Cursuri și meditații germană online | Grupe de max. 4 | Deutschparadies";
+const HOME_DESC = "Cursuri de germană live online, A1–C1, în grupe de maximum 4 cursanți. 160 € pe nivel (15 lecții). Pregătire telc. Scrie-ne pe WhatsApp!";
+
 async function ogImage() {
   const res = await fetch(OG_IMAGE_URL);
   return new Response(res.body, {
@@ -43,6 +48,21 @@ export default {
     });
     if (isHome) {
       rw = rw
+        .on("head > title", {
+          element(el) {
+            el.setInnerContent(HOME_TITLE);
+          },
+        })
+        .on('meta[name="description"], meta[property="og:description"], meta[name="twitter:description"]', {
+          element(el) {
+            el.setAttribute("content", HOME_DESC);
+          },
+        })
+        .on('meta[property="og:title"], meta[name="twitter:title"]', {
+          element(el) {
+            el.setAttribute("content", HOME_TITLE);
+          },
+        })
         .on("section.hero-simple", {
           element(el) {
             el.after(`<div class="lead-top">${leadBox("", "h3").replace('id="inscriere"', 'id="inscriere-sus"')}</div>`, { html: true });
