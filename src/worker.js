@@ -12,8 +12,8 @@ const OG_IMAGE_URL = "https://res.cloudinary.com/huqvafro/image/upload/deutschpa
 
 // Homepage title + description shown in Google search results (and link previews).
 // Overrides the <title>/<meta> in index.html.
-const HOME_TITLE = "Cursuri și meditații germană online | Grupe de max. 4 | Deutschparadies";
-const HOME_DESC = "Cursuri de germană live online, A1–C1, în grupe de maximum 4 cursanți. Pregătire telc. Scrie-ne pe WhatsApp!";
+const HOME_TITLE = "Cursuri de germană online în toată România | Deutschparadies";
+const HOME_DESC = "Cursuri de germană live online pentru toată România. Niveluri A1–C1, grupe de max. 4 cursanți și pregătire telc. Scrie-ne pe WhatsApp!";
 
 // ---- Lernraum (student app) at /app/ ----
 async function sha256Hex(text) {
