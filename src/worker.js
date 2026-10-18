@@ -20,6 +20,17 @@ async function sha256Hex(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+// Teacher (admin) password: only this can change the student password. Stored in KV "admin"; this is the initial value.
+const ADMIN_DEFAULT = {"salt": "46dd4eace911f4687eeea4bb34ecfdc4", "it": 20000, "hash": "272bf63bc77d896c9b6214c75f73c50bb6ef9e7d4bc9edf28e108361837c8eb6"};
+async function pbkdf2Hex(pw, salt, it) {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: new TextEncoder().encode(salt), iterations: it }, key, 256);
+  return [...new Uint8Array(bits)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+async function currentAdmin(env) {
+  const stored = env.APPKV ? await env.APPKV.get("admin", "json") : null;
+  return stored && stored.hash ? stored : ADMIN_DEFAULT;
+}
 async function currentAccess(request, env) {
   const stored = env.APPKV ? await env.APPKV.get("access", "json") : null;
   if (stored && stored.hash) return stored;
@@ -38,13 +49,23 @@ async function appRoute(request, env, path) {
     if (request.method !== "POST") return json({ error: "method" }, 405);
     let body;
     try { body = await request.json(); } catch (e) { return json({ error: "bad" }, 400); }
+    if (!body || typeof body.admin !== "string" || body.admin.length > 200) return json({ error: "bad" }, 400);
+    const adm = await currentAdmin(env);
+    if ((await pbkdf2Hex(body.admin, adm.salt, adm.it)) !== adm.hash) return json({ error: "wrong" }, 403);
     const acc = await currentAccess(request, env);
-    if (!acc || !body || typeof body.current !== "string" || typeof body.next !== "string") return json({ error: "bad" }, 400);
-    if ((await sha256Hex(acc.salt + body.current)) !== acc.hash) return json({ error: "wrong" }, 403);
-    if (body.next.length < 6 || body.next.length > 100) return json({ error: "short" }, 400);
-    const next = { v: (acc.v || 1) + 1, salt: acc.salt, hash: await sha256Hex(acc.salt + body.next) };
-    await env.APPKV.put("access", JSON.stringify(next));
-    return json(next);
+    if (!acc) return json({ error: "missing" }, 500);
+    let out = acc;
+    if (typeof body.next === "string" && body.next.length) {
+      if (body.next.length < 6 || body.next.length > 100) return json({ error: "short" }, 400);
+      out = { v: (acc.v || 1) + 1, salt: acc.salt, hash: await sha256Hex(acc.salt + body.next) };
+      await env.APPKV.put("access", JSON.stringify(out));
+    }
+    if (typeof body.newAdmin === "string" && body.newAdmin.length) {
+      if (body.newAdmin.length < 6 || body.newAdmin.length > 100) return json({ error: "short" }, 400);
+      const salt = [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, "0")).join("");
+      await env.APPKV.put("admin", JSON.stringify({ salt, it: ADMIN_DEFAULT.it, hash: await pbkdf2Hex(body.newAdmin, salt, ADMIN_DEFAULT.it) }));
+    }
+    return json(out);
   }
   const res = await env.ASSETS.fetch(request);
   const out = new Response(res.body, res);

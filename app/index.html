@@ -4538,6 +4538,7 @@ try{const r=JSON.parse(sessionStorage.getItem("dp_route"));if(r)route=r}catch(e)
 
 function render(){
   if(!ACCESS)return;
+  if(IS_LEHRER&&window.__DP_WEB&&!window.__lehrerShown){window.__lehrerShown=1;return pwChangeWeb()}
   if(!unlocked())return lockScreen();
   document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.lang));
   touchDay();
@@ -4567,7 +4568,7 @@ function home(){
   <div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
   <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
   <div id="lvlList"></div>
-  <footer>Deutschparadies · deutschparadies.ro<br><button class="linkbtn" data-pw="1">Passwort ändern (Lehrer)</button></footer>`;
+  <footer>Deutschparadies · deutschparadies.ro${(!window.__DP_WEB||IS_LEHRER)?`<br><button class="linkbtn" data-pw="1">Passwort ändern (Lehrer)</button>`:""}</footer>`;
   levelList(cur, app.querySelector("#lvlList"));
 }
 
@@ -4876,7 +4877,30 @@ function lockScreen(){
   app.querySelector("#lf").onsubmit=async e=>{e.preventDefault();const v=app.querySelector("#lpw").value;const h=await sha(ACCESS.salt+v);if(h===ACCESS.hash){setUnlocked(h);render()}else{app.querySelector("#lfb").hidden=false}};
   setTimeout(()=>{const i=app.querySelector("#lpw");i&&i.focus()},50);
 }
+const IS_LEHRER=/[?&]lehrer\b/.test(location.search);
+function pwChangeWeb(){
+  const f=(id,l,ac)=>`<label class="kind" style="display:block;margin-top:12px">${l}</label><input class="gap" id="${id}" type="password" autocomplete="${ac}">`;
+  app.innerHTML=`<button class="back" data-home="">‹ Zur App</button><h1>Lehrerbereich</h1><p class="muted">Hier änderst du das Passwort für die Schüler. Dafür brauchst du dein Lehrer-Passwort.</p>
+  <form id="pf" class="card" style="margin-top:10px">${f("pa","Lehrer-Passwort","current-password")}
+  <h3 style="margin-top:18px">Neues Schüler-Passwort</h3>${f("p1","Neues Schüler-Passwort (mind. 6 Zeichen)","new-password")}${f("p2","Wiederholen","new-password")}
+  <h3 style="margin-top:18px">Lehrer-Passwort ändern <span class="muted">(optional)</span></h3>${f("q1","Neues Lehrer-Passwort","new-password")}${f("q2","Wiederholen","new-password")}
+  <button class="btn" type="submit" style="width:100%;margin-top:14px">Speichern</button><div class="feedback" id="pfb" hidden></div></form>`;
+  const fb=app.querySelector("#pfb");const msg=(t,ok)=>{fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.textContent=t};
+  app.querySelector("#pf").onsubmit=async e=>{e.preventDefault();const v=id=>app.querySelector("#"+id).value;
+    const pa=v("pa"),p1=v("p1"),p2=v("p2"),q1=v("q1"),q2=v("q2");
+    if(!pa)return msg("Bitte das Lehrer-Passwort eingeben.");
+    if(!p1&&!q1)return msg("Bitte ein neues Passwort eingeben.");
+    if(p1&&p1.length<6)return msg("Das neue Schüler-Passwort muss mindestens 6 Zeichen haben.");
+    if(p1!==p2)return msg("Die beiden Schüler-Passwörter sind nicht gleich.");
+    if(q1&&q1.length<6)return msg("Das neue Lehrer-Passwort muss mindestens 6 Zeichen haben.");
+    if(q1!==q2)return msg("Die beiden Lehrer-Passwörter sind nicht gleich.");
+    msg("Speichere …",true);
+    try{const r=await fetch("/app/api/password",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({admin:pa,next:p1,newAdmin:q1})});const j=await r.json().catch(()=>({}));
+      if(r.ok&&j.hash){ACCESS={v:j.v,salt:ACCESS.salt,hash:j.hash};setUnlocked(j.hash);app.querySelector("#pf").reset();return msg("Gespeichert!"+(p1?" Das neue Schüler-Passwort gilt ab jetzt für alle.":"")+(q1?" Dein Lehrer-Passwort wurde geändert.":""),true)}
+      return msg(j.error==="wrong"?"Das Lehrer-Passwort ist falsch.":"Speichern fehlgeschlagen. Bitte später noch einmal versuchen.")}catch(err){return msg("Keine Verbindung. Bitte später noch einmal versuchen.")}};
+}
 function pwChange(){
+  if(window.__DP_WEB)return pwChangeWeb();
   app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>Passwort ändern</h1><p class="muted">Nur für den Lehrer. Nach dem Speichern brauchen alle Schüler das neue Passwort.</p>
   <form id="pf" class="card" style="margin-top:10px"><label class="kind">Aktuelles Passwort</label><input class="gap" id="p0" type="password" autocomplete="current-password">
   <label class="kind" style="display:block;margin-top:12px">Neues Passwort (mind. 6 Zeichen)</label><input class="gap" id="p1" type="password" autocomplete="new-password">
