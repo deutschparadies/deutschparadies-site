@@ -37,6 +37,22 @@ async function currentAccess(request, env) {
   const res = await env.ASSETS.fetch(new Request(new URL("/app/access.json", request.url)));
   return res.ok ? await res.json() : null;
 }
+// Lernraum: "Texte" button next to Buch / Dialoge (one Google Drive folder per level).
+const TEXTE_FOLDERS = {
+  "A1.1": "10xnUwxxPuT53aBxElVnuc4DBydMuvFMP",
+  "A1.2": "1tXhSxNYwMvz7gI7_3fADMcNGgMAk3I6n",
+  "A2.1": "1kT6SzGBtEGLMVk22tN0KGF5Z3q77rEfM",
+  "A2.2": "1Z1rlPlbCJF6nlC5piiuT_udDE7YyQMJO",
+  "B1.1": "1hIv7XhuSw_HzVkihFMEe-7Q0kPtE-c3o",
+  "B1.2": "1dXBGJ1mtdD-GfUTg2Eoj_434irrX00aL",
+  "B2.1": "141ZxEOG4lENrlVj8OrxKn4ueP7S82DN1",
+  "B2.2": "11WEGl8CE15Z-y754cgue9ewiJxAQekaU",
+};
+const TEXTE_SCRIPT = `<script>(function(){var F=${JSON.stringify(TEXTE_FOLDERS)};
+function add(){document.querySelectorAll(".mats").forEach(function(m){if(m.querySelector(".mat-texte"))return;var s=m.querySelector(".mat small");if(!s)return;var k=(s.textContent.match(/zum\\s+(\\S+)/)||[])[1];if(!k||!F[k])return;var a=document.createElement("a");a.className="mat mat-texte";a.href="https://drive.google.com/drive/folders/"+F[k];a.target="_blank";a.rel="noopener";a.innerHTML="<b>Texte</b><small>Lesetexte zum "+k+"</small>";m.appendChild(a);});}
+function go(){var r=document.getElementById("app")||document.body;add();new MutationObserver(add).observe(r,{childList:true,subtree:true});}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script>`;
+
 async function appRoute(request, env, path) {
   const json = (obj, status = 200) => new Response(JSON.stringify(obj), {
     status, headers: { "content-type": "application/json", "cache-control": "no-store" },
@@ -70,6 +86,11 @@ async function appRoute(request, env, path) {
   const res = await env.ASSETS.fetch(request);
   const out = new Response(res.body, res);
   out.headers.set("x-robots-tag", "noindex");
+  if ((out.headers.get("content-type") || "").includes("text/html")) {
+    return new HTMLRewriter().on("body", {
+      element(el) { el.append(TEXTE_SCRIPT, { html: true }); },
+    }).transform(out);
+  }
   return out;
 }
 
