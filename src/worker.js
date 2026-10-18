@@ -37,20 +37,32 @@ async function currentAccess(request, env) {
   const res = await env.ASSETS.fetch(new Request(new URL("/app/access.json", request.url)));
   return res.ok ? await res.json() : null;
 }
-// Lernraum: "Texte" button next to Buch / Dialoge (one Google Drive folder per level).
-const TEXTE_FOLDERS = {
-  "A1.1": "10xnUwxxPuT53aBxElVnuc4DBydMuvFMP",
-  "A1.2": "1tXhSxNYwMvz7gI7_3fADMcNGgMAk3I6n",
-  "A2.1": "1kT6SzGBtEGLMVk22tN0KGF5Z3q77rEfM",
-  "A2.2": "1Z1rlPlbCJF6nlC5piiuT_udDE7YyQMJO",
-  "B1.1": "1hIv7XhuSw_HzVkihFMEe-7Q0kPtE-c3o",
-  "B1.2": "1dXBGJ1mtdD-GfUTg2Eoj_434irrX00aL",
-  "B2.1": "141ZxEOG4lENrlVj8OrxKn4ueP7S82DN1",
-  "B2.2": "11WEGl8CE15Z-y754cgue9ewiJxAQekaU",
+// Lernraum: "Texte" button next to Buch / Dialoge (one Google Drive folder per level: [Buch, Dialoge, Texte]).
+const LERN_FOLDERS = {
+  "A1.1": ["1VHCji-yC88Dlrl_yx4ACwAYE3jzMPQaB", "1H0FpU0GLr0ksVK-r2VR50Ub519rpQNJp", "10xnUwxxPuT53aBxElVnuc4DBydMuvFMP"],
+  "A1.2": ["1KaKGmt1w2NkgV-FdCSuV2W2LtKwG2p8W", "1liUk12JO2w8IzyJWGGK6yBb0LOWLbUIa", "1tXhSxNYwMvz7gI7_3fADMcNGgMAk3I6n"],
+  "A2.1": ["1QeQ1X30V6DTLopdoHsvn9UjCvnesJqco", "1rfmjjOeIj4BfIXviP6xc6mYbbrBpydmm", "1kT6SzGBtEGLMVk22tN0KGF5Z3q77rEfM"],
+  "A2.2": ["1S0J1MFtmWnqBILqnhLhiRGFHZ9mjGlhl", "1RZwperIRZzo0vTZqKMN2eK4H8Y4IOIv-", "1Z1rlPlbCJF6nlC5piiuT_udDE7YyQMJO"],
+  "B1.1": ["1L3G0rDte0EVszz6GYPW9--fhaiWm0mwO", "1u1pKJvLgV3yCjmbeNXJOAJkc7gau-EW-", "1hIv7XhuSw_HzVkihFMEe-7Q0kPtE-c3o"],
+  "B1.2": ["1CKZpAyMawCbT5o6OMARCSk86sG9coM9d", "1EgjCnfZomq7DP78v6H0KE-Oi3LUIubcH", "1dXBGJ1mtdD-GfUTg2Eoj_434irrX00aL"],
+  "B2.1": ["1WgIO1w8O-3l1J9Sz-9lCqm_e2O-_cmlI", "1jSkgHe3EqOC0VmPQuBxD3SFNp9vycmuk", "141ZxEOG4lENrlVj8OrxKn4ueP7S82DN1"],
+  "B2.2": ["1NDqe13FWldTnl3Gf9ZWX_pAcdSH2HYBB", "1xc-a0KxNUgP0LPILk4UzOgTM5QsmENSW", "11WEGl8CE15Z-y754cgue9ewiJxAQekaU"],
 };
-const TEXTE_SCRIPT = `<script>(function(){var F=${JSON.stringify(TEXTE_FOLDERS)};
-function add(){document.querySelectorAll(".mats").forEach(function(m){if(m.querySelector(".mat-texte"))return;var s=m.querySelector(".mat small");if(!s)return;var k=(s.textContent.match(/zum\\s+(\\S+)/)||[])[1];if(!k||!F[k])return;var a=document.createElement("a");a.className="mat mat-texte";a.href="https://drive.google.com/drive/folders/"+F[k];a.target="_blank";a.rel="noopener";a.innerHTML="<b>Texte</b><small>Lesetexte zum "+k+"</small>";m.appendChild(a);});}
-function go(){var r=document.getElementById("app")||document.body;add();new MutationObserver(add).observe(r,{childList:true,subtree:true});}
+const TEXTE_SCRIPT = `<style>.mats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mat{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r,14px);padding:14px}.mat b{font-family:var(--display);font-size:1.05rem}.mat b::after{content:" \\2197";color:var(--gold)}.mat small{color:var(--muted)}</style>
+<script>(function(){var F=${JSON.stringify(LERN_FOLDERS)},D="https://drive.google.com/drive/folders/";
+function link(cls,href,t,s){var a=document.createElement("a");a.className="mat "+cls;a.href=href;a.target="_blank";a.rel="noopener";a.innerHTML="<b>"+t+"</b><small>"+s+"</small>";return a}
+function add(){var app=document.getElementById("app");if(!app)return;
+ var hs=[].slice.call(app.querySelectorAll(".section-h h2")),h=null;for(var i=0;i<hs.length;i++){if(/^[AB][12]\\.[12]$/.test(hs[i].textContent.trim())){h=hs[i];break}}var lv=h&&h.textContent.trim();
+ var m=app.querySelector(".mats");
+ if(m){if(m.querySelector(".mat-texte"))return;var s=m.querySelector(".mat small");var k=s&&(s.textContent.match(/zum\\s+(\\S+)/)||[])[1];k=k||lv;if(!F[k])return;m.appendChild(link("mat-texte",D+F[k][2],"Texte","Lesetexte zum "+k));return}
+ if(!lv||!F[lv])return;var box=h.closest(".section-h").parentElement;var ls=box.querySelectorAll(".list");if(!ls.length)return;
+ var sh=document.createElement("div");sh.className="section-h";sh.innerHTML="<h2>Materialien</h2>";
+ var g=document.createElement("div");g.className="mats";
+ g.appendChild(link("","https://drive.google.com/drive/folders/"+F[lv][0],"Buch","PDF zum "+lv));
+ g.appendChild(link("",D+F[lv][1],"Dialoge","Dialoge zum "+lv));
+ g.appendChild(link("mat-texte",D+F[lv][2],"Texte","Lesetexte zum "+lv));
+ ls[ls.length-1].after(sh,g);}
+function go(){var r=document.getElementById("app")||document.body;add();new MutationObserver(function(){add()}).observe(r,{childList:true,subtree:true});}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script>`;
 
 async function appRoute(request, env, path) {
@@ -87,8 +99,9 @@ async function appRoute(request, env, path) {
   const out = new Response(res.body, res);
   out.headers.set("x-robots-tag", "noindex");
   if ((out.headers.get("content-type") || "").includes("text/html")) {
-    return new HTMLRewriter().on("body", {
-      element(el) { el.append(TEXTE_SCRIPT, { html: true }); },
+    out.headers.set("cache-control", "no-cache");
+    return new HTMLRewriter().onDocument({
+      end(end) { end.append(TEXTE_SCRIPT, { html: true }); },
     }).transform(out);
   }
   return out;
