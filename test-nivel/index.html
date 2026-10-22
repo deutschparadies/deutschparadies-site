@@ -96,6 +96,13 @@ h2{font-family:Fraunces,serif;color:var(--forest);font-size:1.35rem;margin:0 0 8
 .skills div{background:var(--paper);border-radius:12px;padding:10px 6px;text-align:center;font-size:.78rem;color:rgba(23,35,29,.65)}
 .skills b{display:block;font-family:Fraunces,serif;font-size:1.25rem;color:var(--forest)}
 .hide{display:none!important}
+.field{display:block;text-align:left;margin:12px 0}
+.field span{display:block;font-weight:700;font-size:.9rem;color:var(--forest);margin-bottom:6px}
+.field input{width:100%;font:500 1.02rem Inter,sans-serif;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper)}
+.field input:focus{outline:none;border-color:var(--gold);background:#fff}
+.chk{display:flex;gap:10px;align-items:flex-start;text-align:left;font-size:.88rem;color:rgba(23,35,29,.75);margin:14px 0 6px}
+.chk input{margin-top:3px;width:18px;height:18px;flex:0 0 18px}
+.err{color:var(--brick);font-size:.88rem;min-height:1.2em;margin:6px 0 0}
 footer{text-align:center;font-size:.8rem;color:rgba(23,35,29,.5);padding:0 16px 30px}
 @media(max-width:420px){.card{padding:22px 16px}.q{font-size:1.12rem}.btn{padding:14px 22px}}
 </style>
@@ -140,6 +147,21 @@ footer{text-align:center;font-size:.8rem;color:rgba(23,35,29,.5);padding:0 16px 
       <button class="btn btn-ghost" id="backBtn">← Înapoi</button>
       <button class="btn btn-dark" id="nextBtn" disabled>Mai departe →</button>
     </div>
+  </section>
+
+  <!-- GATE -->
+  <section id="gate" class="card hide center">
+    <span class="eyebrow">Ultimul pas</span>
+    <h2 style="margin-top:8px">Ai terminat testul! 🎉</h2>
+    <p class="lead">Scrie numele și numărul tău de telefon ca să vezi rezultatul. Profesorul Saleh îl primește și îți poate confirma nivelul personal.</p>
+    <form id="gateForm" novalidate>
+      <label class="field"><span>Nume și prenume</span><input name="nume" autocomplete="name" required></label>
+      <label class="field"><span>Telefon (WhatsApp)</span><input name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="07xx xxx xxx" required></label>
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <label class="chk"><input type="checkbox" name="acord"> <span>Sunt de acord să fiu contactat de Deutschparadies în legătură cu rezultatul testului. <a href="/confidentialitate.html" target="_blank">Detalii</a></span></label>
+      <p class="err" id="gateErr"></p>
+      <button class="btn btn-gold" id="gateBtn" type="submit" style="margin-top:6px">Vezi rezultatul →</button>
+    </form>
   </section>
 
   <!-- RESULT -->
@@ -235,7 +257,7 @@ var $=function(id){return document.getElementById(id)};
 var idx=0,ans=[],plays={},audio=null,playing=false;
 function track(ev,params){try{if(window.fbq)fbq('trackCustom',ev,params||{});}catch(e){}}
 
-function show(id){["intro","quiz","result"].forEach(function(s){$(s).classList.toggle("hide",s!==id)});window.scrollTo(0,0);}
+function show(id){["intro","quiz","gate","result"].forEach(function(s){$(s).classList.toggle("hide",s!==id)});window.scrollTo(0,0);}
 function stopAudio(){if(audio){audio.pause();audio=null;}playing=false;setPlayIcon();}
 function setPlayIcon(){$("playIco").innerHTML=playing?'<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>':'<path d="M8 5v14l11-7z"/>';}
 
@@ -273,6 +295,7 @@ $("nextBtn").onclick=function(){if(ans[idx]===undefined)return;var cur=items[idx
 $("backBtn").onclick=function(){if(idx>0){var cur=items[idx],pv=items[idx-1];if(pv.clip!==cur.clip)stopAudio();idx--;render();}};
 $("againBtn").onclick=function(){show("intro");};
 
+var RES=null;
 function finish(){
   stopAudio();
   var per={},sk={g:0,l:0,h:0};LV.forEach(function(l){per[l]=0});
@@ -298,10 +321,28 @@ function finish(){
   $("resTable").innerHTML=tb;
   var msg="Bună! Am făcut testul de nivel pe deutschparadies.ro.\nRezultat: "+level+" – curs recomandat "+course+".\nScor: "+LV.map(function(l){return l+" "+per[l]+"/10"}).join(", ")+".\nAș vrea detalii despre curs.";
   $("waBtn").href="https://wa.me/40771237705?text="+encodeURIComponent(msg);
-  $("waBtn").onclick=function(){try{if(window.fbq)fbq('track','Lead',{content_name:'Test de nivel '+level});}catch(e){}};
+  $("waBtn").onclick=function(){track("TestNivelWhatsApp",{level:level});};
   $("barFill").style.width="100%";
-  show("result");track("TestNivelFinal",{level:level,course:course});
+  var wrong=[];items.forEach(function(it,i){if(ans[i]!==it.correct)wrong.push((i+1)+". ["+it.lv+"] "+it.stem.replace("___","…")+" → ales: "+ans[i]+" | corect: "+it.correct);});
+  RES={level:level,course:course,per:per,sk:sk,wrong:wrong};
+  show("gate");track("TestNivelFinal",{level:level,course:course});
 }
+$("gateForm").addEventListener("submit",function(e){
+  e.preventDefault();var f=e.target,err=$("gateErr"),nume=f.nume.value.trim(),tel=f.telefon.value.trim();
+  if(nume.length<2||tel.replace(/\D/g,"").length<8){err.textContent="Te rugăm să scrii numele și un număr de telefon valid.";return;}
+  if(!f.acord.checked){err.textContent="Te rugăm să bifezi acordul pentru a vedea rezultatul.";return;}
+  err.textContent="";if(f._honey.value){show("result");return;}
+  var b=$("gateBtn");b.disabled=true;b.textContent="Se încarcă rezultatul…";
+  var r=RES,body={_subject:"Test de nivel: "+nume+" – "+r.level+" (curs "+r.course+")",_template:"table",
+    Nume:nume,Telefon:tel,"Nivel estimat":r.level,"Curs recomandat":r.course,
+    "Scor pe niveluri":LV.map(function(l){return l+" "+r.per[l]+"/10"}).join(" | "),
+    "Gramatică":r.sk.g+"/30","Citire":r.sk.l+"/10","Ascultare":r.sk.h+"/10",
+    "Greșeli":r.wrong.length?r.wrong.join("\n"):"niciuna",Pagina:location.href};
+  var done=false;function go(){if(done)return;done=true;b.disabled=false;b.textContent="Vezi rezultatul →";show("result");}
+  try{if(window.fbq)fbq("track","Lead",{content_name:"Test de nivel "+r.level});}catch(x){}
+  fetch("https://formsubmit.co/ajax/info@deutschparadies.ro",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)}).catch(function(){}).finally(go);
+  setTimeout(go,5000);
+});
 })();
 </script>
 </body>
