@@ -153,14 +153,15 @@ footer{text-align:center;font-size:.8rem;color:rgba(23,35,29,.5);padding:0 16px 
   <section id="gate" class="card hide center">
     <span class="eyebrow">Ultimul pas</span>
     <h2 style="margin-top:8px">Ai terminat testul! 🎉</h2>
-    <p class="lead">Scrie numele și numărul tău de telefon ca să vezi rezultatul. Profesorul Saleh îl primește și îți poate confirma nivelul personal.</p>
+    <p class="lead">Scrie numele și numărul tău ca să vezi rezultatul.</p>
     <form id="gateForm" novalidate>
       <label class="field"><span>Nume și prenume</span><input name="nume" autocomplete="name" required></label>
       <label class="field"><span>Telefon (WhatsApp)</span><input name="telefon" type="tel" inputmode="tel" autocomplete="tel" placeholder="07xx xxx xxx" required></label>
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-      <label class="chk"><input type="checkbox" name="acord"> <span>Sunt de acord să fiu contactat de Deutschparadies în legătură cu rezultatul testului. <a href="/confidentialitate.html" target="_blank">Detalii</a></span></label>
+      <p style="margin:6px 0 4px;font-size:1rem"><b>✅ 100% gratuit, fără nicio obligație.</b></p>
+      <p style="margin:0 0 10px;font-size:.88rem;opacity:.8">Numărul tău îl folosește doar profesorul Saleh, ca să-ți confirme nivelul. Fără spam. <a href="/confidentialitate.html" target="_blank">Confidențialitate</a></p>
       <p class="err" id="gateErr"></p>
-      <button class="btn btn-gold" id="gateBtn" type="submit" style="margin-top:6px">Vezi rezultatul →</button>
+      <button class="btn btn-gold" id="gateBtn" type="submit" style="margin-top:6px">Vezi rezultatul gratuit →</button>
     </form>
   </section>
 
@@ -330,7 +331,6 @@ function finish(){
 $("gateForm").addEventListener("submit",function(e){
   e.preventDefault();var f=e.target,err=$("gateErr"),nume=f.nume.value.trim(),tel=f.telefon.value.trim();
   if(nume.length<2||tel.replace(/\D/g,"").length<8){err.textContent="Te rugăm să scrii numele și un număr de telefon valid.";return;}
-  if(!f.acord.checked){err.textContent="Te rugăm să bifezi acordul pentru a vedea rezultatul.";return;}
   err.textContent="";if(f._honey.value){show("result");return;}
   var b=$("gateBtn");b.disabled=true;b.textContent="Se încarcă rezultatul…";
   var r=RES,body={_subject:"Test de nivel: "+nume+" – "+r.level+" (curs "+r.course+")",_template:"table",
@@ -338,7 +338,7 @@ $("gateForm").addEventListener("submit",function(e){
     "Scor pe niveluri":LV.map(function(l){return l+" "+r.per[l]+"/10"}).join(" | "),
     "Gramatică":r.sk.g+"/30","Citire":r.sk.l+"/10","Ascultare":r.sk.h+"/10",
     "Greșeli":r.wrong.length?r.wrong.join("\n"):"niciuna",Pagina:location.href};
-  var done=false;function go(){if(done)return;done=true;b.disabled=false;b.textContent="Vezi rezultatul →";show("result");}
+  var done=false;function go(){if(done)return;done=true;b.disabled=false;b.textContent="Vezi rezultatul gratuit →";show("result");}
   try{if(window.fbq)fbq("track","Lead",{content_name:"Test de nivel "+r.level});}catch(x){}
   fetch("https://formsubmit.co/ajax/info@deutschparadies.ro",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)}).catch(function(){}).finally(go);
   setTimeout(go,5000);
