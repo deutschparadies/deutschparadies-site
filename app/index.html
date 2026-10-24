@@ -4585,7 +4585,7 @@ function levelList(lv,el){
 function level(lv){route={v:"home",lv};home()}
 
 const AUDIO_DRIVE={"B1.1":{1:"1pOXRMIHwzjkRwfwkeafbbcinGd6q-K21",2:"1Yj1LbmQEwuerk3VXWDUzwxxJjyQ4UGeY",3:"1A0zjRQiQpCaz5ruHb0fxJapcrc9tDcIx",4:"1QeL0hIi_j5jflLFzj9Bv7NfUF_S26E_u",5:"1W56h6LbvsrYqiu8d024G48hpQ1r0f0Uz",6:"1m815cDxRdOMLKxvtUAG3o7LcBW0TuuzQ",7:"1K8q-YJEnyJez5S0yFsPv1M2gPijgWnKK"}};
-function audioBtn(f){const id=(AUDIO_DRIVE[f.lv]||{})[f.l.n];return id?`<a class="btn" style="display:inline-block;margin-top:12px" href="https://drive.google.com/drive/folders/${id}" target="_blank" rel="noopener">🎧 Audios · Schritte Lektion ${f.l.n}</a>`:""}
+function audioBtn(f){if(f.lv==="A1.1"||f.lv==="A1.2")return `<a class="btn" style="display:inline-block;margin-top:12px" href="https://play.google.com/store/apps/details?id=com.hueber.huebermedia" target="_blank" rel="noopener">🎧 Audios · Hueber-App</a>`;const id=(AUDIO_DRIVE[f.lv]||{})[f.l.n];return id?`<a class="btn" style="display:inline-block;margin-top:12px" href="https://drive.google.com/drive/folders/${id}" target="_blank" rel="noopener">🎧 Audios · Schritte Lektion ${f.l.n}</a>`:""}
 
 function lesson(id){
   const f=findLesson(id);if(!f)return go({v:"home"});const l=f.l;S.last=id;save();
