@@ -73,6 +73,35 @@ async function appRoute(request, env, path) {
     const acc = await currentAccess(request, env);
     return acc ? json(acc) : json({ error: "missing" }, 500);
   }
+  if (path === "/app/api/videos") {
+    const cur = (env.APPKV ? await env.APPKV.get("videos", "json") : null) || {};
+    if (request.method === "GET") return json(cur);
+    if (request.method !== "POST") return json({ error: "method" }, 405);
+    let body;
+    try { body = await request.json(); } catch (e) { return json({ error: "bad" }, 400); }
+    if (!body || typeof body.admin !== "string" || body.admin.length > 200) return json({ error: "bad" }, 400);
+    const adm = await currentAdmin(env);
+    if ((await pbkdf2Hex(body.admin, adm.salt, adm.it)) !== adm.hash) return json({ error: "wrong" }, 403);
+    if (!Object.prototype.hasOwnProperty.call(LERN_FOLDERS, body.lv)) return json({ error: "bad" }, 400);
+    const list = Array.isArray(cur[body.lv]) ? cur[body.lv] : [];
+    if (body.add && typeof body.add === "object") {
+      const t = String(body.add.t || "").trim().slice(0, 120);
+      const u = String(body.add.u || "").trim();
+      if (!t) return json({ error: "title" }, 400);
+      let ok = false;
+      try { ok = new URL(u).protocol === "https:"; } catch (e) {}
+      if (!ok || u.length > 500 || /[\s"<>]/.test(u)) return json({ error: "url" }, 400);
+      if (list.length >= 100) return json({ error: "full" }, 400);
+      list.push({ t, u });
+    } else if (body.del && typeof body.del === "object") {
+      const i = body.del.i;
+      if (!Number.isInteger(i) || !list[i] || list[i].u !== body.del.u) return json({ error: "bad" }, 400);
+      list.splice(i, 1);
+    } else return json({ error: "bad" }, 400);
+    cur[body.lv] = list;
+    await env.APPKV.put("videos", JSON.stringify(cur));
+    return json({ videos: cur });
+  }
   if (path === "/app/api/password") {
     if (request.method !== "POST") return json({ error: "method" }, 405);
     let body;
