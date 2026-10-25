@@ -4902,11 +4902,13 @@ function videoAdmin(){
   <button class="btn" type="submit" style="width:100%;margin-top:14px">Video hinzufügen</button><div class="feedback" id="vfb" hidden></div>
   <div id="vcur" style="margin-top:18px"></div></form>`;
   const $=id=>box.querySelector("#"+id);
+  try{const sp=sessionStorage.getItem("dp_vpw");if(sp)$("va").value=sp}catch(e){}
   const msg=(t,ok)=>{const fb=$("vfb");fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.textContent=t};
   const list=()=>{const lv=$("vl").value,vs=VIDEOS[lv]||[];$("vcur").innerHTML=`<h3>Videos in ${lv}</h3>`+(vs.length?`<div class="list" style="margin-top:8px">${vs.map((v,i)=>`<div class="row"><span class="t"><b>${esc(v.t)}</b><small style="word-break:break-all">${esc(v.u)}</small></span><button type="button" class="btn ghost" style="flex:none;padding:8px 12px;font-size:.9rem" data-vdel="${i}">Löschen</button></div>`).join("")}</div>`:`<p class="muted">Noch keine Videos.</p>`)};
   const send=async(body,okText)=>{const pa=$("va").value;if(!pa){msg("Bitte das Lehrer-Passwort eingeben.");return false}msg("Speichere …",true);
     try{const r=await fetch("/app/api/videos",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(Object.assign({admin:pa,lv:$("vl").value},body))});const j=await r.json().catch(()=>({}));
-      if(r.ok&&j.videos){VIDEOS=j.videos;list();msg(okText,true);return true}
+      if(r.ok&&j.videos){try{sessionStorage.setItem("dp_vpw",pa)}catch(e){}VIDEOS=j.videos;list();msg(okText,true);return true}
+      if(j.error==="wrong"){try{sessionStorage.removeItem("dp_vpw")}catch(e){}}
       msg(j.error==="wrong"?"Das Lehrer-Passwort ist falsch.":j.error==="url"?"Der Link muss mit https:// beginnen.":j.error==="title"?"Bitte einen Titel eingeben.":j.error==="full"?"Maximal 100 Videos pro Niveau.":"Speichern fehlgeschlagen. Bitte später noch einmal versuchen.")}catch(e){msg("Keine Verbindung. Bitte später noch einmal versuchen.")}return false};
   $("vl").onchange=list;
   $("vf").onsubmit=async e=>{e.preventDefault();const t=$("vt").value.trim(),u=$("vu").value.trim();if(!t)return msg("Bitte einen Titel eingeben.");if(!/^https:\/\/\S+$/i.test(u))return msg("Der Link muss mit https:// beginnen.");
