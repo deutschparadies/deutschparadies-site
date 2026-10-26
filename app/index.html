@@ -4576,6 +4576,8 @@ function home(){
   <div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
   <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
   <div id="lvlList"></div>
+  <div class="section-h"><h2>Allgemeine Dialoge Grammatik</h2></div>
+  <div class="list"><button class="row" disabled><span class="num">💬</span><span class="t"><b>Bald verfügbar</b><small>Dialoge zur Grammatik für alle Niveaus</small></span></button></div>
   <footer>Deutschparadies · deutschparadies.ro<br><button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button></footer>`;
   levelList(cur, app.querySelector("#lvlList"));
 }
