@@ -78,6 +78,15 @@ h2{font-size:1.25rem}
 .row .pct{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .row[disabled]{opacity:.55;cursor:default}
 a.row{text-decoration:none;color:var(--ink)}
+details.vbox{margin-top:22px}
+details.vbox>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+details.vbox>summary::-webkit-details-marker{display:none}
+details.vbox>summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.vbox .vi{width:42px;height:42px;flex:none;border-radius:50%;background:var(--brand-2);color:#fff;display:grid;place-items:center;font-size:1rem}
+.vbox .vt{flex:1;min-width:0}.vbox .vt b{display:block;font-family:var(--display);font-size:1.05rem}.vbox .vt small{color:var(--muted)}
+.vbox .chev{color:var(--gold);font-size:1.3rem;line-height:1;transition:transform .2s}
+details.vbox[open] .chev{transform:rotate(180deg)}
+details.vbox .list{margin-top:8px}
 a.row:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 select.gap{width:100%;font:inherit;font-size:1.1rem;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
 .back{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px 7px 10px;color:var(--ink);font-weight:700;margin-bottom:10px}
@@ -4504,7 +4513,7 @@ let VIDEOS={};
 async function loadVideos(){if(!window.__DP_WEB)return;try{const r=await fetch("/app/api/videos",{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&typeof j==="object"&&!Array.isArray(j)){VIDEOS=j;const el=app.querySelector("#lvlList");if(el&&route.v==="home"&&unlocked())levelList(route.lv||"A1.1",el)}}}catch(e){}}
 function vHost(u){try{const h=new URL(u).hostname.replace(/^www\.|^m\./,"");return /(^|\.)youtube\.com$|^youtu\.be$/.test(h)?"YouTube":h}catch(e){return ""}}
 function videoSection(lv){if(!window.__DP_WEB)return "";const vs=VIDEOS[lv]||[];
- return `<div class="section-h"><h2>Videos</h2><span class="muted" style="font-size:.85rem">${vs.length?vs.length+(vs.length===1?" Video":" Videos"):""}</span></div><div class="list vids">`+(vs.length?vs.map(v=>`<a class="row" href="${esc(v.u)}" target="_blank" rel="noopener"><span class="num">▶</span><span class="t"><b>${esc(v.t)}</b><small>${esc(vHost(v.u))}</small></span><span class="pct">↗</span></a>`).join(""):`<div class="row" style="opacity:.7"><span class="num">▶</span><span class="t"><b>Bald verfügbar</b><small>Hier kommen Lernvideos zum ${lv}.</small></span></div>`)+`</div>`}
+ return `<details class="vbox"><summary><span class="vi">▶</span><span class="vt"><b>Videos</b><small>${vs.length?vs.length+(vs.length===1?" Video":" Videos")+" zum "+lv:"Bald verfügbar"}</small></span><span class="chev">⌄</span></summary><div class="list vids">`+(vs.length?vs.map(v=>`<a class="row" href="${esc(v.u)}" target="_blank" rel="noopener"><span class="num">▶</span><span class="t"><b>${esc(v.t)}</b><small>${esc(vHost(v.u))}</small></span><span class="pct">↗</span></a>`).join(""):`<p class="muted" style="margin:4px 2px">Hier kommen bald Lernvideos zum ${lv}.</p>`)+`</div></details>`}
 const LNAME={ro:"Română",ar:"العربية",en:"English"};
 const T={ro:{tap:"Atinge cartonașul pentru traducere"},ar:{tap:"اضغط على الكارت عشان تشوف الترجمة"},en:{tap:"Tap the card to see the translation"}};
 
