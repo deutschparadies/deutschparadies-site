@@ -185,6 +185,13 @@ textarea.wta,.wta{width:100%;font:inherit;font-size:1rem;line-height:1.55;paddin
 footer{margin-top:28px;text-align:center;font-size:.8rem;color:var(--muted)}
 @media (max-width:380px){.levels{grid-template-columns:repeat(2,1fr)}.modules{grid-template-columns:1fr}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* Anti-copy / anti-screenshot deterrents (browsers cannot fully block screenshots) */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable=true]{-webkit-user-select:text;user-select:text}
+@media print{html,body{display:none!important}}
+#dpShield{position:fixed;inset:0;z-index:2147483647;background:#1f3d2b;color:#f4f1e6;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font:600 16px/1.5 system-ui,sans-serif}
+#dpShield.on{display:flex}
 </style>
 
 <header class="bar"><div class="in">
@@ -4996,4 +5003,24 @@ loadAccess().then(render);loadVideos();
 })();
 </script>
 
+<script>
+(function(){
+  var sh=document.createElement("div");sh.id="dpShield";sh.textContent="Der Inhalt ist geschützt.";
+  function show(){sh.classList.add("on")}
+  function hide(){sh.classList.remove("on")}
+  document.addEventListener("DOMContentLoaded",function(){document.body.appendChild(sh)});
+  document.addEventListener("contextmenu",function(e){e.preventDefault()});
+  document.addEventListener("copy",function(e){e.preventDefault()});
+  document.addEventListener("cut",function(e){e.preventDefault()});
+  document.addEventListener("dragstart",function(e){e.preventDefault()});
+  document.addEventListener("keydown",function(e){
+    var k=(e.key||"").toLowerCase(), mod=e.ctrlKey||e.metaKey;
+    if(k==="printscreen"){try{navigator.clipboard&&navigator.clipboard.writeText("")}catch(x){} show(); setTimeout(hide,2500); e.preventDefault(); return}
+    if(mod&&(k==="p"||k==="s"||k==="c"||k==="u"||k==="x")&&!(e.target.matches&&e.target.matches("input,textarea"))){e.preventDefault(); if(k==="p"){show();setTimeout(hide,2500)}}
+  });
+  document.addEventListener("visibilitychange",function(){ if(document.hidden) show(); else setTimeout(hide,400)});
+  window.addEventListener("blur",show); window.addEventListener("focus",function(){setTimeout(hide,400)});
+  window.addEventListener("beforeprint",show);
+})();
+</script>
 </html>
