@@ -192,7 +192,20 @@ async function ogImage() {
 
 export default {
   async fetch(request, env) {
-    const path = new URL(request.url).pathname;
+    const url = new URL(request.url);
+    const path = url.pathname;
+    // www -> main domain (one canonical host)
+    if (url.hostname === "www.deutschparadies.ro") {
+      return Response.redirect("https://deutschparadies.ro" + path + url.search, 301);
+    }
+    // Old URLs still indexed by Google -> current pages
+    const OLD = {
+      "/curs-germana-a1": "/cursuri/a1-1",
+      "/curs-germana-a1/": "/cursuri/a1-1",
+      "/despre-noi": "/",
+      "/despre-noi/": "/",
+    };
+    if (OLD[path]) return Response.redirect("https://deutschparadies.ro" + OLD[path], 301);
     if (path === "/app" ) return Response.redirect(new URL("/app/", request.url).toString(), 301);
     if (path.startsWith("/app/")) return appRoute(request, env, path);
     if (path === "/og-image.jpg") return ogImage();
