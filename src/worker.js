@@ -31,6 +31,12 @@ async function currentAdmin(env) {
   const stored = env.APPKV ? await env.APPKV.get("admin", "json") : null;
   return stored && stored.hash ? stored : ADMIN_DEFAULT;
 }
+const SESSION_TTL = 60 * 60 * 12;
+function readCookie(request, name) {
+  const c = request.headers.get("cookie") || "";
+  const m = c.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)"));
+  return m ? m[1] : "";
+}
 async function currentAccess(request, env) {
   const stored = env.APPKV ? await env.APPKV.get("access", "json") : null;
   if (stored && stored.hash) return stored;
@@ -101,6 +107,43 @@ async function appRoute(request, env, path) {
     cur[body.lv] = list;
     await env.APPKV.put("videos", JSON.stringify(cur));
     return json({ videos: cur });
+  }
+  if (path === "/app/api/session") {
+    if (request.method !== "POST") return json({ error: "method" }, 405);
+    let body;
+    try { body = await request.json(); } catch (e) { return json({ error: "bad" }, 400); }
+    if (!body || typeof body.pw !== "string" || body.pw.length > 200) return json({ error: "bad" }, 400);
+    const acc = await currentAccess(request, env);
+    if (!acc || !env.APPKV) return json({ error: "missing" }, 500);
+    if ((await sha256Hex(acc.salt + body.pw)) !== acc.hash) return json({ error: "wrong" }, 403);
+    const tok = [...crypto.getRandomValues(new Uint8Array(32))].map((b) => b.toString(16).padStart(2, "0")).join("");
+    await env.APPKV.put("sess:" + tok, "1", { expirationTtl: SESSION_TTL });
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "set-cookie": `dp_s=${tok}; Max-Age=${SESSION_TTL}; Path=/app; HttpOnly; Secure; SameSite=Strict`,
+      },
+    });
+  }
+  if (path.startsWith("/app/dialoge/")) {
+    if (request.method !== "GET" && request.method !== "HEAD") return new Response("method", { status: 405 });
+    const tok = readCookie(request, "dp_s");
+    const ok = /^[a-f0-9]{64}$/.test(tok) && env.APPKV && (await env.APPKV.get("sess:" + tok)) === "1";
+    if (!ok) return new Response("locked", { status: 403, headers: { "cache-control": "no-store" } });
+    const file = await env.ASSETS.fetch(request);
+    if (!file.ok) return new Response("not found", { status: 404, headers: { "cache-control": "no-store" } });
+    return new Response(file.body, {
+      status: 200,
+      headers: {
+        "content-type": "application/pdf",
+        "cache-control": "private, no-store",
+        "content-disposition": "inline",
+        "x-content-type-options": "nosniff",
+        "x-robots-tag": "noindex",
+      },
+    });
   }
   if (path === "/app/api/password") {
     if (request.method !== "POST") return json({ error: "method" }, 405);
