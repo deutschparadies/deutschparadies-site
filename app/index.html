@@ -189,6 +189,7 @@ footer{margin-top:28px;text-align:center;font-size:.8rem;color:var(--muted)}
 /* Anti-copy / anti-screenshot deterrents (browsers cannot fully block screenshots) */
 body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,textarea,[contenteditable=true]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+.dp-free body{-webkit-user-select:auto;user-select:auto;-webkit-touch-callout:default}
 @media print{html,body{display:none!important}}
 .pdfov{position:fixed;inset:0;z-index:9000;background:#e9ece8;overflow:auto;-webkit-user-select:none;user-select:none}
 .pdfbar{position:sticky;top:0;background:#173226;padding:10px 14px;display:flex;justify-content:flex-end}
@@ -4936,6 +4937,7 @@ function videoAdmin(){
   <label class="kind" style="display:block;margin-top:12px">Niveau</label><select class="gap" id="vl">${D.levels.map(x=>`<option>${x.id}</option>`).join("")}</select>
   <label class="kind" style="display:block;margin-top:12px">Titel des Videos</label><input class="gap" id="vt" maxlength="120">
   <label class="kind" style="display:block;margin-top:12px">Link (https://…)</label><input class="gap" id="vu" type="url" inputmode="url" autocomplete="off" placeholder="https://www.youtube.com/…">
+  <button class="btn ghost" type="button" id="vpaste" style="width:100%;margin-top:8px">📋 Link aus der Zwischenablage einfügen</button>
   <button class="btn" type="submit" style="width:100%;margin-top:14px">Video hinzufügen</button><div class="feedback" id="vfb" hidden></div>
   <div id="vcur" style="margin-top:18px"></div></form>`;
   const $=id=>box.querySelector("#"+id);
@@ -4947,8 +4949,10 @@ function videoAdmin(){
       if(r.ok&&j.videos){try{sessionStorage.setItem("dp_vpw",pa)}catch(e){}VIDEOS=j.videos;list();msg(okText,true);return true}
       if(j.error==="wrong"){try{sessionStorage.removeItem("dp_vpw")}catch(e){}}
       msg(j.error==="wrong"?"Das Lehrer-Passwort ist falsch.":j.error==="url"?"Der Link muss mit https:// beginnen.":j.error==="title"?"Bitte einen Titel eingeben.":j.error==="full"?"Maximal 100 Videos pro Niveau.":"Speichern fehlgeschlagen. Bitte später noch einmal versuchen.")}catch(e){msg("Keine Verbindung. Bitte später noch einmal versuchen.")}return false};
+  const pickUrl=t=>{const m=String(t||"").match(/https:\/\/[^\s"'<>]+/i);return m?m[0]:String(t||"").trim()};
+  $("vpaste").onclick=async()=>{try{const t=await navigator.clipboard.readText();if(!t)return msg("Die Zwischenablage ist leer. Kopiere zuerst den Link.");$("vu").value=pickUrl(t);msg("Link eingefügt.",true)}catch(e){msg("Einfügen nicht erlaubt. Bitte lange auf das Link-Feld drücken und „Einfügen“ wählen.")}};
   $("vl").onchange=list;
-  $("vf").onsubmit=async e=>{e.preventDefault();const t=$("vt").value.trim(),u=$("vu").value.trim();if(!t)return msg("Bitte einen Titel eingeben.");if(!/^https:\/\/\S+$/i.test(u))return msg("Der Link muss mit https:// beginnen.");
+  $("vf").onsubmit=async e=>{e.preventDefault();const t=$("vt").value.trim(),u=pickUrl($("vu").value);if(!t)return msg("Bitte einen Titel eingeben.");if(!/^https:\/\/\S+$/i.test(u))return msg("Der Link muss mit https:// beginnen.");
     if(await send({add:{t,u}},"Video hinzugefügt! Die Schüler sehen es jetzt unter "+$("vl").value+".")){$("vt").value="";$("vu").value=""}};
   $("vcur").onclick=e=>{const b=e.target.closest("[data-vdel]");if(!b)return;const i=+b.dataset.vdel,v=(VIDEOS[$("vl").value]||[])[i];if(v)send({del:{i,u:v.u}},"Video gelöscht.")};
   list();loadVideos().then(()=>{if(box.isConnected)list()});
@@ -5020,6 +5024,7 @@ loadAccess().then(render);loadVideos();
 
 <script>
 (function(){
+  if(/[?&]lehrer\b/.test(location.search)){document.documentElement.classList.add("dp-free");return}
   function inField(t){return !!(t&&t.closest&&t.closest("input,textarea,[contenteditable=true]"))}
   document.addEventListener("contextmenu",function(e){if(!inField(e.target))e.preventDefault()});
   document.addEventListener("copy",function(e){if(!inField(e.target))e.preventDefault()});
