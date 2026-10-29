@@ -51,6 +51,14 @@
   .vid{display:flex;gap:14px;align-items:center;background:var(--forest-deep);color:#fff;border-radius:16px;padding:12px;margin-top:14px;text-decoration:none;}
   .vid img{width:150px;height:116px;object-fit:cover;border-radius:10px;flex:none;}
   .vid b{display:block;font-size:1.05rem;margin-bottom:4px;} .vid span{color:var(--gold);font-weight:700;}
+  .mod-grid.one{grid-template-columns:1fr;}
+  .ptab{width:100%;border-collapse:collapse;margin-top:12px;background:#fff;border-radius:14px;overflow:hidden;}
+  .ptab th{background:var(--gold);color:var(--forest-deep);text-align:left;padding:10px 12px;font-size:.9rem;}
+  .ptab td{padding:12px;border-top:1px solid var(--line);color:var(--ink,#1d2b24);vertical-align:top;}
+  .ptab td a{color:var(--forest);font-weight:700;}
+  .ptab td small{display:block;color:var(--brick);font-weight:600;font-size:.8rem;}
+  .ptab td b{color:var(--forest-deep);}
+  .prices .pnote{margin-top:12px;}
   .per{display:block;color:var(--brick);font-weight:700;margin-top:2px;}
   @media (max-width:720px){.trust{grid-template-columns:1fr;text-align:center;}.trust img.t-photo{margin:0 auto;width:180px;height:230px;}.testis{grid-template-columns:1fr;}.vid img{width:110px;height:86px;}}
 </style>
@@ -80,8 +88,6 @@
       <span>Live pe Webex</span>
       <span>Maximum 4 cursanți</span>
       <span>Lecții de la 9,90 €</span>
-      <span>A1.1 · 15 lecții · 160 €</span>
-      <span>Program stabilit împreună</span>
     </div>
     <a class="mod-cta" href="https://wa.me/40771237705?text=Bun%C4%83%21%20Sunt%20interesat%28%C4%83%29%20de%20un%20curs%20de%20german%C4%83%20online.%20A%C8%99%20dori%20detalii."><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.4 5 5.2-1.4A9.9 9.9 0 1 0 12.04 2zm5.8 14.1c-.25.7-1.45 1.33-2 1.4-.52.08-1.17.11-1.89-.12a17 17 0 0 1-1.7-.63 13.4 13.4 0 0 1-5.15-4.55c-.38-.5-.9-1.33-.9-2.54 0-1.2.63-1.8.86-2.04.22-.25.49-.31.65-.31h.47c.15 0 .35-.06.55.42.2.5.7 1.7.76 1.83.06.12.1.27.02.43-.08.17-.12.27-.24.42l-.37.43c-.12.12-.25.26-.11.5.14.25.64 1.05 1.37 1.7.94.84 1.74 1.1 1.98 1.22.25.13.4.1.54-.06.15-.17.62-.72.79-.97.16-.25.33-.2.55-.12.23.08 1.42.67 1.67.8.24.12.4.18.46.28.07.1.07.6-.18 1.3z"/></svg> <span>Scrie-ne pe WhatsApp</span></a>
   </section>
@@ -109,7 +115,7 @@
     </div>
   </div>
 
-  <div class="mod-grid">
+  <div class="mod-grid one">
     <div class="mod-box"><h2>Cum se desfășoară cursul online</h2><ul>
       <li><span>Lecții live pe Webex — nu înregistrări, ci profesor și colegi în timp real</span></li>
       <li><span>Grupe de maximum 4 cursanți, ca să vorbești la fiecare lecție</span></li>
@@ -120,26 +126,25 @@
       <li><span>Materialele de curs sunt incluse în preț</span></li>
       <li><span>Acces gratuit la aplicația Lernraum, rezervată doar cursanților Deutschparadies: vocabular, dialoguri, texte și exerciții pentru fiecare lecție</span></li>
     </ul></div>
-    <div class="mod-box"><h2>Pentru cine este</h2><ul>
-      <li><span>Pentru cei care încep de la zero sau vor să continue de la nivelul lor</span></li>
-      <li><span>Pentru românii din România care vor să lucreze sau să se mute în Germania ori Austria</span></li>
-      <li><span>Pentru românii deja stabiliți în Germania sau Austria</span></li>
-      <li><span>Pentru angajații companiilor germane din România</span></li>
-      <li><span>Pentru cei care se pregătesc pentru un examen telc</span></li>
-    </ul></div>
   </div>
 
-  <div class="mod-wide">
-    <h2>Toate nivelurile, de la A1 la C1</h2>
-    <p>A1.1 are 15 lecții, A1.2–A2.2 câte 20, B1 câte 25 și B2 câte 30 de lecții; pentru C1 stabilim împreună. Lucrăm cu manualele <strong>Schritte international Neu</strong> (A1–B1) și <strong>Sicher!</strong> (B2–C1). Alege nivelul ca să vezi ce înveți în fiecare modul:</p>
-    <div class="mod-all"><a href="/cursuri/a1-1">A1.1</a><a href="/cursuri/a1-2">A1.2</a><a href="/cursuri/a2-1">A2.1</a><a href="/cursuri/a2-2">A2.2</a><a href="/cursuri/b1-1">B1.1</a><a href="/cursuri/b1-2">B1.2</a><a href="/cursuri/b2-1">B2.1</a><a href="/cursuri/b2-2">B2.2</a><a href="/cursuri/c1-1">C1.1</a><a href="/cursuri/c1-2">C1.2</a></div>
+  <div class="mod-wide prices">
+    <h2>Prețuri pe niveluri</h2>
+    <table class="ptab">
+      <thead><tr><th>Nivel</th><th>Lecții</th><th>Preț</th></tr></thead>
+      <tbody>
+        <tr><td><a href="/cursuri/a1-1">A1.1</a> <small>(începători)</small></td><td>15</td><td><b>160 €</b><small>10,67 € / lecție</small></td></tr>
+        <tr><td><a href="/cursuri/a1-2">A1.2</a>, <a href="/cursuri/a2-1">A2.1</a>, <a href="/cursuri/a2-2">A2.2</a></td><td>20</td><td><b>198 €</b><small>9,90 € / lecție</small></td></tr>
+        <tr><td><a href="/cursuri/b1-1">B1.1</a>, <a href="/cursuri/b1-2">B1.2</a></td><td>25</td><td><b>248 €</b><small>9,92 € / lecție</small></td></tr>
+        <tr><td><a href="/cursuri/b2-1">B2.1</a>, <a href="/cursuri/b2-2">B2.2</a></td><td>30</td><td><b>297 €</b><small>9,90 € / lecție</small></td></tr>
+        <tr><td><a href="/cursuri/c1-1">C1.1</a>, <a href="/cursuri/c1-2">C1.2</a></td><td>—</td><td><b>stabilit cu profesorul</b></td></tr>
+      </tbody>
+    </table>
+    <p class="pnote">Materialele de curs și accesul în aplicația Lernraum sunt incluse. Lucrăm cu manualele Schritte international Neu (A1–B1) și Sicher! (B2–C1).</p>
   </div>
 
-  <div class="mod-grid">
-    <div class="mod-box"><h2>Pregătire pentru examenul telc</h2>
-      <p>La nivelurile superioare pregătim examenele telc. Lucrăm mult pe proba scrisă — de exemplu scrisoarea de reclamație (<em>Beschwerde</em>) — și pe proba orală, cu <em>Redewendungen</em> și <em>Rollenspiele</em>, ca să știi exact ce te așteaptă în ziua examenului.</p>
-      <p><a href="/blog/examen-telc-b2-ghid" style="font-weight:700;">Citește ghidul examenului telc B2 →</a></p></div>
-    <div class="mod-box"><h2>Cum începi</h2>
+  <div class="mod-grid one">
+    <div class="mod-box"><h2>Cum începi — 3 pași simpli</h2>
       <ol class="steps">
         <li>Faci <a href="/#test-nivel" style="font-weight:700;">testul gratuit de nivel</a> sau ne spui ce ai învățat până acum.</li>
         <li>Ne scrii pe WhatsApp și stabilim nivelul potrivit.</li>
@@ -153,7 +158,6 @@
     <details><summary>Când încep grupele?</summary><p>Nu avem date fixe de start. Zilele și ora fiecărei grupe se stabilesc împreună cu profesorul, în funcție de programul cursanților.</p></details>
     <details><summary>Pot participa dacă locuiesc în Germania sau Austria?</summary><p>Da. Cursurile sunt 100% online, așa că poți participa din România, Germania, Austria sau din orice altă țară.</p></details>
     <details><summary>Cum aflu de la ce nivel încep?</summary><p>Faci testul gratuit de nivel de pe site (A1.1–A2.2). Pentru B1 și peste, profesorul îți confirmă nivelul printr-o scurtă discuție pe WhatsApp.</p></details>
-    <details><summary>Cât costă un nivel?</summary><p>A1.1 are 15 lecții (160 €), A1.2, A2.1 și A2.2 au câte 20 de lecții (198 €), B1.1 și B1.2 câte 25 de lecții (248 €), iar B2.1 și B2.2 câte 30 de lecții (297 €). Pentru C1, numărul de lecții și prețul se stabilesc cu profesorul. Materialele de curs sunt incluse. Practic, plătești între 9,90 € și 10,67 € pe lecție live, într-o grupă de maximum 4 persoane.</p></details>
     <details><summary>Cum se face plata?</summary><p>Pentru A1.1 (15 lecții) plătești 160 €, o singură dată. Pentru nivelurile cu mai multe lecții, prima plată este de 160 € pentru primele 15 lecții, iar diferența până la prețul nivelului o plătești înainte de lecțiile rămase. Pentru fiecare plată primești factură de la firma noastră.</p></details>
     <details><summary>Mă pregătiți și pentru examenul telc?</summary><p>Da. Pregătim examenele telc, cu accent pe proba scrisă (de exemplu scrisoarea de reclamație – Beschwerde) și pe proba orală, prin Redewendungen și Rollenspiele.</p></details>
   </div>
