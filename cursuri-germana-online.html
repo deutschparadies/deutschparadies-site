@@ -38,6 +38,21 @@
   .faq summary{cursor:pointer;font-weight:700;color:var(--forest);}
   .faq details p{margin:10px 0 0;color:var(--ink);}
   .mod-wide .mod-all a{color:var(--forest);}
+  .trust{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:22px;}
+  .trust img.t-photo{width:200px;height:260px;object-fit:cover;border-radius:14px;}
+  .trust .t-num{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;color:var(--forest);line-height:1;}
+  .trust h2{margin:6px 0 8px;}
+  .g-line{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:6px;align-items:center;font-weight:600;color:var(--forest);text-decoration:none;margin-top:10px;}
+  .g-line .stars{color:#f5a623;letter-spacing:1px;}
+  .testis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+  .testi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .testi p{margin:0 0 10px;font-style:italic;color:var(--ink,#1d2b24);}
+  .testi b{color:var(--forest);} .testi small{display:block;color:var(--brick);font-weight:600;}
+  .vid{display:flex;gap:14px;align-items:center;background:var(--forest-deep);color:#fff;border-radius:16px;padding:12px;margin-top:14px;text-decoration:none;}
+  .vid img{width:150px;height:116px;object-fit:cover;border-radius:10px;flex:none;}
+  .vid b{display:block;font-size:1.05rem;margin-bottom:4px;} .vid span{color:var(--gold);font-weight:700;}
+  .per{display:block;color:var(--brick);font-weight:700;margin-top:2px;}
+  @media (max-width:720px){.trust{grid-template-columns:1fr;text-align:center;}.trust img.t-photo{margin:0 auto;width:180px;height:230px;}.testis{grid-template-columns:1fr;}.vid img{width:110px;height:86px;}}
 </style>
 </head>
 <body>
@@ -64,20 +79,45 @@
     <div class="chips">
       <span>Live pe Webex</span>
       <span>Maximum 4 cursanți</span>
-      <span>A1.1 · 15 lecții · 160 €</span>
+      <span>A1.1 · 15 lecții · 160 € (sub 11 € / lecție)</span>
       <span>Program stabilit împreună</span>
     </div>
     <a class="mod-cta" href="https://wa.me/40771237705?text=Bun%C4%83%21%20Sunt%20interesat%28%C4%83%29%20de%20un%20curs%20de%20german%C4%83%20online.%20A%C8%99%20dori%20detalii."><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.4 5 5.2-1.4A9.9 9.9 0 1 0 12.04 2zm5.8 14.1c-.25.7-1.45 1.33-2 1.4-.52.08-1.17.11-1.89-.12a17 17 0 0 1-1.7-.63 13.4 13.4 0 0 1-5.15-4.55c-.38-.5-.9-1.33-.9-2.54 0-1.2.63-1.8.86-2.04.22-.25.49-.31.65-.31h.47c.15 0 .35-.06.55.42.2.5.7 1.7.76 1.83.06.12.1.27.02.43-.08.17-.12.27-.24.42l-.37.43c-.12.12-.25.26-.11.5.14.25.64 1.05 1.37 1.7.94.84 1.74 1.1 1.98 1.22.25.13.4.1.54-.06.15-.17.62-.72.79-.97.16-.25.33-.2.55-.12.23.08 1.42.67 1.67.8.24.12.4.18.46.28.07.1.07.6-.18 1.3z"/></svg> <span>Scrie-ne pe WhatsApp</span></a>
   </section>
 
+  <section class="trust" aria-label="Profesorul tău">
+    <img class="t-photo" src="/img/profesor.svg" width="640" height="853" loading="lazy" alt="Profesorul Saleh, Deutschparadies">
+    <div>
+      <span class="eyebrow" style="color:var(--brick);">Profesorul tău</span>
+      <h2>Saleh — 24 de ani dedicați predării limbii germane</h2>
+      <p>Toate lecțiile le predau eu, live. În 24 de ani am pregătit cursanți de la primul „Guten Tag” până la interviuri, examene telc și o viață nouă în Germania. Nu predau doar gramatică: te fac să vorbești, lecție cu lecție.</p>
+      <a class="g-line" href="https://www.google.com/maps/search/?api=1&query=Deutschparadies%20Cursuri%20limba%20german%C4%83" target="_blank" rel="noopener"><span class="stars">★★★★★</span> 4.9 · 29 de recenzii pe Google</a>
+    </div>
+  </section>
+
+  <div class="mod-wide">
+    <h2>Rezultate reale, spuse de cursanți</h2>
+    <a class="vid" href="https://www.facebook.com/share/v/1BvYJ6u5qe/" target="_blank" rel="noopener">
+      <img src="/img/video.svg" width="900" height="694" loading="lazy" alt="Cursanții Deutschparadies vorbesc despre progresul lor">
+      <div><b>Cursanții mei povestesc cum au ajuns la B2 și C1</b><span>Vezi video ▶</span></div>
+    </a>
+    <div class="testis">
+      <div class="testi"><p>„Am învățat mai mult în 3 luni decât credeam că e posibil!”</p><b>Luminița</b><small>Ajunsă la B2</small></div>
+      <div class="testi"><p>„Profesorul explică foarte clar, iar grupele mici m-au ajutat enorm.”</p><b>Vladuț</b><small>Ajuns la C1</small></div>
+      <div class="testi"><p>„Cea mai bună investiție pentru cariera mea internațională.”</p><b>M. Kaziz</b><small>Ajuns la B2</small></div>
+    </div>
+  </div>
+
   <div class="mod-grid">
     <div class="mod-box"><h2>Cum se desfășoară cursul online</h2><ul>
       <li><span>Lecții live pe Webex — nu înregistrări, ci profesor și colegi în timp real</span></li>
       <li><span>Grupe de maximum 4 cursanți, ca să vorbești la fiecare lecție</span></li>
-      <li><span>15–30 de lecții pe nivel (A1.1: 15, A1.2–A2.2: 20, B1: 25, B2: 30)</span></li>
+      <li><span>Lecții de 60 de minute, de obicei de 2 ori pe săptămână</span></li>
+      <li><span>15–30 de lecții pe nivel (A1.1: 15, A1.2–A2.2: 20, B1: 25, B2: 30) — A1.1 durează aproximativ 2 luni</span></li>
       <li><span>Zilele și ora se stabilesc împreună cu profesorul</span></li>
       <li><span>Temele le trimiți în grupul de WhatsApp al cursului și primești corectura</span></li>
       <li><span>Materialele de curs sunt incluse în preț</span></li>
+      <li><span>Acces gratuit la aplicația Lernraum, rezervată doar cursanților Deutschparadies: vocabular, dialoguri, texte și exerciții pentru fiecare lecție</span></li>
     </ul></div>
     <div class="mod-box"><h2>Pentru cine este</h2><ul>
       <li><span>Pentru cei care încep de la zero sau vor să continue de la nivelul lor</span></li>
@@ -112,12 +152,13 @@
     <details><summary>Când încep grupele?</summary><p>Nu avem date fixe de start. Zilele și ora fiecărei grupe se stabilesc împreună cu profesorul, în funcție de programul cursanților.</p></details>
     <details><summary>Pot participa dacă locuiesc în Germania sau Austria?</summary><p>Da. Cursurile sunt 100% online, așa că poți participa din România, Germania, Austria sau din orice altă țară.</p></details>
     <details><summary>Cum aflu de la ce nivel încep?</summary><p>Faci testul gratuit de nivel de pe site (A1.1–A2.2). Pentru B1 și peste, profesorul îți confirmă nivelul printr-o scurtă discuție pe WhatsApp.</p></details>
-    <details><summary>Cât costă un nivel?</summary><p>A1.1 are 15 lecții (160 €), A1.2, A2.1 și A2.2 au câte 20 de lecții (198 €), B1.1 și B1.2 câte 25 de lecții (248 €), iar B2.1 și B2.2 câte 30 de lecții (297 €). Pentru C1, numărul de lecții și prețul se stabilesc cu profesorul. Materialele de curs sunt incluse.</p></details>
+    <details><summary>Cât costă un nivel?</summary><p>A1.1 are 15 lecții (160 €), A1.2, A2.1 și A2.2 au câte 20 de lecții (198 €), B1.1 și B1.2 câte 25 de lecții (248 €), iar B2.1 și B2.2 câte 30 de lecții (297 €). Pentru C1, numărul de lecții și prețul se stabilesc cu profesorul. Materialele de curs sunt incluse. Practic, plătești sub 11 € pe lecție live, într-o grupă de maximum 4 persoane.</p></details>
+    <details><summary>Cum se face plata?</summary><p>Plata se face integral, o singură dată pentru nivel, și primești factură de la firma noastră.</p></details>
     <details><summary>Mă pregătiți și pentru examenul telc?</summary><p>Da. Pregătim examenele telc, cu accent pe proba scrisă (de exemplu scrisoarea de reclamație – Beschwerde) și pe proba orală, prin Redewendungen și Rollenspiele.</p></details>
   </div>
 
   <div class="mod-price">
-    <div><div class="p">160 €</div><small>A1.1 · 15 lecții live · materiale incluse</small></div>
+    <div><div class="p">160 €</div><small>A1.1 · 15 lecții live · materiale incluse<span class="per">sub 11 € / lecție</span></small></div>
     <a class="mod-cta" href="https://wa.me/40771237705?text=Bun%C4%83%21%20Sunt%20interesat%28%C4%83%29%20de%20un%20curs%20de%20german%C4%83%20online.%20A%C8%99%20dori%20detalii."><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.4 5 5.2-1.4A9.9 9.9 0 1 0 12.04 2zm5.8 14.1c-.25.7-1.45 1.33-2 1.4-.52.08-1.17.11-1.89-.12a17 17 0 0 1-1.7-.63 13.4 13.4 0 0 1-5.15-4.55c-.38-.5-.9-1.33-.9-2.54 0-1.2.63-1.8.86-2.04.22-.25.49-.31.65-.31h.47c.15 0 .35-.06.55.42.2.5.7 1.7.76 1.83.06.12.1.27.02.43-.08.17-.12.27-.24.42l-.37.43c-.12.12-.25.26-.11.5.14.25.64 1.05 1.37 1.7.94.84 1.74 1.1 1.98 1.22.25.13.4.1.54-.06.15-.17.62-.72.79-.97.16-.25.33-.2.55-.12.23.08 1.42.67 1.67.8.24.12.4.18.46.28.07.1.07.6-.18 1.3z"/></svg> <span>Scrie-ne pe WhatsApp</span></a>
   </div>
 </main>
