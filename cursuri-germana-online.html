@@ -52,6 +52,13 @@
   .vid img{width:150px;height:116px;object-fit:cover;border-radius:10px;flex:none;}
   .vid b{display:block;font-size:1.05rem;margin-bottom:4px;} .vid span{color:var(--gold);font-weight:700;}
   .mod-grid.one{grid-template-columns:1fr;}
+  .lvs{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+  .lv{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;background:#fff;border-radius:12px;padding:14px 16px;text-decoration:none;}
+  .lv-n{font-family:'Fraunces',serif;font-weight:900;font-size:1.25rem;color:var(--forest);}
+  .lv-n em{display:block;font-family:Inter,sans-serif;font-style:normal;font-size:.75rem;font-weight:600;color:var(--brick);}
+  .lv-l{color:var(--ink,#1d2b24);font-weight:600;white-space:nowrap;}
+  .lv-p{font-weight:800;font-size:1.15rem;color:var(--forest-deep);min-width:64px;text-align:right;white-space:nowrap;}
+  .lv-p.sm{font-size:.9rem;font-weight:700;}
   .ptab{width:100%;border-collapse:collapse;margin-top:12px;background:#fff;border-radius:14px;overflow:hidden;}
   .ptab th{background:var(--gold);color:var(--forest-deep);text-align:left;padding:10px 12px;font-size:.9rem;}
   .ptab td{padding:12px;border-top:1px solid var(--line);color:var(--ink,#1d2b24);vertical-align:top;}
@@ -130,21 +137,19 @@
 
   <div class="mod-wide prices">
     <h2>Prețuri pe niveluri</h2>
-    <table class="ptab">
-      <thead><tr><th>Modul</th><th>Număr de lecții</th><th>Preț</th></tr></thead>
-      <tbody>
-        <tr><td><a href="/cursuri/a1-1">A1.1</a> <small>(începători)</small></td><td><b>15 lecții</b></td><td><b>160 €</b><small>10,67 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/a1-2">A1.2</a></td><td><b>20 lecții</b></td><td><b>198 €</b><small>9,90 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/a2-1">A2.1</a></td><td><b>20 lecții</b></td><td><b>198 €</b><small>9,90 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/a2-2">A2.2</a></td><td><b>20 lecții</b></td><td><b>198 €</b><small>9,90 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/b1-1">B1.1</a></td><td><b>25 lecții</b></td><td><b>248 €</b><small>9,92 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/b1-2">B1.2</a></td><td><b>25 lecții</b></td><td><b>248 €</b><small>9,92 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/b2-1">B2.1</a></td><td><b>30 lecții</b></td><td><b>297 €</b><small>9,90 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/b2-2">B2.2</a></td><td><b>30 lecții</b></td><td><b>297 €</b><small>9,90 € / lecție</small></td></tr>
-        <tr><td><a href="/cursuri/c1-1">C1.1</a></td><td>stabilit cu profesorul</td><td>stabilit cu profesorul</td></tr>
-        <tr><td><a href="/cursuri/c1-2">C1.2</a></td><td>stabilit cu profesorul</td><td>stabilit cu profesorul</td></tr>
-      </tbody>
-    </table>
+    <p class="pnote" style="margin-top:0;">Fiecare lecție durează 60 de minute · de la 9,90 € / lecție</p>
+    <div class="lvs">
+      <a class="lv" href="/cursuri/a1-1"><span class="lv-n">A1.1<em>Începători</em></span><span class="lv-l">15 lecții</span><span class="lv-p">160 €</span></a>
+      <a class="lv" href="/cursuri/a1-2"><span class="lv-n">A1.2</span><span class="lv-l">20 lecții</span><span class="lv-p">198 €</span></a>
+      <a class="lv" href="/cursuri/a2-1"><span class="lv-n">A2.1</span><span class="lv-l">20 lecții</span><span class="lv-p">198 €</span></a>
+      <a class="lv" href="/cursuri/a2-2"><span class="lv-n">A2.2</span><span class="lv-l">20 lecții</span><span class="lv-p">198 €</span></a>
+      <a class="lv" href="/cursuri/b1-1"><span class="lv-n">B1.1</span><span class="lv-l">25 lecții</span><span class="lv-p">248 €</span></a>
+      <a class="lv" href="/cursuri/b1-2"><span class="lv-n">B1.2</span><span class="lv-l">25 lecții</span><span class="lv-p">248 €</span></a>
+      <a class="lv" href="/cursuri/b2-1"><span class="lv-n">B2.1</span><span class="lv-l">30 lecții</span><span class="lv-p">297 €</span></a>
+      <a class="lv" href="/cursuri/b2-2"><span class="lv-n">B2.2</span><span class="lv-l">30 lecții</span><span class="lv-p">297 €</span></a>
+      <a class="lv" href="/cursuri/c1-1"><span class="lv-n">C1.1</span><span class="lv-l">—</span><span class="lv-p sm">la cerere</span></a>
+      <a class="lv" href="/cursuri/c1-2"><span class="lv-n">C1.2</span><span class="lv-l">—</span><span class="lv-p sm">la cerere</span></a>
+    </div>
     <p class="pnote">Materialele de curs și accesul în aplicația Lernraum sunt incluse. Lucrăm cu manualele Schritte international Neu (A1–B1) și Sicher! (B2–C1).</p>
   </div>
 
