@@ -200,6 +200,43 @@ input,textarea,[contenteditable=true]{-webkit-user-select:text;user-select:text;
 .pdfpw input{padding:10px;border:1px solid #c9d2c8;border-radius:8px;font-size:16px}
 .pdfpw button{background:#173226;color:#f4f1e6;border:0;border-radius:8px;padding:10px;font-weight:700;cursor:pointer}
 .pdfpw p{margin:0;font-size:14px}
+/* PLUSCSS:BEGIN */
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;color:var(--ink);font:inherit;cursor:pointer}
+.tool .ti{font-size:1.5rem;line-height:1}.tool b{font-family:var(--display);font-size:1.02rem;margin-top:6px}.tool small{color:var(--muted);font-size:.8rem}
+.tool.locked{opacity:.75;cursor:default}
+.quizcall{display:flex;gap:12px;align-items:center;width:100%;text-align:left;margin-top:14px;background:var(--gold);color:var(--gold-ink);border:0;border-radius:var(--r);padding:14px;font:inherit;cursor:pointer}
+.quizcall .ti{font-size:1.6rem}.quizcall b{display:block;font-family:var(--display)}.quizcall small{display:block;opacity:.85}
+button.mat{font:inherit;text-align:left;cursor:pointer}
+.art-der{color:#2563eb;font-weight:700}.art-die{color:#dc2626;font-weight:700}.art-das{color:#16a34a;font-weight:700}
+.flash{text-align:center;margin-top:10px}.flash .fw{font-family:var(--display);font-size:2rem;margin:14px 0 8px}.flash .ft{font-size:1.25rem;font-weight:700;margin:14px 0 6px}.flash .fe{color:var(--muted);display:flex;gap:8px;align-items:center;justify-content:center}
+.w-ok{color:var(--ok);font-weight:700}.w-no{color:var(--bad);font-weight:700;text-decoration:underline wavy}
+.bub{border-radius:16px;padding:12px 14px;margin:12px 0;background:var(--surface);border:1px solid var(--line)}.bub b{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}.bub span{font-size:1.15rem}
+.bub.p{border-left:4px solid var(--gold)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.tabs button{flex:1 1 auto;min-width:0;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 8px;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer}.tabs button[aria-pressed=true]{background:var(--brand-2);border-color:var(--brand-2);color:#fff}
+.chip[aria-pressed=true]{border-color:var(--brand-2);background:var(--brand-2);color:#fff}
+.ctab{overflow-x:auto;margin-top:8px}.ctab table{border-collapse:collapse;width:100%;font-size:.86rem}.ctab.conj table{table-layout:fixed}.ctab.conj thead th{font-size:.74rem;letter-spacing:0;text-transform:none}.ctab.conj th:nth-child(1){width:25%}.ctab.conj th:nth-child(2){width:22%}.ctab.conj th:nth-child(3){width:23%}.ctab.conj td,.ctab.conj th{white-space:normal!important;overflow-wrap:break-word}.ctab th,.ctab td{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}.ctab thead th{color:var(--muted);font-size:.78rem;text-transform:uppercase}
+.built{min-height:48px;border:2px dashed var(--line);border-radius:12px;padding:10px;margin:8px 0;font-size:1.1rem}
+.wbtn[disabled]{opacity:.35}
+.chip.ok{border-color:var(--ok);background:var(--ok-bg)}.chip.bad{border-color:var(--bad);background:var(--bad-bg)}
+.exambar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;background:var(--brand);color:#f4f1e6;border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.exambar b{font-size:1.15rem}.exambar .muted{color:rgba(255,255,255,.75)}
+.demobar{background:var(--gold);color:var(--gold-ink);font-weight:700;text-align:center;border-radius:10px;padding:8px 10px;margin-bottom:10px;font-size:.9rem}.demobar a{color:inherit}
+.st{font-size:.8rem;border-radius:20px;padding:3px 10px;background:var(--bg);border:1px solid var(--line)}.st.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
+.ctext{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:10px;margin-top:6px;font-size:.98rem;line-height:1.5}
+.corr{margin-top:10px;border-left:4px solid var(--ok);padding-left:10px}
+.chk{display:block;padding:6px 0}
+.wta{width:100%;font:inherit;border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);color:var(--ink)}
+.ro-sub{display:block;font-family:var(--body);font-size:.72rem;font-weight:400;font-style:italic;letter-spacing:0;text-transform:none;color:var(--muted);line-height:1.3;margin-top:1px}
+.mat b::after{content:none!important}
+.tabs button .ro-sub{font-size:.66rem}
+.tw{cursor:pointer;border-radius:4px}.tw:hover,.tw:active{background:var(--ok-bg)}
+.wpop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.25);display:flex;align-items:flex-end}
+.wpi{position:relative;width:100%;background:var(--surface);color:var(--ink);border-radius:18px 18px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -8px 30px rgba(0,0,0,.2)}
+.wpi .fw{font-family:var(--display);font-size:1.5rem}.wpx{position:absolute;top:10px;right:max(14px,env(safe-area-inset-right,0px));border:0;background:none;font-size:1.2rem;color:var(--muted);cursor:pointer}
+.bchk{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:4px;font-size:.92rem}.bchk li{color:var(--muted)}.bchk li.ok{color:var(--ink)}
+.chips.rm{margin-top:8px}.chips.rm .chip{padding:6px 10px}
+/* PLUSCSS:END */
 </style>
 
 <header class="bar"><div class="in">
@@ -4523,7 +4560,7 @@ D.telc.tests.forEach(function(t,ti){
 const D=window.DP_DATA, app=document.getElementById('app');
 const PHOTO="data:image/jpeg;base64,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";
 const SPEAK_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
-const FOLDERS={"A1.1":["1VHCji-yC88Dlrl_yx4ACwAYE3jzMPQaB","1H0FpU0GLr0ksVK-r2VR50Ub519rpQNJp"],"A1.2":["1KaKGmt1w2NkgV-FdCSuV2W2LtKwG2p8W","1liUk12JO2w8IzyJWGGK6yBb0LOWLbUIa"],"A2.1":["1QeQ1X30V6DTLopdoHsvn9UjCvnesJqco","1rfmjjOeIj4BfIXviP6xc6mYbbrBpydmm"],"A2.2":["1S0J1MFtmWnqBILqnhLhiRGFHZ9mjGlhl","1RZwperIRZzo0vTZqKMN2eK4H8Y4IOIv-"],"B1.1":["1L3G0rDte0EVszz6GYPW9--fhaiWm0mwO","1u1pKJvLgV3yCjmbeNXJOAJkc7gau-EW-"],"B1.2":["1CKZpAyMawCbT5o6OMARCSk86sG9coM9d","1EgjCnfZomq7DP78v6H0KE-Oi3LUIubcH"],"B2.1":["1WgIO1w8O-3l1J9Sz-9lCqm_e2O-_cmlI","1jSkgHe3EqOC0VmPQuBxD3SFNp9vycmuk"],"B2.2":["1NDqe13FWldTnl3Gf9ZWX_pAcdSH2HYBB","1xc-a0KxNUgP0LPILk4UzOgTM5QsmENSW"]};
+const FOLDERS={"A1.1":["1VHCji-yC88Dlrl_yx4ACwAYE3jzMPQaB","1H0FpU0GLr0ksVK-r2VR50Ub519rpQNJp","10xnUwxxPuT53aBxElVnuc4DBydMuvFMP"],"A1.2":["1KaKGmt1w2NkgV-FdCSuV2W2LtKwG2p8W","1liUk12JO2w8IzyJWGGK6yBb0LOWLbUIa","1tXhSxNYwMvz7gI7_3fADMcNGgMAk3I6n"],"A2.1":["1QeQ1X30V6DTLopdoHsvn9UjCvnesJqco","1rfmjjOeIj4BfIXviP6xc6mYbbrBpydmm","1kT6SzGBtEGLMVk22tN0KGF5Z3q77rEfM"],"A2.2":["1S0J1MFtmWnqBILqnhLhiRGFHZ9mjGlhl","1RZwperIRZzo0vTZqKMN2eK4H8Y4IOIv-","1Z1rlPlbCJF6nlC5piiuT_udDE7YyQMJO"],"B1.1":["1L3G0rDte0EVszz6GYPW9--fhaiWm0mwO","1u1pKJvLgV3yCjmbeNXJOAJkc7gau-EW-","1hIv7XhuSw_HzVkihFMEe-7Q0kPtE-c3o"],"B1.2":["1CKZpAyMawCbT5o6OMARCSk86sG9coM9d","1EgjCnfZomq7DP78v6H0KE-Oi3LUIubcH","1dXBGJ1mtdD-GfUTg2Eoj_434irrX00aL"],"B2.1":["1WgIO1w8O-3l1J9Sz-9lCqm_e2O-_cmlI","1jSkgHe3EqOC0VmPQuBxD3SFNp9vycmuk","141ZxEOG4lENrlVj8OrxKn4ueP7S82DN1"],"B2.2":["1NDqe13FWldTnl3Gf9ZWX_pAcdSH2HYBB","1xc-a0KxNUgP0LPILk4UzOgTM5QsmENSW","11WEGl8CE15Z-y754cgue9ewiJxAQekaU"]};
 const DRIVE=id=>"https://drive.google.com/drive/folders/"+id;
 const ALLG_DIALOGE={"A1":[{t:"Possessivartikel & Possessivpronomen",s:"40 Fragen · A1–B1 · mit Lösungen",u:"/app/dialoge/Possessivartikel.pdf"}],"A2":[{t:"Perfekt mit „sein”",s:"50 Verben · von leicht bis schwer",u:"/app/dialoge/Perfekt_mit_sein.pdf"}],"B1":[{t:"Possessivartikel & Possessivpronomen",s:"40 Fragen · A1–B1 · mit Lösungen",u:"/app/dialoge/Possessivartikel.pdf"},{t:"Präteritum",s:"60 Fragen · B1–B2",u:"/app/dialoge/Praeteritum.pdf"}],"B2":[]};
 function allgDialoge(){const lv=Object.keys(ALLG_DIALOGE);return `<details class="vbox"><summary><span class="vi">💬</span><span class="vt"><b>Allgemeine Dialoge Grammatik</b><small>${lv.join(" · ")}</small></span><span class="chev">⌄</span></summary><div class="inner">`+lv.map(n=>{const ds=ALLG_DIALOGE[n];return `<details class="vbox sub"><summary><span class="vi">${n}</span><span class="vt"><b>${n}</b><small>${ds.length?ds.length+(ds.length===1?" Dialog":" Dialoge"):"Bald verfügbar"}</small></span><span class="chev">⌄</span></summary><div class="list">`+(ds.length?ds.map(d=>`<a class="row" href="#" data-pdf="${d.u}"><span class="num">💬</span><span class="t"><b>${esc(d.t)}</b><small>${esc(d.s)}</small></span><span class="pct">Ansehen</span></a>`).join(""):`<p class="muted" style="margin:4px 2px">Hier kommen bald Dialoge zur Grammatik für ${n}.</p>`)+`</div></details>`}).join("")+`</div></details>`}
@@ -4576,7 +4613,8 @@ try{const r=JSON.parse(sessionStorage.getItem("dp_route"));if(r)route=r}catch(e)
 function render(){
   if(!ACCESS)return;
   if(IS_LEHRER&&window.__DP_WEB&&!window.__lehrerShown){window.__lehrerShown=1;return pwChangeWeb()}
-  if(!unlocked())return lockScreen();
+  if(DEMO){if(route.v!=="home"&&route.v!=="level"&&!DEMO_OK(route))return demoLocked()}
+  else if(!unlocked())return lockScreen();
   document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.lang));
   touchDay();
   if(route.v==="home")return home();
@@ -4584,17 +4622,18 @@ function render(){
   if(route.v==="lesson")return lesson(route.id);
   if(route.v==="mod")return module(route.id,route.m);
   if(route.v==="telc")return telcView(route.i);
+  if(PLUS_VIEWS[route.v])return PLUS_VIEWS[route.v](route);
   home();
 }
 
 function home(){
-  const cur=route.lv||"A1.1";
+  const cur=route.lv||S.lastLv||"A1.1";
   const goal=Math.min(100,Math.round(S.todayPts/GOAL*100));
   const lastL=S.last&&findLesson(S.last);
-  app.innerHTML=`
+  app.innerHTML=`${!realUnlocked()&&trialOk()?`<div class="demobar">Probezugang · noch ${Math.max(1,Math.ceil((trialExp()-Date.now())/3600000))} Std. · <a href="${WA}" target="_blank" rel="noopener">Kurs anfragen</a></div>`:""}
   <section class="hero">
     <div class="ph"><img src="${PHOTO}" alt="Saleh"></div>
-    <div><h1>Hallo! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
+    <div><h1>Hallo${myName()?", "+esc(myName().split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
   </section>
   <div class="stats">
     <div class="stat"><b>${S.points}</b><span>Punkte</span></div>
@@ -4602,11 +4641,12 @@ function home(){
     <div class="stat"><b>${S.todayPts}/${GOAL}</b><span>Tagesziel</span><div class="goal"><i style="width:${goal}%"></i></div></div>
   </div>
   ${lastL?`<div class="actions"><button class="btn gold" data-go-lesson="${lastL.l.id}">Weitermachen · Lektion ${lastL.l.n}: ${esc(lastL.l.title)}</button></div>`:""}
+  ${plusHome()}
   <div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
   <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
   <div id="lvlList"></div>
   ${allgDialoge()}
-  <footer>Deutschparadies · deutschparadies.ro<br><button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button></footer>`;
+  <footer>Deutschparadies · deutschparadies.ro<br>${DEMO?`<a class="linkbtn" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a>`:`<button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button>`}</footer>`;
   levelList(cur, app.querySelector("#lvlList"));
 }
 
@@ -4617,14 +4657,14 @@ function levelList(lv,el){
   else{h+=(meta.lessons||[]).map((t,i)=>`<button class="row" disabled><span class="num">${i+1}</span><span class="t"><b>${esc(t)}</b><small>Bald verfügbar</small></span></button>`).join("")}
   if(lv==="B2.2"&&D.telc)h+=`</div><div class="section-h"><h2>telc B2 · Prüfungstraining</h2><span class="muted" style="font-size:.85rem">5 Modelltests</span></div><div class="list">`+telcRows();
   const fo=FOLDERS[lv];
-  if(fo)h+=`</div><div class="section-h"><h2>Materialien</h2></div><div class="mats"><a class="mat" href="${DRIVE(fo[0])}" target="_blank" rel="noopener"><b>Buch</b><small>PDF zum ${lv}</small></a><a class="mat" href="${DRIVE(fo[1])}" target="_blank" rel="noopener"><b>Dialoge</b><small>Dialoge zum ${lv}</small></a>`;
+  if(fo)h+=`</div><div class="section-h"><h2>Materialien</h2></div><div class="mats"><button class="mat" data-p="drive" data-f="${fo[0]}" data-t="Buch ${lv}" data-lv="${lv}"><b>Buch</b><small>PDF zum ${lv}</small></button><button class="mat" data-p="drive" data-f="${fo[1]}" data-t="Dialoge ${lv}" data-lv="${lv}"><b>Dialoge</b><small>Dialoge zum ${lv}</small></button>${fo[2]?`<button class="mat" data-p="drive" data-f="${fo[2]}" data-t="Texte ${lv}" data-lv="${lv}"><b>Texte</b><small>Lesetexte zum ${lv}</small></button>`:""}`;
   el.innerHTML=h+"</div>"+videoSection(lv);
 }
 function level(lv){route={v:"home",lv};home()}
 
 const AUDIO_DRIVE={"B1.1":{1:"1pOXRMIHwzjkRwfwkeafbbcinGd6q-K21",2:"1Yj1LbmQEwuerk3VXWDUzwxxJjyQ4UGeY",3:"1A0zjRQiQpCaz5ruHb0fxJapcrc9tDcIx",4:"1QeL0hIi_j5jflLFzj9Bv7NfUF_S26E_u",5:"1W56h6LbvsrYqiu8d024G48hpQ1r0f0Uz",6:"1m815cDxRdOMLKxvtUAG3o7LcBW0TuuzQ",7:"1K8q-YJEnyJez5S0yFsPv1M2gPijgWnKK"},"B2.2":{7:"1luf59C_6kvPoI84a7gnAF3GkFgog_tAj",8:"1UCZx9EuekwTGuvZ1himfmG86wZB_sS4N",9:"1Kia0dpCL5OE5C9-A9vw5sRVDOm0v2ZBl",10:"1OCwJ-g99ik_CH-HYkhc8HE4d-NU0sacZ",11:"1_uAV8ymsBQ41iJSsbmELo00M5Ypn24vL",12:"1XCn8Z0P9G9rX6HCeqEQRNnoi8-9q2koR"}};
 const AUDIO_CDS={"A2.2":["1_dVRmupt85OAAb-E2E95Ko2f90lAXd57","1c1D3viSk-f_j2QxlgsV88mhH7f-CLOto"],"B1.2":["17S96FSEMoG8vMZv3ayMwsVhVUA6NU_Mh","17VVNfr2J0mRw9ppTt6c31gwUwxjfX4Ps"]};
-function audioBtn(f){if(AUDIO_CDS[f.lv])return AUDIO_CDS[f.lv].map((id,i)=>`<a class="btn" style="display:inline-block;margin:12px 8px 0 0" href="https://drive.google.com/drive/folders/${id}" target="_blank" rel="noopener">🎧 Audios · CD ${i+1}</a>`).join("");if(f.lv==="A1.1"||f.lv==="A1.2")return `<a class="btn" style="display:inline-block;margin-top:12px" href="https://play.google.com/store/apps/details?id=com.hueber.huebermedia" target="_blank" rel="noopener">🎧 Audios · Hueber-App</a>`;const id=(AUDIO_DRIVE[f.lv]||{})[f.l.n];return id?`<a class="btn" style="display:inline-block;margin-top:12px" href="https://drive.google.com/drive/folders/${id}" target="_blank" rel="noopener">🎧 Audios · Lektion ${f.l.n}</a>`:""}
+function audioBtn(f){if(AUDIO_CDS[f.lv])return AUDIO_CDS[f.lv].map((id,i)=>`<button class="btn" style="display:inline-block;margin:12px 8px 0 0" data-p="drive" data-f="${id}" data-t="Audios · CD ${i+1}" data-lv="${f.lv}">🎧 Audios · CD ${i+1}</button>`).join("");if(f.lv==="A1.1"||f.lv==="A1.2")return `<a class="btn" style="display:inline-block;margin-top:12px" href="https://play.google.com/store/apps/details?id=com.hueber.huebermedia" target="_blank" rel="noopener">🎧 Audios · Hueber-App</a>`;const id=(AUDIO_DRIVE[f.lv]||{})[f.l.n];return id?`<button class="btn" style="display:inline-block;margin-top:12px" data-p="drive" data-f="${id}" data-t="Audios · Lektion ${f.l.n}" data-lv="${f.lv}">🎧 Audios · Lektion ${f.l.n}</button>`:""}
 
 function lesson(id){
   const f=findLesson(id);if(!f)return go({v:"home"});const l=f.l;S.last=id;save();
@@ -4834,7 +4874,7 @@ function telcView(i){
   window.__telcAudio={};
   t.hoeren1.items.forEach((x,k)=>window.__telcAudio["h1-"+k]=x.script);t.hoeren3.items.forEach((x,k)=>window.__telcAudio["h3-"+k]=x.script);window.__telcAudio.h2=t.hoeren2.script;
   app.innerHTML=`<button class="back" data-home="B2.2">‹ Zurück</button><span class="kind" style="display:block">telc Deutsch B2 · Modelltest ${i+1}</span><h1>${esc(t.title.split(" · ")[1]||t.title)}</h1>
-  <div class="card" id="tsum" style="margin-top:8px"></div>
+  <div class="card" id="tsum" style="margin-top:8px"></div>${route.exam?"":`<div class="actions"><button class="btn gold" id="exstart">⏱ Prüfungsmodus starten (140 Min.)</button></div><p class="note">Im Prüfungsmodus läuft die Zeit, jeder Hörtext läuft nur so oft wie in der echten Prüfung, und du gibst alles am Ende ab.</p>`}
   <div class="chips" style="margin-top:10px">${nav}</div>
 
   <h2 class="tsec" id="s-l1">Leseverstehen · Teil 1</h2><p class="note">Lesen Sie die Überschriften a–j und die Texte 1–5. Welche Überschrift passt zu welchem Text? Fünf Überschriften bleiben übrig.</p>
@@ -4905,6 +4945,7 @@ function telcView(i){
   app.querySelectorAll("textarea.tw").forEach(ta=>{const key="dp_telc_w_"+i+"_"+ta.dataset.k;try{ta.value=localStorage.getItem(key)||""}catch(e){}
     const wc=ta.parentNode.querySelector(".twc");const cnt=()=>{wc.textContent=(ta.value.trim().match(/\S+/g)||[]).length};cnt();
     ta.oninput=()=>{cnt();try{localStorage.setItem(key,ta.value)}catch(e){}}});
+  if(route.exam)telcExam(i);else{const xs=app.querySelector("#exstart");if(xs)xs.onclick=()=>go({v:"telc",i,exam:1})}
 }
 
 
@@ -4912,7 +4953,10 @@ function telcView(i){
 const FALLBACK_ACCESS={"v": 1, "salt": "dp-lernraum-2026", "hash": "5d8d316d1a7fc0552b54e85ae3e76fafa278d645f77267961069baed06aab256"};let ACCESS=null;
 async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 async function loadAccess(){try{const r=await fetch(window.__DP_WEB?"/app/access.json":"access.json",{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&j.hash)ACCESS=j}}catch(e){}if(!ACCESS)ACCESS=FALLBACK_ACCESS}
-function unlocked(){try{return localStorage.getItem("dp_unlock")===ACCESS.hash}catch(e){return window.__dpUnlock===ACCESS.hash}}
+function realUnlocked(){try{return localStorage.getItem("dp_unlock")===ACCESS.hash}catch(e){return window.__dpUnlock===ACCESS.hash}}
+function trialExp(){try{return +localStorage.getItem("dp_trial_exp")||0}catch(e){return +(window.__dpTrial||0)}}
+function trialOk(){return !!window.__DP_WEB&&trialExp()>Date.now()}
+function unlocked(){return realUnlocked()||trialOk()}
 function setUnlocked(h){window.__dpUnlock=h;try{localStorage.setItem("dp_unlock",h)}catch(e){}}
 
 /* ---- Dialog viewer: PDFs are only sent to a logged-in session and drawn on canvas (no download link, no print, no text layer) ---- */
@@ -4920,13 +4964,25 @@ let PDFJS_LIB=null;
 function loadPdfJs(){if(PDFJS_LIB)return Promise.resolve(PDFJS_LIB);return new Promise((ok,no)=>{if(window.pdfjsLib){PDFJS_LIB=window.pdfjsLib;return ok(PDFJS_LIB)}const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";PDFJS_LIB=window.pdfjsLib;ok(PDFJS_LIB)};s.onerror=no;document.head.appendChild(s)})}
 async function renderPdf(data,body){const lib=await loadPdfJs();const doc=await lib.getDocument({data}).promise;body.innerHTML="";const dpr=window.devicePixelRatio||1;const w=Math.min((body.clientWidth||800)-24,900);for(let i=1;i<=doc.numPages;i++){const page=await doc.getPage(i);const v0=page.getViewport({scale:1});const vp=page.getViewport({scale:(w/v0.width)*dpr});const cv=document.createElement("canvas");cv.width=Math.floor(vp.width);cv.height=Math.floor(vp.height);cv.style.width=(cv.width/dpr)+"px";cv.className="pdfpg";body.appendChild(cv);await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise}}
 function askPdfPassword(ov,body,u){body.innerHTML='<form id="pdfPw" class="pdfpw"><p>Bitte gib das Schüler-Passwort ein, um diesen Dialog zu öffnen.</p><input id="pdfPwIn" type="password" autocomplete="current-password" required><button type="submit">Öffnen</button><p id="pdfPwErr" hidden>Falsches Passwort.</p></form>';body.querySelector("#pdfPw").onsubmit=async e=>{e.preventDefault();const pw=body.querySelector("#pdfPwIn").value;const r=await fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw})}).catch(()=>null);if(r&&r.ok){ov.remove();openPdf(u)}else{body.querySelector("#pdfPwErr").hidden=false}}}
-async function openPdf(u){document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===403){askPdfPassword(ov,body,u);return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
+async function openPdf(u){if(DEMO){demoLocked();return}document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401||(r.status===403&&!/\/api\/drive\//.test(u))){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
 document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-pdf]");if(!a)return;e.preventDefault();openPdf(a.dataset.pdf)});
 function lockScreen(){
-  app.innerHTML=`<div class="lock"><img class="lock-logo" alt="Deutschparadies" src="${document.querySelector("header .logo").src}"><h1>Deutschparadies Lernraum</h1><p class="muted">Nur für Kursteilnehmer. Bitte gib das Passwort ein, das du von deinem Lehrer bekommen hast.</p>
-  <form id="lf"><input class="gap" id="lpw" type="password" autocomplete="current-password" placeholder="Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button></form><div class="feedback bad" id="lfb" hidden>Falsches Passwort. Versuch es noch einmal.</div></div>`;
-  app.querySelector("#lf").onsubmit=async e=>{e.preventDefault();const v=app.querySelector("#lpw").value;const h=await sha(ACCESS.salt+v);if(h===ACCESS.hash){setUnlocked(h);if(window.__DP_WEB)fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw:v})}).catch(()=>{});render()}else{app.querySelector("#lfb").hidden=false}};
-  setTimeout(()=>{const i=app.querySelector("#lpw");i&&i.focus()},50);
+  const web=!!window.__DP_WEB,expired=web&&trialExp()&&!trialOk();
+  const urlCode=web?((location.search.match(/[?&]code=([A-Za-z0-9-]+)/)||[])[1]||""):"";
+  app.innerHTML=`<div class="lock"><img class="lock-logo" alt="Deutschparadies" src="${document.querySelector("header .logo").src}"><h1>Deutschparadies Lernraum</h1>
+  ${expired?`<div class="feedback bad" style="margin-bottom:12px">Dein Probezugang ist abgelaufen. Lust auf den Kurs? <a href="${WA}" target="_blank" rel="noopener">Schreib uns auf WhatsApp</a>.</div>`:""}
+  <p class="muted">Nur für Kursteilnehmer. Bitte gib das Passwort ein, das du von deinem Lehrer bekommen hast.</p>
+  <form id="lf"><input class="gap" id="lpw" type="password" autocomplete="current-password" placeholder="Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button></form><div class="feedback bad" id="lfb" hidden>Falsches Passwort. Versuch es noch einmal.</div>
+  ${web?`<details class="card" style="margin-top:16px;text-align:left" ${urlCode?"open":""}><summary style="cursor:pointer;font-weight:700">Ich habe einen Probe-Code</summary><form id="cf" style="margin-top:10px"><input class="gap" id="ccode" value="${esc(urlCode)}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. K7M2Q9XA"><button class="btn gold" type="submit" style="width:100%;margin-top:10px">Probezugang starten</button></form><div class="feedback bad" id="cfb" hidden></div><p class="note">Mit dem Code kannst du den Lernraum ausprobieren. Der Code gilt 24 Stunden.</p></details>`:""}</div>`;
+  app.querySelector("#lf").onsubmit=async e=>{e.preventDefault();const v=app.querySelector("#lpw").value;const h=await sha(ACCESS.salt+v);if(h===ACCESS.hash){setUnlocked(h);if(window.__DP_WEB)await fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw:v})}).catch(()=>{});render()}else{app.querySelector("#lfb").hidden=false}};
+  const cf=app.querySelector("#cf");
+  if(cf){const cfb=app.querySelector("#cfb");
+    const go2=async()=>{const code=app.querySelector("#ccode").value.trim();if(!code)return;cfb.hidden=true;const j=await api("login",{method:"POST",body:{code}});
+      if(j._ok&&j.trial){window.__dpTrial=j.trial.exp;try{localStorage.setItem("dp_trial_exp",String(j.trial.exp))}catch(err){}try{history.replaceState(route,"",location.pathname)}catch(err){}route={v:"home"};return render()}
+      cfb.hidden=false;cfb.textContent=j.error==="expired"?"Dieser Link ist abgelaufen (24 Stunden sind vorbei). Lust auf den Kurs? Schreib uns auf WhatsApp.":j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":j._status===0?"Keine Verbindung. Bitte später noch einmal versuchen.":"Dieser Code ist nicht gültig."};
+    cf.onsubmit=e=>{e.preventDefault();go2()};
+    if(urlCode&&!expired)go2()}
+  setTimeout(()=>{const i=app.querySelector(urlCode?"#ccode":"#lpw");i&&i.focus()},50);
 }
 const IS_LEHRER=/[?&]lehrer\b/.test(location.search);
 function videoAdmin(){
@@ -4959,12 +5015,12 @@ function videoAdmin(){
 }
 function pwChangeWeb(){
   const f=(id,l,ac)=>`<label class="kind" style="display:block;margin-top:12px">${l}</label><input class="gap" id="${id}" type="password" autocomplete="${ac}">`;
-  app.innerHTML=`<button class="back" data-home="">‹ Zur App</button><h1>Lehrerbereich</h1><p class="muted">Hier änderst du das Passwort für die Schüler. Dafür brauchst du dein Lehrer-Passwort.</p>
+  app.innerHTML=`<button class="back" data-home="">‹ Zur App</button><h1>Lehrerbereich</h1><div id="tcon"></div><h2 style="margin-top:26px">Passwörter</h2><p class="muted">Hier änderst du das gemeinsame Kurs-Passwort oder dein Lehrer-Passwort.</p>
   <form id="pf" class="card" style="margin-top:10px">${f("pa","Lehrer-Passwort","current-password")}
   <h3 style="margin-top:18px">Neues Schüler-Passwort</h3>${f("p1","Neues Schüler-Passwort (mind. 6 Zeichen)","new-password")}${f("p2","Wiederholen","new-password")}
   <h3 style="margin-top:18px">Lehrer-Passwort ändern <span class="muted">(optional)</span></h3>${f("q1","Neues Lehrer-Passwort","new-password")}${f("q2","Wiederholen","new-password")}
   <button class="btn" type="submit" style="width:100%;margin-top:14px">Speichern</button><div class="feedback" id="pfb" hidden></div></form><div id="vadm"></div>`;
-  videoAdmin();
+  videoAdmin();teacherConsole(app.querySelector("#tcon"));
   const fb=app.querySelector("#pfb");const msg=(t,ok)=>{fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.textContent=t};
   app.querySelector("#pf").onsubmit=async e=>{e.preventDefault();const v=id=>app.querySelector("#"+id).value;
     const pa=v("pa"),p1=v("p1"),p2=v("p2"),q1=v("q1"),q2=v("q2");
@@ -5012,11 +5068,832 @@ document.addEventListener("click",e=>{
   if(b.dataset.pw)return pwChange();
   if(b.dataset.telc!==undefined)return go({v:"telc",i:b.dataset.telc});
   if(b.dataset.l){S.lang=b.dataset.l;save();return render()}
-  if(b.dataset.lv){route={v:"home",lv:b.dataset.lv};return render()}
+  if(b.dataset.lv){route={v:"home",lv:b.dataset.lv};S.lastLv=b.dataset.lv;save();try{history.replaceState(route,"");sessionStorage.setItem("dp_route",JSON.stringify(route))}catch(e){}return render()}
   if(b.dataset.goLesson)return go({v:"lesson",id:b.dataset.goLesson});
   if(b.dataset.mod)return go({v:"mod",id:route.id,m:b.dataset.mod});
   if("home" in b.dataset)return go({v:"home",lv:b.dataset.home});
 });
+/* PLUS:BEGIN */
+// ---------- Rollenspiele (partner line is spoken, the student answers) ----------
+// k: groups of accepted words; every group needs at least one match. you: model answer.
+const RP=[
+{id:"a11-1",lv:"A1.1",t:"Im Kurs: Hallo!",sit:{ro:"Ești în prima zi la cursul de germană. Un coleg te salută.",ar:"انت في أول يوم في كورس الألماني، وزميل بيسلم عليك.",en:"It's your first day at the German course. A classmate greets you."},turns:[
+ {p:"Hallo! Ich heiße Jonas. Und wie heißt du?",you:"Hallo Jonas! Ich heiße Ana.",k:[["heiße","bin","name"]]},
+ {p:"Freut mich! Woher kommst du?",you:"Ich komme aus Rumänien.",k:[["komme","bin"],["aus"]]},
+ {p:"Und wo wohnst du jetzt?",you:"Ich wohne in Bukarest.",k:[["wohne","lebe"],["in"]]},
+ {p:"Welche Sprachen sprichst du?",you:"Ich spreche Rumänisch, Englisch und ein bisschen Deutsch.",k:[["spreche"]]},
+ {p:"Super! Bis morgen, tschüs!",you:"Tschüs, bis morgen!",k:[["tschüs","tschüss","wiedersehen","bis","ciao"]]}]},
+{id:"a11-2",lv:"A1.1",t:"Im Café bestellen",sit:{ro:"Ești într-o cafenea în Viena și comanzi ceva de băut și de mâncat.",ar:"انت في كافيه في فيينا وعايز تطلب حاجة تشربها وحاجة تاكلها.",en:"You are in a café in Vienna and order something to drink and eat."},turns:[
+ {p:"Guten Tag! Was möchten Sie trinken?",you:"Guten Tag! Ich möchte einen Kaffee, bitte.",k:[["möchte","nehme","hätte","gern"]]},
+ {p:"Mit Milch und Zucker?",you:"Mit Milch, aber ohne Zucker, bitte.",k:[["milch","zucker","ohne","ja","nein"]]},
+ {p:"Möchten Sie auch etwas essen?",you:"Ja, ich nehme einen Apfelkuchen.",k:[["nehme","möchte","ja","nein"]]},
+ {p:"Gern. Sonst noch etwas?",you:"Nein, danke. Das ist alles.",k:[["nein","danke","alles","nichts"]]},
+ {p:"Das macht sieben Euro achtzig.",you:"Hier, bitte. Stimmt so.",k:[["bitte","hier","stimmt","danke"]]}]},
+{id:"a12-1",lv:"A1.2",t:"Beim Arzt anrufen",sit:{ro:"Ești bolnav și suni la cabinetul medical pentru o programare.",ar:"انت عيان وبتتصل بعيادة الدكتور علشان تاخد ميعاد.",en:"You are ill and call the doctor's office for an appointment."},turns:[
+ {p:"Praxis Dr. Weber, guten Morgen. Was kann ich für Sie tun?",you:"Guten Morgen, ich möchte einen Termin, bitte.",k:[["termin"]]},
+ {p:"Was fehlt Ihnen denn?",you:"Ich habe Kopfschmerzen und Fieber.",k:[["habe","tut","bin"],["schmerzen","fieber","husten","weh","krank","erkältung"]]},
+ {p:"Können Sie heute um elf Uhr kommen?",you:"Ja, um elf Uhr kann ich kommen.",k:[["ja","nein","kann","geht","passt"]]},
+ {p:"Wie ist Ihr Name, bitte?",you:"Mein Name ist Popescu.",k:[["name","heiße","bin"]]},
+ {p:"Gut, Frau Popescu. Bringen Sie bitte Ihre Versichertenkarte mit.",you:"Ja, mache ich. Vielen Dank, auf Wiederhören!",k:[["danke","wiederhören","tschüs","ja"]]}]},
+{id:"a12-2",lv:"A1.2",t:"Kleidung kaufen",sit:{ro:"Ești într-un magazin de haine și cauți o jachetă.",ar:"انت في محل هدوم بتدور على جاكيت.",en:"You are in a clothes shop looking for a jacket."},turns:[
+ {p:"Hallo! Kann ich Ihnen helfen?",you:"Ja, gern. Ich suche eine Jacke.",k:[["suche","möchte","brauche"]]},
+ {p:"Welche Größe haben Sie?",you:"Ich habe Größe M.",k:[["größe","habe","s","m","l","xl","38","40","42"]]},
+ {p:"Welche Farbe gefällt Ihnen?",you:"Schwarz oder blau gefällt mir.",k:[["schwarz","blau","rot","grün","grau","weiß","braun","gefällt"]]},
+ {p:"Hier ist eine Jacke in Blau. Möchten Sie sie anprobieren?",you:"Ja, gern. Wo ist die Umkleidekabine?",k:[["ja","gern","nein","anprobieren"]]},
+ {p:"Und? Passt die Jacke?",you:"Ja, sie passt gut. Ich nehme sie.",k:[["passt","nehme","kaufe","zu","groß","klein"]]}]},
+{id:"a21-1",lv:"A2.1",t:"Eine Wohnung besichtigen",sit:{ro:"Vizitezi un apartament și pui întrebări proprietarului.",ar:"انت بتشوف شقة للإيجار وبتسأل صاحبها.",en:"You are viewing a flat and ask the landlord questions."},turns:[
+ {p:"Guten Tag! Kommen Sie herein. Das ist das Wohnzimmer.",you:"Guten Tag! Das Wohnzimmer ist schön hell. Wie groß ist die Wohnung?",k:[["groß","quadratmeter","zimmer"]]},
+ {p:"Die Wohnung hat 65 Quadratmeter und drei Zimmer.",you:"Wie hoch ist die Miete?",k:[["miete","kostet","kosten","euro"]]},
+ {p:"Die Miete ist 750 Euro warm.",you:"Sind die Nebenkosten schon dabei?",k:[["nebenkosten","warm","kalt","dabei","inklusive","strom"]]},
+ {p:"Ja, nur der Strom kommt noch dazu. Haben Sie Haustiere?",you:"Nein, ich habe keine Haustiere.",k:[["nein","ja","keine","hund","katze","haustier"]]},
+ {p:"Wann möchten Sie einziehen?",you:"Ich möchte am ersten Mai einziehen.",k:[["einziehen","ersten","nächsten","monat","mai","juni","bald","sofort"]]}]},
+{id:"a21-2",lv:"A2.1",t:"Am Bahnhof",sit:{ro:"Ești la ghișeul gării și cumperi un bilet la München.",ar:"انت عند شباك التذاكر في المحطة وبتشتري تذكرة لميونخ.",en:"You are at the station counter buying a ticket to Munich."},turns:[
+ {p:"Guten Tag, wohin möchten Sie fahren?",you:"Ich möchte nach München fahren.",k:[["nach"],["münchen"]]},
+ {p:"Wann möchten Sie fahren?",you:"Morgen früh, so gegen acht Uhr.",k:[["morgen","heute","uhr","früh","abend","um"]]},
+ {p:"Einfach oder hin und zurück?",you:"Hin und zurück, bitte.",k:[["einfach","zurück"]]},
+ {p:"Der Zug fährt um acht Uhr zwölf. Sie müssen in Nürnberg umsteigen.",you:"Von welchem Gleis fährt der Zug ab?",k:[["gleis","bahnsteig","wo"]]},
+ {p:"Von Gleis fünf. Das macht 89 Euro.",you:"Kann ich mit Karte bezahlen?",k:[["karte","bar","bezahlen","zahlen"]]}]},
+{id:"a22-1",lv:"A2.2",t:"Eine Party planen",sit:{ro:"Organizezi cu o prietenă o petrecere surpriză pentru un coleg.",ar:"انت ومعاك صاحبتك بتنظموا حفلة مفاجأة لزميلكم.",en:"You and a friend are planning a surprise party for a colleague."},turns:[
+ {p:"Tim hat nächste Woche Geburtstag. Sollen wir eine Überraschungsparty machen?",you:"Ja, gute Idee! Wann sollen wir feiern?",k:[["ja","idee","gern","super","prima"]]},
+ {p:"Vielleicht am Samstag. Wo können wir feiern?",you:"Wir können bei mir feiern, meine Wohnung ist groß genug.",k:[["bei","in","im","wohnung","garten","restaurant","café"]]},
+ {p:"Wen sollen wir einladen?",you:"Wir laden die Kollegen und seine Freunde ein.",k:[["einladen","laden","kollegen","freunde","familie"]]},
+ {p:"Wer kümmert sich um das Essen?",you:"Ich kann einen Kuchen backen und Salat machen.",k:[["kann","mache","backe","koche","kaufe","bringe"]]},
+ {p:"Und was schenken wir ihm?",you:"Wir könnten ihm ein Buch oder einen Gutschein schenken.",k:[["schenken","buch","gutschein","geschenk","könnten"]]}]},
+{id:"a22-2",lv:"A2.2",t:"Reklamation im Geschäft",sit:{ro:"Ai cumpărat un telefon și nu funcționează. Mergi înapoi la magazin.",ar:"اشتريت موبايل وطلع بايظ، فرجعت للمحل.",en:"You bought a phone that doesn't work and go back to the shop."},turns:[
+ {p:"Guten Tag, was kann ich für Sie tun?",you:"Guten Tag, ich habe gestern dieses Handy gekauft, aber es funktioniert nicht.",k:[["funktioniert","kaputt","geht nicht","defekt"]]},
+ {p:"Was genau ist das Problem?",you:"Der Akku lädt nicht und das Display bleibt schwarz.",k:[["akku","display","bildschirm","lädt","schwarz","an"]]},
+ {p:"Haben Sie den Kassenbon dabei?",you:"Ja, hier ist der Kassenbon.",k:[["ja","hier","bon","quittung","rechnung"]]},
+ {p:"Wir können das Handy reparieren lassen. Das dauert zwei Wochen.",you:"Das ist zu lange. Ich möchte lieber ein neues Handy oder mein Geld zurück.",k:[["neues","geld","zurück","umtauschen","lieber","lange"]]},
+ {p:"In Ordnung, dann tauschen wir es um.",you:"Vielen Dank, das ist sehr nett.",k:[["danke","nett","gut","super"]]}]},
+{id:"b11-1",lv:"B1.1",t:"Vorstellungsgespräch",sit:{ro:"Ai un interviu pentru un post de recepționer într-un hotel.",ar:"عندك إنترفيو لوظيفة موظف استقبال في فندق.",en:"You have a job interview for a receptionist job in a hotel."},turns:[
+ {p:"Guten Tag, schön, dass Sie da sind. Erzählen Sie doch kurz etwas über sich.",you:"Gern. Ich heiße Ana Popescu, bin 29 Jahre alt und habe Tourismus studiert.",k:[["heiße","bin","name"],["jahre","studiert","gearbeitet","ausbildung","arbeite"]]},
+ {p:"Warum möchten Sie bei uns arbeiten?",you:"Ich arbeite gern mit Menschen und Ihr Hotel hat einen sehr guten Ruf.",k:[["weil","denn","gern","interessiert","möchte"]]},
+ {p:"Welche Erfahrungen haben Sie schon?",you:"Ich habe drei Jahre an der Rezeption in einem Hotel in Brașov gearbeitet.",k:[["habe","gearbeitet","erfahrung","jahre"]]},
+ {p:"Was sind Ihre Stärken?",you:"Ich bin zuverlässig, freundlich und spreche drei Sprachen.",k:[["bin","kann","spreche","stärke"]]},
+ {p:"Haben Sie noch Fragen an uns?",you:"Ja, wie sehen die Arbeitszeiten aus und wann kann ich anfangen?",k:[["arbeitszeit","wann","gehalt","schicht","anfangen","frage","ja"]]}]},
+{id:"b11-2",lv:"B1.1",t:"Ärger mit dem Nachbarn",sit:{ro:"Vecinul tău face des zgomot noaptea. Vorbești politicos cu el.",ar:"جارك بيعمل دوشة كتير بالليل، وبتكلمه بأدب.",en:"Your neighbour is often noisy at night. You talk to him politely."},turns:[
+ {p:"Oh, hallo! Was gibt's?",you:"Hallo, entschuldigen Sie bitte. Ich möchte kurz mit Ihnen über die Musik am Abend sprechen.",k:[["entschuldigen","musik","laut","lärm","sprechen"]]},
+ {p:"Ist die Musik zu laut?",you:"Ja, leider. Ich kann oft nicht schlafen, weil ich früh aufstehen muss.",k:[["weil","denn","schlafen","früh","laut"]]},
+ {p:"Das tut mir leid, das wusste ich nicht.",you:"Kein Problem. Könnten Sie die Musik ab zweiundzwanzig Uhr leiser machen?",k:[["könnten","würden","leiser","uhr","bitte"]]},
+ {p:"Natürlich. Am Samstag mache ich aber eine Party.",you:"Das ist in Ordnung, wenn Sie mir vorher Bescheid sagen.",k:[["ordnung","okay","wenn","bescheid","sagen"]]},
+ {p:"Mache ich. Danke, dass Sie direkt mit mir gesprochen haben.",you:"Gern, und danke für Ihr Verständnis.",k:[["danke","gern","verständnis"]]}]},
+{id:"b12-1",lv:"B1.2",t:"Eine Reise reklamieren",sit:{ro:"Hotelul din vacanță nu a corespuns ofertei. Suni la agenția de turism.",ar:"الفندق في الأجازة ماكانش زي العرض، وبتتصل بشركة السياحة.",en:"The holiday hotel did not match the offer. You call the travel agency."},turns:[
+ {p:"Reisebüro Sonnenschein, Müller am Apparat. Wie kann ich Ihnen helfen?",you:"Guten Tag, ich rufe wegen meiner Reise nach Mallorca an. Ich möchte mich beschweren.",k:[["beschweren","reklamieren","problem","wegen"]]},
+ {p:"Was war denn nicht in Ordnung?",you:"Das Zimmer war schmutzig und statt Meerblick hatten wir Blick auf eine Baustelle.",k:[["zimmer","schmutzig","baustelle","laut","statt","meerblick","pool"]]},
+ {p:"Haben Sie sich vor Ort bei der Reiseleitung beschwert?",you:"Ja, aber die Reiseleitung hat uns nicht geholfen.",k:[["ja","nein","beschwert","reiseleitung","geholfen"]]},
+ {p:"Was erwarten Sie jetzt von uns?",you:"Ich erwarte, dass Sie mir einen Teil des Preises zurückzahlen.",k:[["erwarte","zurück","geld","erstatten","preis","gutschein"]]},
+ {p:"Schicken Sie uns bitte Fotos und eine schriftliche Beschwerde.",you:"Das mache ich gern. Ich schicke Ihnen heute noch eine E-Mail.",k:[["mache","schicke","e-mail","email","heute"]]}]},
+{id:"b12-2",lv:"B1.2",t:"Über Medien diskutieren",sit:{ro:"Discuți cu un coleg dacă copiii ar trebui să aibă telefon mobil.",ar:"بتتناقش مع زميل: هل الأطفال لازم يكون معاهم موبايل؟",en:"You discuss with a colleague whether children should have mobile phones."},turns:[
+ {p:"Meine Tochter ist neun und möchte unbedingt ein Handy. Was meinst du?",you:"Ich finde, mit neun Jahren ist sie noch zu jung für ein eigenes Handy.",k:[["finde","meine","denke","glaube","meiner meinung"]]},
+ {p:"Aber alle ihre Freundinnen haben schon eins.",you:"Das verstehe ich, aber das ist für mich kein gutes Argument.",k:[["verstehe","aber","argument","trotzdem","stimmt"]]},
+ {p:"Mit einem Handy kann sie mich aber anrufen, wenn etwas passiert.",you:"Da hast du recht. Vielleicht reicht ein einfaches Handy ohne Internet.",k:[["recht","stimmt","vielleicht","einfaches","ohne"]]},
+ {p:"Und wie lange sollte sie es benutzen dürfen?",you:"Meiner Meinung nach höchstens eine Stunde pro Tag.",k:[["stunde","minuten","höchstens","pro tag","meinung"]]},
+ {p:"Gute Idee. Ich spreche heute Abend mit ihr darüber.",you:"Ja, mach das. Wichtig ist, dass ihr gemeinsame Regeln findet.",k:[["wichtig","regeln","gemeinsam","mach","ja"]]}]},
+{id:"b21-1",lv:"B2.1",t:"Gemeinsam etwas planen (telc Teil 3)",sit:{ro:"Planificați împreună o petrecere de rămas-bun pentru o colegă care se mută în străinătate.",ar:"بتخططوا سوا لحفلة وداع لزميلة مسافرة تعيش برة.",en:"Together you plan a farewell party for a colleague who is moving abroad."},turns:[
+ {p:"Unsere Kollegin Elena zieht nächsten Monat nach Kanada. Wir sollten etwas für sie organisieren, oder?",you:"Auf jeden Fall! Ich schlage vor, dass wir eine kleine Abschiedsfeier im Büro machen.",k:[["schlage","vorschlag","wie wäre","könnten","sollten","feier"]]},
+ {p:"Im Büro ist es aber ziemlich eng. Was hältst du von einem Restaurant?",you:"Das ist eine gute Idee, allerdings wird das für manche Kollegen teuer.",k:[["idee","allerdings","aber","teuer","einverstanden","stimmt"]]},
+ {p:"Wir könnten ja einen Teil aus der Teamkasse bezahlen.",you:"Einverstanden. Dann kümmere ich mich um die Reservierung.",k:[["einverstanden","kümmere","übernehme","reservierung","mache"]]},
+ {p:"Und was schenken wir ihr zum Abschied?",you:"Wie wäre es mit einem Fotobuch mit Bildern von uns allen?",k:[["wie wäre","fotobuch","geschenk","könnten","schlage"]]},
+ {p:"Toll! Wer sammelt das Geld ein?",you:"Das kannst du übernehmen. Lass uns bis Freitag alles erledigen.",k:[["übernehmen","kannst","ich","freitag","erledigen"]]}]},
+{id:"b21-2",lv:"B2.1",t:"Beschwerde am Telefon",sit:{ro:"Internetul nu funcționează de o săptămână. Suni la furnizor.",ar:"الإنترنت واقع بقاله أسبوع، وبتتصل بالشركة.",en:"Your internet hasn't worked for a week. You call the provider."},turns:[
+ {p:"Kundenservice NetPlus, mein Name ist Schulz. Was kann ich für Sie tun?",you:"Guten Tag, Frau Schulz. Seit einer Woche funktioniert mein Internet nicht mehr.",k:[["seit"],["internet","verbindung","funktioniert"]]},
+ {p:"Haben Sie den Router schon neu gestartet?",you:"Ja, mehrmals. Außerdem habe ich schon zweimal angerufen, aber nichts ist passiert.",k:[["ja","mehrmals","angerufen","schon","passiert"]]},
+ {p:"Das tut mir leid. Ein Techniker könnte am Donnerstag kommen.",you:"Das ist mir zu spät, da ich von zu Hause arbeite und dringend Internet brauche.",k:[["spät","dringend","brauche","arbeite","da","weil"]]},
+ {p:"Ich verstehe. Ich kann einen Termin für morgen Vormittag anbieten.",you:"Das passt. Außerdem erwarte ich eine Gutschrift für die Tage ohne Internet.",k:[["passt","erwarte","gutschrift","erstattung","geld"]]},
+ {p:"Das notiere ich. Sie bekommen eine Bestätigung per E-Mail.",you:"Vielen Dank für Ihre Hilfe. Auf Wiederhören!",k:[["danke","wiederhören","hilfe"]]}]},
+{id:"b22-1",lv:"B2.2",t:"Diskussion: Homeoffice (telc Teil 2)",sit:{ro:"Discutați despre avantajele și dezavantajele lucrului de acasă.",ar:"بتتناقشوا في مزايا وعيوب الشغل من البيت.",en:"You discuss the pros and cons of working from home."},turns:[
+ {p:"Immer mehr Firmen erlauben Homeoffice. Wie stehst du dazu?",you:"Ich halte Homeoffice grundsätzlich für eine gute Entwicklung, weil man flexibler ist.",k:[["halte","finde","meiner meinung","bin der ansicht","denke"],["weil","da","denn","flexibel"]]},
+ {p:"Aber fehlt dir nicht der Kontakt zu den Kollegen?",you:"Das ist ein berechtigter Einwand. Deshalb finde ich zwei Tage im Büro ideal.",k:[["einwand","stimmt","recht","allerdings","deshalb","aber"]]},
+ {p:"Manche Chefs glauben, dass man zu Hause weniger arbeitet.",you:"Das sehe ich anders. Studien zeigen, dass viele im Homeoffice sogar produktiver sind.",k:[["sehe","anders","studien","produktiv","widerspreche","nicht einverstanden"]]},
+ {p:"Wie ist die Situation in deinem Heimatland?",you:"In Rumänien arbeiten vor allem in der IT-Branche viele Menschen von zu Hause.",k:[["rumänien","heimatland","bei uns","in"]]},
+ {p:"Lass uns zusammenfassen: Was ist dein Fazit?",you:"Zusammenfassend würde ich sagen, dass eine Mischung aus Büro und Homeoffice am besten ist.",k:[["zusammenfassend","fazit","insgesamt","würde","mischung"]]}]},
+{id:"b22-2",lv:"B2.2",t:"Präsentation & Rückfragen (telc Teil 1)",sit:{ro:"Prezinți pe scurt tema „Mai bine la oraș sau la țară?” și răspunzi la întrebări.",ar:"بتقدم بإيجاز موضوع \"الأفضل المدينة ولا الريف؟\" وبترد على الأسئلة.",en:"You briefly present \"City or countryside?\" and answer follow-up questions."},turns:[
+ {p:"Du hast dir das Thema Stadt oder Land ausgesucht. Womit möchtest du beginnen?",you:"Ich möchte zuerst über meine eigene Erfahrung sprechen. Ich bin auf dem Land aufgewachsen.",k:[["zuerst","zunächst","möchte","erfahrung","beginnen"]]},
+ {p:"Welche Vorteile hat das Leben auf dem Land?",you:"Ein großer Vorteil ist die Ruhe und die Natur. Außerdem sind die Mieten niedriger.",k:[["vorteil","ruhe","natur","außerdem","günstiger","niedriger"]]},
+ {p:"Und welche Nachteile siehst du?",you:"Ein Nachteil ist, dass die Verkehrsverbindungen oft schlecht sind.",k:[["nachteil","allerdings","jedoch","verkehr","schlecht","weit"]]},
+ {p:"Wie sieht das in deinem Heimatland aus?",you:"In Rumänien ziehen viele junge Leute vom Land in die großen Städte.",k:[["rumänien","heimatland","bei uns","ziehen"]]},
+ {p:"Und wo möchtest du selbst in Zukunft leben?",you:"Ich persönlich würde gern am Stadtrand leben, weil man dort beides hat.",k:[["würde","möchte","persönlich","weil","da"]]}]}
+];
+
+// ---------- Verben für den Konjugator ----------
+// "inf|du,er|präteritum|partizip|aux|prefix"  (empty = regular rule; aux s = sein)
+const VERB_SRC=`sein||||s|
+haben||||h|
+werden||||s|
+wissen||||h|
+können||||h|
+müssen||||h|
+dürfen||||h|
+sollen||||h|
+wollen||||h|
+mögen||||h|
+machen
+spielen
+lernen
+wohnen
+kaufen
+kochen
+fragen
+sagen
+hören
+brauchen
+arbeiten
+warten
+antworten
+kosten
+reden
+öffnen
+regnen
+reisen|||gereist|s|
+tanzen
+heißen||hieß|geheißen||
+studieren
+telefonieren
+fotografieren
+besuchen|||besucht||
+bezahlen|||bezahlt||
+erzählen|||erzählt||
+verkaufen|||verkauft||
+entschuldigen|||entschuldigt||
+einkaufen|||eingekauft||ein
+aufräumen|||aufgeräumt||auf
+abholen|||abgeholt||ab
+zumachen|||zugemacht||zu
+aufmachen|||aufgemacht||auf
+vorstellen|||vorgestellt||vor
+fahren|fährst,fährt|fuhr|gefahren|s|
+schlafen|schläfst,schläft|schlief|geschlafen||
+tragen|trägst,trägt|trug|getragen||
+waschen|wäschst,wäscht|wusch|gewaschen||
+laufen|läufst,läuft|lief|gelaufen|s|
+fallen|fällst,fällt|fiel|gefallen|s|
+gefallen|gefällst,gefällt|gefiel|gefallen||
+halten|hältst,hält|hielt|gehalten||
+lassen|lässt,lässt|ließ|gelassen||
+essen|isst,isst|aß|gegessen||
+geben|gibst,gibt|gab|gegeben||
+helfen|hilfst,hilft|half|geholfen||
+nehmen|nimmst,nimmt|nahm|genommen||
+sprechen|sprichst,spricht|sprach|gesprochen||
+treffen|triffst,trifft|traf|getroffen||
+vergessen|vergisst,vergisst|vergaß|vergessen||
+werfen|wirfst,wirft|warf|geworfen||
+sterben|stirbst,stirbt|starb|gestorben|s|
+lesen|liest,liest|las|gelesen||
+sehen|siehst,sieht|sah|gesehen||
+fernsehen|siehst,sieht|sah|ferngesehen||fern
+empfehlen|empfiehlst,empfiehlt|empfahl|empfohlen||
+gehen||ging|gegangen|s|
+kommen||kam|gekommen|s|
+ankommen||kam|angekommen|s|an
+bleiben||blieb|geblieben|s|
+schreiben||schrieb|geschrieben||
+trinken||trank|getrunken||
+finden||fand|gefunden||
+singen||sang|gesungen||
+beginnen||begann|begonnen||
+schwimmen||schwamm|geschwommen|s|
+fliegen||flog|geflogen|s|
+ziehen||zog|gezogen||
+umziehen||zog|umgezogen|s|um
+verlieren||verlor|verloren||
+verstehen||verstand|verstanden||
+stehen||stand|gestanden||
+aufstehen||stand|aufgestanden|s|auf
+liegen||lag|gelegen||
+sitzen||saß|gesessen||
+rufen||rief|gerufen||
+anrufen||rief|angerufen||an
+steigen||stieg|gestiegen|s|
+einsteigen||stieg|eingestiegen|s|ein
+umsteigen||stieg|umgestiegen|s|um
+aussteigen||stieg|ausgestiegen|s|aus
+anfangen|fängst,fängt|fing|angefangen||an
+einladen|lädst,lädt|lud|eingeladen||ein
+mitnehmen|nimmst,nimmt|nahm|mitgenommen||mit
+bekommen||bekam|bekommen||
+bringen||brachte|gebracht||
+denken||dachte|gedacht||
+kennen||kannte|gekannt||
+nennen||nannte|genannt||
+rennen||rannte|gerannt|s|
+tun|tust,tut|tat|getan||
+passieren|||passiert|s|
+bitten||bat|gebeten||
+schließen||schloss|geschlossen||
+wählen
+zeigen
+suchen
+leben
+lieben
+glauben
+holen
+putzen
+stellen
+legen
+hängen
+schicken
+benutzen
+wandern|||gewandert|s|
+sammeln
+lächeln
+ändern
+erinnern|||erinnert||
+feiern
+duschen
+packen
+mieten
+heiraten
+treiben||trieb|getrieben||
+gewinnen||gewann|gewonnen||
+vergleichen||verglich|verglichen||
+entscheiden||entschied|entschieden||
+erhalten|erhältst,erhält|erhielt|erhalten||
+unterschreiben||unterschrieb|unterschrieben||
+beschweren|||beschwert||`;
+const VERB_FULL={
+ sein:{pr:["bin","bist","ist","sind","seid","sind"],pt:["war","warst","war","waren","wart","waren"],pp:"gewesen",aux:"s"},
+ haben:{pr:["habe","hast","hat","haben","habt","haben"],pt:["hatte","hattest","hatte","hatten","hattet","hatten"],pp:"gehabt",aux:"h"},
+ werden:{pr:["werde","wirst","wird","werden","werdet","werden"],pt:["wurde","wurdest","wurde","wurden","wurdet","wurden"],pp:"geworden",aux:"s"},
+ wissen:{pr:["weiß","weißt","weiß","wissen","wisst","wissen"],pt:["wusste","wusstest","wusste","wussten","wusstet","wussten"],pp:"gewusst",aux:"h"},
+ können:{pr:["kann","kannst","kann","können","könnt","können"],pt:["konnte","konntest","konnte","konnten","konntet","konnten"],pp:"gekonnt",aux:"h"},
+ müssen:{pr:["muss","musst","muss","müssen","müsst","müssen"],pt:["musste","musstest","musste","mussten","musstet","mussten"],pp:"gemusst",aux:"h"},
+ dürfen:{pr:["darf","darfst","darf","dürfen","dürft","dürfen"],pt:["durfte","durftest","durfte","durften","durftet","durften"],pp:"gedurft",aux:"h"},
+ sollen:{pr:["soll","sollst","soll","sollen","sollt","sollen"],pt:["sollte","solltest","sollte","sollten","solltet","sollten"],pp:"gesollt",aux:"h"},
+ wollen:{pr:["will","willst","will","wollen","wollt","wollen"],pt:["wollte","wolltest","wollte","wollten","wolltet","wollten"],pp:"gewollt",aux:"h"},
+ mögen:{pr:["mag","magst","mag","mögen","mögt","mögen"],pt:["mochte","mochtest","mochte","mochten","mochtet","mochten"],pp:"gemocht",aux:"h"}
+};
+
+// ===================== Lernraum Plus =====================
+const WEB=!!window.__DP_WEB;
+const DEMO=false; // the limited demo was replaced by one-time trial codes
+const WA="https://wa.me/40771237705?text="+encodeURIComponent("Salut! Am încercat Lernraum (demo) și vreau să mă înscriu la un curs de germană.");
+const myName=()=>{try{return localStorage.getItem("dp_name")||""}catch(e){return ""}};
+const setName=n=>{try{localStorage.setItem("dp_name",n)}catch(e){}};
+function sendResult(b){const name=myName();if(!WEB||DEMO||!name)return;b.name=name;api("result",{method:"POST",body:b})}
+function askName(title,cb){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>${esc(title)}</h1><form id="nf" class="card"><label class="kind">Dein Vor- und Nachname</label><input class="gap" id="nn" maxlength="60" autocomplete="name" value="${esc(myName())}"><p class="note">Damit dein Lehrer Saleh sieht, dass das von dir ist.</p><button class="btn" type="submit" style="width:100%;margin-top:10px">Weiter</button></form>`;
+  const f=app.querySelector("#nf");f.onsubmit=e=>{e.preventDefault();const n=app.querySelector("#nn").value.trim();if(n.length<2)return;setName(n);cb(n)};setTimeout(()=>app.querySelector("#nn").focus(),30)}
+async function api(p,opt){opt=opt||{};const o={method:opt.method||"GET",headers:{},credentials:"same-origin",cache:"no-store"};
+  if(opt.body!==undefined){o.headers["content-type"]="application/json";o.body=typeof opt.body==="string"?opt.body:JSON.stringify(opt.body)}
+  if(opt.keepalive)o.keepalive=true;
+  let r;try{r=await fetch("/app/api/"+p,o)}catch(e){return {_status:0,_ok:false,error:"net"}}
+  let j={};try{j=await r.json()}catch(e){}j._status=r.status;j._ok=r.ok;return j}
+const dayNum=()=>Math.floor(Date.now()/864e5);
+const fmtDate=ts=>{try{return new Date(ts).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"})}catch(e){return ""}};
+const LI={ro:1,ar:2,en:3};
+const tr=x=>x[LI[L()]]||x[1];
+const levelIds=()=>D.levels.map(l=>l.id);
+function artHtml(de){const m=String(de).match(/^(der|die|das) (.*)$/);return m?`<span class="art-${m[1]}">${m[1]}</span> ${esc(m[2])}`:esc(de)}
+
+// ---------- home tools ----------
+function plusHome(){
+  const t=(p,ico,b,s)=>`<button class="tool" data-p="${p}"><span class="ti">${ico}</span><b>${b}</b><small>${s}</small></button>`;
+  const due=srsDue(S.srsLv||null);
+  setTimeout(loadQuizCalls,0);
+  return `<div id="quizcalls"></div>
+  <div class="section-h"><h2>Trainieren</h2></div>
+  <div class="tools">
+   ${t("srs","🗂️","Wortschatz-Trainer",due?due+" Wörter heute fällig":"Karteikarten mit System")}
+   ${t("pron","🎙️","Aussprache","Hören · Nachsprechen · Feedback")}
+   ${t("rp","🎭","Rollenspiele","Dialoge sprechen wie im Alltag")}
+   ${t("gram","🔎","Grammatik & Verben","Suchen · Konjugieren · Artikel")}
+   ${t("hw","📮","Hausaufgaben","Abgeben · Korrektur lesen")}
+   ${t("final","🏅","Abschlusstest","Test + Zertifikat pro Niveau")}
+   ${t("bes","✉️","Beschwerde-Trainer","telc-Schreiben Schritt für Schritt")}
+   ${t("fehler","📕","Fehlerheft",((S.wrong||[]).filter(x=>FH_OK(x.q)).length||"Keine")+" Fehler zum Üben")}
+   ${t("week","🏆","Wochen-Challenge",S.wkOn&&S.wk&&S.wk.id===weekId()?S.wk.pts+" Punkte diese Woche":"Wer übt am meisten?")}
+   ${t("plan","📅","telc-Plan",S.plan&&S.plan.date?"Noch "+Math.max(0,Math.ceil((new Date(S.plan.date+"T09:00:00")-Date.now())/864e5))+" Tage":"Plan bis zur Prüfung")}
+  </div>
+  <div class="actions"><button class="btn ghost" data-p="install">📲 Lernraum als App installieren</button></div>`}
+async function loadQuizCalls(){if(!WEB||DEMO)return;const j=await api("quiz");const box=document.getElementById("quizcalls");if(!box||!j._ok)return;const done=S.quizDone||{};
+  box.innerHTML=Object.entries(j.quiz||{}).map(([lv,q])=>{const f=findLesson(q.lesson);if(!f)return "";const key=q.lesson+":"+q.at;return `<button class="quizcall" data-p="quiz" data-id="${q.lesson}" data-q="${key}"><span class="ti">${done[key]?"✅":"📝"}</span><span><b>Quiz vor der Stunde · ${lv}${done[key]?" (erledigt)":""}</b><small>Lektion ${f.l.n}: ${esc(f.l.title)} · 10 Fragen</small></span></button>`}).join("")}
+
+// ---------- generic question runner (quiz + final test) ----------
+function vocabPool(lessons){const out=[];lessons.forEach(l=>(l.vocab||[]).forEach(v=>out.push(v)));return out}
+function vocQ(v,pool){const others=shuffle(pool.filter(x=>x!==v&&tr(x)!==tr(v))).slice(0,3).map(tr);const o=shuffle([tr(v)].concat(others));return {kind:"voc",q:v[0],o,a:o.indexOf(tr(v))}}
+function exQs(lessons,n){const ex=[];lessons.forEach(l=>(l.ex||[]).forEach(e=>{if(e.t==="mc"||e.t==="gap"||e.t==="order")ex.push([e,l.id])}));return shuffle(ex).slice(0,n).map(([e,id])=>Object.assign({kind:e.t,_lid:id,_orig:e},e))}
+function runQuiz(opt){
+  const qs=opt.qs;let i=0,score=0;const wrong=[];
+  function next(){if(i>=qs.length)return opt.done(score,qs.length,wrong);draw()}
+  function draw(){const q=qs[i];
+    let body="";
+    if(q.kind==="mc")body=`<p class="q">${esc(q.q)}</p><div class="chips">${q.o.map((o,k)=>`<button class="chip" data-k="${k}">${esc(o)}</button>`).join("")}</div>`;
+    else if(q.kind==="voc")body=`<p class="q">${artHtml(q.q)} ${sayBtn(q.q)}</p><p class="note">Was bedeutet das? (${LNAME[L()]})</p><div class="chips"${rtl()}>${q.o.map((o,k)=>`<button class="chip" data-k="${k}">${esc(o)}</button>`).join("")}</div>`;
+    else if(q.kind==="gap")body=`<p class="q">${esc(q.q)}</p><input class="gap" id="qin" autocomplete="off" autocapitalize="none" spellcheck="false"><div class="actions"><button class="btn" id="qok">Prüfen</button></div>`;
+    else if(q.kind==="order"){q._w=q._w||shuffle(q.w);body=`<p class="note">Bilde den Satz.</p><div class="built" id="built"></div><div class="chips" id="wpool">${q._w.map((w,k)=>`<button class="chip wbtn" data-w="${k}" style="width:auto">${esc(w)}</button>`).join("")}</div><div class="actions"><button class="btn ghost" id="qreset">Neu</button><button class="btn" id="qok">Prüfen</button></div>`}
+    app.innerHTML=`<button class="back" data-home="">‹ Abbrechen</button><span class="kind" style="display:block">${esc(opt.kind)}</span><h1>${esc(opt.title)}</h1>
+    <div class="progress" style="margin-top:8px"><div class="goal"><i style="width:${i/qs.length*100}%"></i></div><span>${i+1}/${qs.length}</span></div>
+    <div class="card">${body}<div class="feedback" id="qfb" hidden></div></div><div class="actions" id="qnext" hidden><button class="btn" id="qn">${i<qs.length-1?"Weiter":"Ergebnis"}</button></div>`;
+    const fb=app.querySelector("#qfb");let answered=false;
+    const finish=(ok,sol)=>{if(answered)return;answered=true;if(ok){score++;addPts(5)}else{wrong.push(q);if(!opt.noLog&&q._lid&&q._orig){S.wrong=(S.wrong||[]).concat([{id:q._lid,q:q._orig}]).slice(-50);save()}}fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.innerHTML=ok?"Richtig!":`Leider falsch.<small>Richtig: ${esc(sol)}</small>`;app.querySelector("#qnext").hidden=false;app.querySelector("#qn").onclick=()=>{i++;next()}};
+    if(q.kind==="mc"||q.kind==="voc")app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{if(answered)return;const k=+b.dataset.k;app.querySelectorAll("[data-k]").forEach(x=>{if(+x.dataset.k===q.a)x.classList.add("ok")});if(k!==q.a)b.classList.add("bad");finish(k===q.a,q.o[q.a])});
+    if(q.kind==="gap"){const inp=app.querySelector("#qin");const ans=[].concat(q.a);app.querySelector("#qok").onclick=()=>finish(ans.some(a=>norm(a)===norm(inp.value)),ans[0]);inp.onkeydown=e=>{if(e.key==="Enter")app.querySelector("#qok").click()};setTimeout(()=>inp.focus(),30)}
+    if(q.kind==="order"){const built=[];const bEl=app.querySelector("#built");const upd=()=>{bEl.textContent=built.map(k=>q._w[k]).join(" ");app.querySelectorAll(".wbtn").forEach(b=>b.disabled=built.includes(+b.dataset.w))};
+      app.querySelectorAll(".wbtn").forEach(b=>b.onclick=()=>{built.push(+b.dataset.w);upd()});app.querySelector("#qreset").onclick=()=>{built.length=0;upd()};
+      const sols=[].concat(q.a);app.querySelector("#qok").onclick=()=>finish(sols.some(a=>norm(a)===norm(built.map(k=>q._w[k]).join(" "))),sols[0])}
+  }
+  next()}
+function resultCard(score,total,passPct,extra){const pct=Math.round(score/total*100);const pass=passPct?pct>=passPct:null;
+  return `<div class="card" style="text-align:center"><span class="kind">Ergebnis</span><h2 style="font-size:2rem;margin:6px 0">${score} / ${total}</h2><div class="goal"><i style="width:${pct}%"></i></div><p style="margin-top:8px">${pct} %${pass===null?"":pass?" · <b>Bestanden!</b>":" · noch nicht bestanden (ab "+passPct+" %)"}</p>${extra||""}</div>`}
+
+// ---------- pre-lesson quiz ----------
+function quizView(r){
+  const f=findLesson(r.id);if(!f)return go({v:"home"});
+  if(!myName())return askName("Quiz vor der Stunde",()=>quizView(r));
+  const pool=vocabPool([f.l]);const ex=exQs([f.l],7);const voc=shuffle(pool).slice(0,10-ex.length).map(v=>vocQ(v,pool));
+  runQuiz({kind:"Quiz vor der Stunde · "+myName(),title:`Lektion ${f.l.n}: ${f.l.title}`,qs:shuffle(ex.concat(voc)),done:(s,t,w)=>{
+    S.quizDone=S.quizDone||{};if(r.q)S.quizDone[r.q]=1;save();
+    sendResult({type:"quiz",ref:f.l.id,score:s,total:t,info:w.map(q=>q.q).slice(0,6).join(" | ").slice(0,380)});
+    app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>Quiz fertig!</h1>${resultCard(s,t,0,`<p class="note">Dein Lehrer sieht dein Ergebnis vor der Stunde.</p>`)}<div class="actions"><button class="btn" data-go-lesson="${f.l.id}">Lektion wiederholen</button></div>`}})}
+
+// ---------- final test + certificate ----------
+function finalView(r){
+  if(DEMO)return demoLocked();
+  const lv=r.lv;
+  if(!lv){const best=S.final||{};
+    app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Abschlusstest</span><h1>Niveau abschließen</h1><p class="muted">25 Fragen aus allen Lektionen des Niveaus. Ab 70 % hast du bestanden und bekommst dein Lernraum-Zertifikat.</p>
+    <div class="list" style="margin-top:12px">${levelIds().filter(id=>lessonsOf(id).length).map(id=>`<button class="row" data-p="final" data-lv="${id}"><span class="num ${best[id]&&best[id].pass?"done":""}">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${best[id]?"Bestes Ergebnis: "+best[id].pct+" %":"Noch nicht gemacht"}</small></span>${best[id]&&best[id].pass?`<span class="pct">🏅</span>`:""}</button>`).join("")}</div>`;return}
+  const ls=lessonsOf(lv);const pool=vocabPool(ls);const ex=exQs(ls,15);const voc=shuffle(pool).slice(0,25-ex.length).map(v=>vocQ(v,pool));
+  runQuiz({kind:"Abschlusstest",title:"Niveau "+lv,qs:shuffle(ex.concat(voc)),done:(s,t)=>{
+    const pct=Math.round(s/t*100),pass=pct>=70;S.final=S.final||{};const prev=S.final[lv];if(!prev||pct>prev.pct)S.final[lv]={pct,pass,ts:Date.now()};save();
+    sendResult({type:"final",ref:lv,score:s,total:t,pass});
+    app.innerHTML=`<button class="back" data-p="final">‹ Zurück</button><h1>Abschlusstest ${lv}</h1>${resultCard(s,t,70)}
+    ${pass?`<div class="card" style="margin-top:12px"><label class="kind">Name auf dem Zertifikat</label><input class="gap" id="cname" maxlength="60" value="${esc(myName())}"><div class="actions"><button class="btn gold" id="cert">🏅 Zertifikat erstellen</button></div></div><div id="certbox"></div>`:`<div class="actions"><button class="btn" data-p="final" data-lv="${lv}">Noch einmal versuchen</button></div>`}`;
+    const cb=app.querySelector("#cert");if(cb)cb.onclick=()=>{const n=app.querySelector("#cname").value.trim();if(n.length<2){app.querySelector("#cname").focus();return}setName(n);makeCert(lv,pct,n,app.querySelector("#certbox"))}}})}
+function makeCert(lv,pct,name,box){
+  const W=1754,H=1240,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  x.fillStyle="#fbf8f0";x.fillRect(0,0,W,H);x.strokeStyle="#173226";x.lineWidth=18;x.strokeRect(40,40,W-80,H-80);x.strokeStyle="#e3a72e";x.lineWidth=4;x.strokeRect(78,78,W-156,H-156);
+  const done=()=>{x.textAlign="center";x.fillStyle="#173226";
+    x.font="700 30px Georgia, serif";x.fillText("DEUTSCHPARADIES · LERNRAUM",W/2,330);
+    x.font="700 96px Georgia, serif";x.fillText("Zertifikat",W/2,450);
+    x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("Hiermit wird bestätigt, dass",W/2,540);
+    x.fillStyle="#15231c";x.font="italic 700 80px Georgia, serif";x.fillText(name,W/2,650);
+    x.strokeStyle="#e3a72e";x.lineWidth=3;x.beginPath();x.moveTo(W/2-420,680);x.lineTo(W/2+420,680);x.stroke();
+    x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("den Abschlusstest für das Niveau",W/2,760);
+    x.fillStyle="#173226";x.font="700 64px Georgia, serif";x.fillText(lv+" · "+pct+" %",W/2,850);
+    x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("im Deutschparadies Lernraum erfolgreich bestanden hat.",W/2,920);
+    x.textAlign="left";x.fillStyle="#15231c";x.font="30px Georgia, serif";x.fillText(fmtDate(Date.now()),190,1060);x.fillText("Datum",190,1100);
+    x.textAlign="right";x.fillText("Saleh",W-190,1060);x.fillText("Lehrer · Deutschparadies",W-190,1100);
+    x.textAlign="center";x.fillStyle="#9aa59e";x.font="22px Georgia, serif";x.fillText("Interne Lernbestätigung des Deutschparadies Lernraums – kein offizielles Sprachzertifikat.",W/2,1150);
+    c.toBlob(b=>{const u=URL.createObjectURL(b);box.innerHTML=`<div class="card" style="margin-top:12px"><img src="${u}" alt="Zertifikat" style="width:100%;border-radius:8px"><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${u}" download="Zertifikat_${lv}_${name.replace(/\s+/g,"_")}.png">Bild speichern</a></div></div>`},"image/png")};
+  const logo=new Image();logo.onload=()=>{x.save();x.beginPath();x.arc(W/2,210,70,0,Math.PI*2);x.closePath();x.fillStyle="#fff";x.fill();x.clip();x.drawImage(logo,W/2-70,140,140,140);x.restore();done()};logo.onerror=done;logo.src=document.querySelector("header .logo").src}
+
+// ---------- vocabulary trainer (spaced repetition, Leitner boxes) ----------
+const BOXDAYS=[0,1,3,7,14,30];
+function srsDeck(lv){const out=[];(lv?[lv]:levelIds()).forEach(id=>lessonsOf(id).forEach(l=>{if(DEMO&&l.id!=="a11-1")return;(l.vocab||[]).forEach((v,k)=>out.push({key:l.id+":"+k,v,lv:id}))}));return out}
+function srsDue(lv){if(!lv)return 0;const s=S.srs||{},t=dayNum();return srsDeck(lv).filter(c=>s[c.key]&&s[c.key][1]<=t).length}
+function srsView(r){
+  S.srs=S.srs||{};const lv=DEMO?"A1.1":(r.lv||S.srsLv||"A1.1");if(!DEMO){S.srsLv=lv}
+  const deck=srsDeck(lv),t=dayNum(),s=S.srs;
+  const due=deck.filter(c=>s[c.key]&&s[c.key][1]<=t),fresh=deck.filter(c=>!s[c.key]);
+  const learned=deck.filter(c=>s[c.key]&&s[c.key][0]>=4).length;
+  if(!r.go){
+    app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Wortschatz-Trainer</span><h1>Karteikarten mit System</h1>
+    <p class="muted">Wörter, die du nicht weißt, kommen öfter. Wörter, die du kannst, kommen später wieder – so bleiben sie im Kopf.</p>
+    ${DEMO?"":`<div class="chips" style="margin-top:10px">${levelIds().map(id=>`<button class="chip" style="width:auto" data-p="srs" data-lv="${id}" aria-pressed="${id===lv}">${id}</button>`).join("")}</div>`}
+    <div class="stats" style="margin-top:12px"><div class="stat"><b>${due.length}</b><span>heute fällig</span></div><div class="stat"><b>${fresh.length}</b><span>neu</span></div><div class="stat"><b>${learned}/${deck.length}</b><span>sicher gelernt</span></div></div>
+    <div class="actions"><button class="btn gold" data-p="srs" data-lv="${lv}" data-go="1" ${due.length+fresh.length?"":"disabled"}>${due.length+fresh.length?"Training starten ("+Math.min(20,due.length+Math.min(10,fresh.length))+" Karten)":"Heute alles gelernt 🎉"}</button></div>
+    <p class="note"><span class="art-der">der</span> · <span class="art-die">die</span> · <span class="art-das">das</span> – die Farbe hilft dir, den Artikel zu merken.</p>`;return}
+  const queue=shuffle(due).slice(0,20);fresh.slice(0,Math.max(0,Math.min(10,20-queue.length))).forEach(c=>queue.push(c));
+  let i=0,ok=0;const again=new Set();
+  function draw(){
+    if(i>=queue.length){save();app.innerHTML=`<button class="back" data-p="srs">‹ Zurück</button><h1>Training fertig!</h1>${resultCard(ok,queue.length,0,`<p class="note">Morgen kommen die nächsten Karten. Komm jeden Tag kurz vorbei!</p>`)}<div class="actions"><button class="btn" data-p="srs" data-lv="${lv}">Weiter</button></div>`;return}
+    const c=queue[i],v=c.v,st=s[c.key];
+    app.innerHTML=`<button class="back" data-p="srs">‹ Beenden</button><div class="progress" style="margin-top:8px"><div class="goal"><i style="width:${i/queue.length*100}%"></i></div><span>${i+1}/${queue.length}</span></div>
+    <div class="flash card"><span class="kind">${st?"Box "+st[0]+" von 5":"Neues Wort"} · ${c.lv}</span><p class="fw">${artHtml(v[0])}</p>${sayBtn(v[0])}
+     <div id="back" hidden><p class="ft"${rtl()}>${esc(tr(v))}</p>${v[4]?`<p class="fe">${sayBtn(v[4])}<span>${esc(v[4])}</span></p>`:""}</div></div>
+    <div class="actions" id="flipa"><button class="btn" id="flip">Umdrehen</button></div>
+    <div class="actions" id="judge" hidden><button class="btn ghost" id="no">✗ Wusste ich nicht</button><button class="btn gold" id="yes">✓ Wusste ich</button></div>`;
+    say(v[0]);
+    app.querySelector("#flip").onclick=()=>{app.querySelector("#back").hidden=false;app.querySelector("#flipa").hidden=true;app.querySelector("#judge").hidden=false};
+    app.querySelector("#yes").onclick=()=>{const b=Math.min(5,(st?st[0]:0)+1);s[c.key]=[b,t+BOXDAYS[b]];if(!again.has(c.key))ok++;addPts(2);i++;draw()};
+    app.querySelector("#no").onclick=()=>{s[c.key]=[1,t];if(!again.has(c.key)){again.add(c.key);queue.push(c)}i++;save();draw()};
+  }
+  draw()}
+
+// ---------- pronunciation trainer ----------
+function compareWords(target,heardList){const tw=norm(target).split(" ").filter(Boolean);let best={hits:[],pct:-1,txt:heardList[0]||""};
+  heardList.forEach(h=>{const hw=norm(h).split(" ");const hits=tw.map(w=>hw.includes(w));const pct=Math.round(hits.filter(Boolean).length/tw.length*100);if(pct>best.pct)best={hits,pct,txt:h}});
+  const words=target.split(/\s+/);let k=0;const html=words.map(w=>{const n=norm(w);if(!n)return esc(w);const ok=best.hits[k++];return `<span class="${ok?"w-ok":"w-no"}">${esc(w)}</span>`}).join(" ");return {pct:best.pct,html,txt:best.txt}}
+function listenOnce(onRes,onErr){if(!Rec){onErr("norec");return}let r;try{r=new Rec()}catch(e){onErr("mic");return}r.lang="de-DE";r.interimResults=false;r.maxAlternatives=3;
+  r.onresult=e=>onRes([...e.results[0]].map(a=>a.transcript));r.onerror=()=>onErr("mic");try{r.start()}catch(e){onErr("mic")}return r}
+const REC_HELP="Die Spracherkennung funktioniert am besten in Chrome (Android) oder Safari (iPhone, mit aktivierter Diktierfunktion). Du kannst trotzdem anhören und laut nachsprechen.";
+function pronView(r){
+  if(DEMO)return demoLocked();
+  const lv=r.lv||S.pronLv||S.srsLv||"A1.1";S.pronLv=lv;
+  const pool=[];lessonsOf(lv).forEach(l=>{(l.speak||[]).forEach(s=>{if(!/…|\.\.\./.test(s))pool.push(s)});(l.vocab||[]).forEach(v=>{if(v[4]&&v[4].split(" ").length>=3)pool.push(v[4])})});
+  if(!pool.length){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>Aussprache</h1><p class="muted">Für dieses Niveau gibt es noch keine Sätze.</p>`;return}
+  const s=r.s&&pool.includes(r.s)?r.s:pool[Math.floor(Math.random()*pool.length)];
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Aussprache-Trainer</span><h1>Hör zu und sprich nach</h1>
+  <div class="chips" style="margin-top:10px">${levelIds().filter(id=>lessonsOf(id).length).map(id=>`<button class="chip" style="width:auto" data-p="pron" data-lv="${id}" aria-pressed="${id===lv}">${id}</button>`).join("")}</div>
+  <div class="card" style="margin-top:12px"><p class="q" id="ptxt">${esc(s)}</p>
+   <div class="actions"><button class="btn ghost" id="pl">🔊 Normal</button><button class="btn ghost" id="ps">🐢 Langsam</button></div>
+   <div class="actions"><button class="btn gold" id="prec">🎙 Jetzt sprechen</button></div>
+   <div class="feedback" id="pfb" hidden></div>${Rec?"":`<p class="note">${REC_HELP}</p>`}</div>
+  <div class="actions"><button class="btn" data-p="pron" data-lv="${lv}">Nächster Satz</button></div>`;
+  app.querySelector("#pl").onclick=()=>say(s);app.querySelector("#ps").onclick=()=>say(s,0.6);
+  const fb=app.querySelector("#pfb");
+  app.querySelector("#prec").onclick=()=>{fb.hidden=false;fb.className="feedback";fb.textContent="Ich höre zu …";
+    listenOnce(h=>{const c=compareWords(s,h);fb.className="feedback "+(c.pct>=80?"ok":"bad");app.querySelector("#ptxt").innerHTML=c.html;
+      fb.innerHTML=(c.pct>=80?`Super! ${c.pct} % richtig. +10`:`${c.pct} % – die roten Wörter noch einmal üben.`)+`<small>Gehört: „${esc(c.txt)}“</small>`;if(c.pct>=80)addPts(10)},
+      e=>{fb.className="feedback bad";fb.textContent=e==="norec"?REC_HELP:"Mikrofon nicht erlaubt oder nichts gehört. Versuch es noch einmal."})}}
+
+// ---------- role plays ----------
+function rpList(){
+  if(DEMO)return demoLocked();
+  const mine=S.srsLv||null;const order=levelIds().slice().sort((a,b)=>(b===mine)-(a===mine));
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Rollenspiele</span><h1>Sprich wie im echten Leben</h1><p class="muted">Dein Gesprächspartner spricht, du antwortest – mit dem Mikrofon oder schriftlich.</p>
+  ${order.map(id=>{const list=RP.filter(x=>x.lv===id);if(!list.length)return "";return `<div class="section-h"><h2>${id}</h2></div><div class="list">${list.map(x=>{const best=(S.rp||{})[x.id];return `<button class="row" data-p="rpp" data-id="${x.id}"><span class="num ${best===x.turns.length?"done":""}">🎭</span><span class="t"><b>${esc(x.t)}</b><small${rtl()}>${esc(x.sit[L()])}</small></span><span class="pct">${best!==undefined?best+"/"+x.turns.length:""}</span></button>`}).join("")}</div>`}).join("")}`}
+function rpPlay(r){
+  if(DEMO)return demoLocked();
+  const sc=RP.find(x=>x.id===r.id);if(!sc)return go({v:"rp"});
+  let i=0,score=0,hide=false;const log=[];
+  const check=(txt,turn)=>{const n=" "+norm(txt)+" ";return turn.k.every(g=>g.some(w=>n.includes(norm(w))))};
+  function draw(){
+    if(i>=sc.turns.length){S.rp=S.rp||{};S.rp[sc.id]=Math.max(S.rp[sc.id]||0,score);save();
+      sendResult({type:"rp",ref:sc.id,score,total:sc.turns.length});
+      app.innerHTML=`<button class="back" data-p="rp">‹ Zurück</button><h1>${esc(sc.t)}</h1>${resultCard(score,sc.turns.length,0)}<div class="card" style="margin-top:12px">${log.join("")}</div><div class="actions"><button class="btn" data-p="rpp" data-id="${sc.id}">Noch einmal</button></div>`;return}
+    const t=sc.turns[i];
+    app.innerHTML=`<button class="back" data-p="rp">‹ Zurück</button><span class="kind" style="display:block">Rollenspiel · ${sc.lv}</span><h1>${esc(sc.t)}</h1>
+    <div class="expl"${rtl()}><div class="lab">Situation</div>${esc(sc.sit[L()])}</div>
+    <div class="progress" style="margin-top:8px"><div class="goal"><i style="width:${i/sc.turns.length*100}%"></i></div><span>${i+1}/${sc.turns.length}</span></div>
+    <div class="bub p"><b>Partner</b><span id="ptext">${hide?"🔊 (nur hören)":esc(t.p)}</span><div class="actions" style="margin-top:6px"><button class="btn ghost" id="again" style="padding:8px">🔊 Nochmal</button><button class="btn ghost" id="hide" style="padding:8px">${hide?"Text zeigen":"Nur hören"}</button></div></div>
+    <div class="card"><span class="kind">Deine Antwort</span>
+     <div class="actions"><button class="btn gold" id="mic">🎙 Antworten</button></div>
+     <input class="gap" id="ans" placeholder="… oder hier schreiben" autocomplete="off" style="margin-top:10px"><div class="actions"><button class="btn ghost" id="send">Prüfen</button></div>
+     <div class="feedback" id="rfb" hidden></div></div><div class="actions" id="rnext" hidden><button class="btn" id="rn">${i<sc.turns.length-1?"Weiter":"Fertig"}</button></div>`;
+    say(t.p);
+    app.querySelector("#again").onclick=()=>say(t.p);
+    app.querySelector("#hide").onclick=()=>{hide=!hide;draw()};
+    let done=false;const fb=app.querySelector("#rfb");
+    const judge=txt=>{if(done)return;done=true;const ok=check(txt,t);if(ok){score++;addPts(10)}
+      log.push(`<p><b>Partner:</b> ${esc(t.p)}<br><b>Du:</b> ${esc(txt)} ${ok?"✅":"❌"}<br><small class="muted">Beispiel: ${esc(t.you)}</small></p>`);
+      fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.innerHTML=(ok?"Gut gemacht!":"Fast – so könntest du antworten:")+`<small>${sayBtn(t.you)} ${esc(t.you)}</small>`;
+      app.querySelector("#rnext").hidden=false;app.querySelector("#rn").onclick=()=>{i++;draw()}};
+    app.querySelector("#send").onclick=()=>{const v=app.querySelector("#ans").value.trim();if(v)judge(v)};
+    app.querySelector("#ans").onkeydown=e=>{if(e.key==="Enter")app.querySelector("#send").click()};
+    app.querySelector("#mic").onclick=()=>{fb.hidden=false;fb.className="feedback";fb.textContent="Ich höre zu …";listenOnce(h=>{app.querySelector("#ans").value=h[0];const best=h.find(x=>check(x,t))||h[0];judge(best)},e=>{fb.className="feedback bad";fb.textContent=e==="norec"?"Spracherkennung nicht verfügbar – schreib deine Antwort ins Feld.":"Mikrofon nicht erlaubt oder nichts gehört."})};
+  }
+  draw()}
+
+// ---------- grammar search, verb conjugator, article finder ----------
+const PRON=["ich","du","er/sie/es","wir","ihr","Sie/sie"];
+let VERBS=null;
+function verbList(){if(VERBS)return VERBS;VERBS={};VERB_SRC.split("\n").forEach(line=>{const p=line.split("|");if(!p[0])return;VERBS[p[0]]={inf:p[0],duer:p[1]?p[1].split(","):null,prt:p[2]||"",pp:p[3]||"",aux:p[4]==="s"?"s":"h",sep:p[5]||""}});return VERBS}
+function conjugate(inf){
+  const f=VERB_FULL[inf];if(f)return {pr:f.pr,pt:f.pt,pf:VERB_FULL[f.aux==="s"?"sein":"haben"].pr.map(a=>a+" "+f.pp),aux:f.aux};
+  const v=verbList()[inf];if(!v)return null;
+  const base=v.sep?inf.slice(v.sep.length):inf;const sp=v.sep?" "+v.sep:"";
+  let stem=/(eln|ern)$/.test(base)?base.slice(0,-1):/en$/.test(base)?base.slice(0,-2):base.slice(0,-1);
+  const eIns=/[td]$/.test(stem)||/[^aeiouäöülrhmn][mn]$/.test(stem);const sEnd=/(s|ß|z|x)$/.test(stem);
+  const wir=base;const ich=/eln$/.test(base)?stem.slice(0,-2)+"le":stem+"e";
+  let du=eIns?stem+"est":sEnd?stem+"t":stem+"st",er=eIns?stem+"et":stem+"t";if(base==="tun"){du="tust";er="tut"}
+  if(v.duer){du=v.duer[0];er=v.duer[1]}
+  const ihr=eIns?stem+"et":stem+"t";
+  const pr=[ich,du,er,wir,ihr,wir].map(x=>x+sp);
+  let pt;
+  if(!v.prt||/te$/.test(v.prt)){const b=v.prt?v.prt.slice(0,-2):(eIns?stem+"e":stem);pt=["te","test","te","ten","tet","ten"].map(e=>b+e)}
+  else{const X=v.prt,td=/[td]$/.test(X),ss=/(s|ß|z)$/.test(X);pt=[X,td?X+"est":ss?X+"t":X+"st",X,X+"en",td?X+"et":X+"t",X+"en"]}
+  pt=pt.map(x=>x+sp);
+  let pp=v.pp;if(!pp){if(/ieren$/.test(base))pp=stem+"t";else if(/^(be|ver|er|ent|emp|ge|zer|miss)/.test(base))pp=stem+(eIns?"et":"t");else pp="ge"+stem+(eIns?"et":"t")}
+  return {pr,pt,pf:VERB_FULL[v.aux==="s"?"sein":"haben"].pr.map(a=>a+" "+pp),aux:v.aux}}
+function vocabMeaning(word){for(const lv in D.lessons)for(const l of D.lessons[lv])for(const v of l.vocab||[])if(v[0]===word)return tr(v);return ""}
+function gramView(r){
+  if(DEMO)return demoLocked();
+  const tab=r.tab||"g";
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Nachschlagen</span><h1>Grammatik & Verben</h1>
+  <div class="tabs"><button data-p="gram" data-tab="g" aria-pressed="${tab==="g"}">Grammatik</button><button data-p="gram" data-tab="v" aria-pressed="${tab==="v"}">Verben</button><button data-p="gram" data-tab="a" aria-pressed="${tab==="a"}">Artikel</button></div>
+  <input class="gap" id="gq" autocomplete="off" autocapitalize="none" spellcheck="false" style="margin-top:12px" placeholder="${tab==="g"?"z. B. Dativ, Perfekt, weil …":tab==="v"?"Verb im Infinitiv, z. B. fahren":"Nomen, z. B. Tisch"}" ${tab==="v"?'list="verbdl"':""} value="${esc(r.q||"")}">
+  ${tab==="v"?`<datalist id="verbdl">${Object.keys(VERB_FULL).concat(Object.keys(verbList())).filter((x,k,a)=>a.indexOf(x)===k).sort().map(x=>`<option value="${x}">`).join("")}</datalist>`:""}
+  <div id="gres" style="margin-top:12px"></div>`;
+  const inp=app.querySelector("#gq"),out=app.querySelector("#gres");
+  const run=()=>{const q=inp.value.trim();
+    if(tab==="g"){const n=norm(q);const items=[];for(const lv of levelIds())for(const l of lessonsOf(lv)){const g=l.grammar;if(!g)continue;const hay=norm(g.title+" "+((g.expl&&g.expl[L()])||"")+" "+JSON.stringify(g.tables||g.table||"").slice(0,3000));if(!n||hay.includes(n))items.push({lv,l,g})}
+      out.innerHTML=items.length?`<div class="list">${items.slice(0,60).map(x=>`<button class="row" data-go-grammar="${x.l.id}"><span class="num">${x.lv.replace(".","")}</span><span class="t"><b>${esc(x.g.title)}</b><small>${x.lv} · Lektion ${x.l.n}: ${esc(x.l.title)}</small></span></button>`).join("")}</div>`:`<p class="muted">Nichts gefunden.</p>`;
+      out.querySelectorAll("[data-go-grammar]").forEach(b=>b.onclick=()=>go({v:"mod",id:b.dataset.goGrammar,m:"grammar"}));return}
+    if(tab==="v"){if(!q){out.innerHTML=`<p class="muted">${Object.keys(verbList()).length} Verben: regelmäßig, unregelmäßig, trennbar, Modalverben.</p>`;return}
+      const inf=q.toLowerCase();const c=conjugate(inf);
+      if(!c){const sug=Object.keys(verbList()).filter(x=>x.startsWith(inf.slice(0,3))).slice(0,8);out.innerHTML=`<p class="muted">„${esc(q)}“ ist noch nicht in der Liste.</p>${sug.length?`<div class="chips">${sug.map(x=>`<button class="chip" style="width:auto" data-p="gram" data-tab="v" data-q="${x}">${x}</button>`).join("")}</div>`:""}`;return}
+      const m=vocabMeaning(inf);
+      out.innerHTML=`<div class="card"><h2 style="margin:0">${esc(inf)} ${sayBtn(inf)}</h2>${m?`<p class="muted"${rtl()}>${esc(m)}</p>`:""}<p class="note">Perfekt mit <b>${c.aux==="s"?"sein":"haben"}</b></p>
+      <div class="ctab conj"><table><thead><tr><th></th><th>Präsens</th><th>Präteritum</th><th>Perfekt</th></tr></thead><tbody>${PRON.map((p,k)=>`<tr><th>${p}</th><td>${esc(c.pr[k])}</td><td>${esc(c.pt[k])}</td><td>${esc(c.pf[k])}</td></tr>`).join("")}</tbody></table></div></div>`;return}
+    if(tab==="a"){const n=norm(q);if(n.length<2){out.innerHTML=`<p class="muted">Tippe mindestens 2 Buchstaben.</p>`;return}const seen=new Set(),items=[];
+      for(const lv of levelIds())for(const l of lessonsOf(lv))for(const v of l.vocab||[]){const m=v[0].match(/^(der|die|das) (.+)$/);if(!m)continue;const w=norm(m[2]);if(w.startsWith(n)||w.includes(n)){if(seen.has(v[0]))continue;seen.add(v[0]);items.push({v,lv,starts:w.startsWith(n)})}}
+      items.sort((a,b)=>b.starts-a.starts);
+      out.innerHTML=items.length?`<div class="list">${items.slice(0,40).map(x=>`<div class="row"><span class="t"><b>${artHtml(x.v[0])}</b><small${rtl()}>${esc(tr(x.v))} · ${x.lv}</small></span>${sayBtn(x.v[0])}</div>`).join("")}</div>`:`<p class="muted">Nicht gefunden.</p>`}};
+  inp.oninput=run;run();setTimeout(()=>inp.focus(),30)}
+
+// ---------- homework ----------
+function compressImage(file){return new Promise((ok,no)=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const max=1400;let w=img.width,h=img.height;if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s)}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);URL.revokeObjectURL(u);let q=0.75,d=c.toDataURL("image/jpeg",q);while(d.length>1200000&&q>0.3){q-=0.15;d=c.toDataURL("image/jpeg",q)}ok(d)};img.onerror=()=>no(new Error("img"));img.src=u})}
+const CRIT={I:"Aufgabenerfüllung",II:"Kommunikative Gestaltung",III:"Formale Richtigkeit"};
+function fbHtml(fb){if(!fb)return "";const cr=Object.keys(CRIT).filter(k=>fb.crit&&fb.crit[k]).map(k=>`<span class="chip" style="width:auto;cursor:default;font-size:.85rem">${k} ${CRIT[k]}: <b>${fb.crit[k]}</b></span>`).join("");
+  return `<div class="corr"><span class="kind">Korrektur von Saleh · ${fmtDate(fb.ts)}</span>${cr?`<div class="chips" style="margin:6px 0">${cr}</div>`:""}${fb.text?`<div class="ctext">${esc(fb.text)}</div>`:""}${fb.note?`<p><b>Kommentar:</b> ${esc(fb.note)}</p>`:""}</div>`}
+const hwMine=()=>{try{return JSON.parse(localStorage.getItem("dp_hw_mine"))||[]}catch(e){return []}};
+const hwAdd=x=>{const a=hwMine();a.unshift(x);try{localStorage.setItem("dp_hw_mine",JSON.stringify(a.slice(0,60)))}catch(e){}};
+function hwView(){
+  if(DEMO)return demoLocked();
+  const lv=S.hwLv||S.srsLv||"A1.1";
+  const tasks=lessonsOf(lv).filter(l=>l.write).map(l=>`Lektion ${l.n}: ${l.write.title}`);
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Hausaufgaben</span><h1>Hausaufgabe abgeben</h1>
+  <form id="hwf" class="card"><label class="kind">Dein Vor- und Nachname</label><input class="gap" id="hn" maxlength="60" autocomplete="name" value="${esc(myName())}">
+   <label class="kind" style="display:block;margin-top:12px">Niveau</label><select class="gap" id="hlv">${levelIds().map(x=>`<option${x===lv?" selected":""}>${x}</option>`).join("")}</select>
+   <label class="kind" style="display:block;margin-top:12px">Aufgabe</label><input class="gap" id="ht" list="hwdl" maxlength="120" placeholder="z. B. Beschwerde an die Hausverwaltung"><datalist id="hwdl">${tasks.map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
+   <label class="kind" style="display:block;margin-top:12px">Dein Text</label><textarea class="wta" id="htx" rows="9" placeholder="Schreib deinen Text hier …"></textarea><div class="wcount"><span id="hwc">0</span> Wörter</div>
+   <label class="kind" style="display:block;margin-top:12px">Oder ein Foto (Heft / Blatt)</label><input type="file" id="himg" accept="image/*" class="gap" style="font-size:.95rem"><img id="hprev" alt="" hidden style="width:100%;margin-top:8px;border-radius:10px">
+   <label class="kind" style="display:block;margin-top:12px">Oder eine Sprachaufnahme (Sprechen, max. 3 Min.)</label><div id="hrec"></div>
+   <button class="btn" type="submit" style="width:100%;margin-top:14px">Abgeben</button><div class="feedback" id="hfb" hidden></div></form>
+  <div class="section-h"><h2>Meine Abgaben</h2></div><div id="hlist"><p class="muted">Lädt …</p></div>`;
+  app.querySelector("#hlv").onchange=e=>{S.hwLv=e.target.value;save();hwView()};
+  let img=null,audio=null;const fb=app.querySelector("#hfb");recorderUI(app.querySelector("#hrec"),a=>{audio=a});const msg=(t,ok)=>{fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.textContent=t};
+  const ta=app.querySelector("#htx");const key="dp_hw_draft";try{ta.value=localStorage.getItem(key)||""}catch(e){}
+  const cnt=()=>app.querySelector("#hwc").textContent=(ta.value.trim().match(/\S+/g)||[]).length;cnt();ta.oninput=()=>{cnt();try{localStorage.setItem(key,ta.value)}catch(e){}};
+  app.querySelector("#himg").onchange=async e=>{const f=e.target.files[0];if(!f)return;msg("Foto wird vorbereitet …",true);try{img=await compressImage(f);const p=app.querySelector("#hprev");p.src=img;p.hidden=false;fb.hidden=true}catch(err){img=null;msg("Das Foto konnte nicht gelesen werden.")}};
+  app.querySelector("#hwf").onsubmit=async e=>{e.preventDefault();const name=app.querySelector("#hn").value.trim(),title=app.querySelector("#ht").value.trim(),text=ta.value.trim(),hlv=app.querySelector("#hlv").value;
+    if(name.length<2)return msg("Bitte schreib deinen Namen.");if(!title)return msg("Bitte schreib, welche Aufgabe das ist.");if(!text&&!img&&!audio)return msg("Bitte schreib einen Text, füge ein Foto hinzu oder nimm etwas auf.");if(img&&audio)return msg("Bitte schick Foto und Aufnahme getrennt (zwei Abgaben).");
+    setName(name);msg("Wird gesendet …",true);const j=await api("hw",{method:"POST",body:{name,lv:hlv,title,text,img,audio}});
+    if(j._ok){hwAdd(j.id+"."+j.tok);try{localStorage.removeItem(key)}catch(e){}addPts(20);msg("Abgegeben! Saleh korrigiert deine Aufgabe bald.",true);ta.value="";cnt();img=null;audio=null;recorderUI(app.querySelector("#hrec"),a=>{audio=a});app.querySelector("#hprev").hidden=true;app.querySelector("#ht").value="";app.querySelector("#himg").value="";loadList()}
+    else msg(j._status===401?"Bitte öffne den Lernraum neu und gib das Passwort ein.":j.error==="big"?"Das Foto ist zu groß.":j._status===0?"Keine Verbindung. Dein Text ist gespeichert – versuch es später noch einmal.":"Senden fehlgeschlagen. Bitte noch einmal versuchen.")};
+  async function loadList(){const box=app.querySelector("#hlist");const mine=hwMine();if(!mine.length){box.innerHTML=`<p class="muted">Noch keine Abgaben auf diesem Handy.</p>`;return}
+    const j=await api("hw?mine="+encodeURIComponent(mine.join(",")));if(!box.isConnected)return;if(!j._ok){box.innerHTML=`<p class="muted">Konnte nicht geladen werden.</p>`;return}
+    const toks={};mine.forEach(x=>{const [id,t]=x.split(".");toks[id]=t});
+    box.innerHTML=j.items.length?j.items.map(it=>`<div class="card hwi" style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(it.title)}</b><span class="st ${it.status==="korrigiert"?"ok":""}">${it.status==="korrigiert"?"✓ Korrigiert":"Eingereicht"}</span></div><small class="muted">${fmtDate(it.ts)} · ${esc(it.name)}</small>
+      ${it.text?`<details style="margin-top:6px"><summary>Mein Text</summary><div class="ctext">${esc(it.text)}</div></details>`:""}${it.hasImg||it.hasAudio?`<button class="btn ghost" style="margin-top:8px;padding:8px" data-hwimg="${it.id}">${it.hasAudio?"Aufnahme anhören":"Foto ansehen"}</button><div class="imgbox"></div>`:""}${fbHtml(it.fb)}</div>`).join(""):`<p class="muted">Noch keine Abgaben.</p>`;
+    box.querySelectorAll("[data-hwimg]").forEach(b=>b.onclick=async()=>{b.disabled=true;const id=b.dataset.hwimg;const r=await api("hwimg?id="+encodeURIComponent(id)+"&tok="+encodeURIComponent(toks[id]||""));if(r.img)b.nextElementSibling.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:8px;border-radius:10px">`;if(r.audio)b.nextElementSibling.innerHTML=`<audio controls src="${r.audio}" style="width:100%;margin-top:8px"></audio>`;b.remove()})}
+  loadList()}
+
+// ---------- protected Drive folders (Buch / Dialoge / Texte) ----------
+async function driveView(r){
+  if(DEMO)return demoLocked();
+  const back=r.trail&&r.trail.length?`<button class="back" id="dback">‹ Zurück</button>`:`<button class="back" data-home="${r.lv||""}">‹ Zurück</button>`;
+  app.innerHTML=`${back}<span class="kind" style="display:block">Materialien${r.lv?" · "+r.lv:""}</span><h1>${esc(r.t||"Ordner")}</h1><div id="dlist" style="margin-top:12px"><p class="muted">Lädt …</p></div>`;
+  const db=app.querySelector("#dback");if(db)db.onclick=()=>history.back();
+  const j=await api("drive/list?f="+encodeURIComponent(r.f));const box=app.querySelector("#dlist");if(!box||!box.isConnected)return;
+  if(j._status===401){box.innerHTML=`<form id="dpw" class="card"><p>Bitte gib das Kurs-Passwort noch einmal ein.</p><input class="gap" id="dpwi" type="password" autocomplete="current-password"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button><p class="feedback bad" id="dpwe" hidden>Falsches Passwort.</p></form>`;box.querySelector("#dpw").onsubmit=async e=>{e.preventDefault();const k=await api("session",{method:"POST",body:{pw:box.querySelector("#dpwi").value}});if(k._ok)driveView(r);else box.querySelector("#dpwe").hidden=false};return}
+  if(!j._ok){box.innerHTML=`<div class="card"><p>Der Ordner kann gerade nicht geladen werden. Bitte später noch einmal versuchen.</p></div>`;return}
+  const items=j.items.slice().sort((a,b)=>(b.folder-a.folder)||a.name.localeCompare(b.name,"de",{numeric:true}));
+  if(!items.length){box.innerHTML=`<p class="muted">Hier gibt es noch keine Dateien.</p>`;return}
+  box.innerHTML=`<div class="list">${items.map(x=>{const ext=(x.name.match(/\.(\w+)$/)||[])[1];const audio=/^(mp3|m4a|wav|ogg)$/i.test(ext||"");
+    return x.folder?`<button class="row" data-dfolder="${x.id}" data-dname="${esc(x.name)}"><span class="num">📁</span><span class="t"><b>${esc(x.name)}</b><small>Ordner</small></span></button>`
+    :audio?`<div class="row" style="flex-wrap:wrap"><span class="num">🎧</span><span class="t"><b>${esc(x.name.replace(/\.\w+$/,""))}</b></span><audio controls controlslist="nodownload" preload="none" style="width:100%" src="/app/api/drive/file?f=${encodeURIComponent(r.f)}&id=${encodeURIComponent(x.id)}"></audio></div>`
+    :`<button class="row" data-dfile="${x.id}"><span class="num">📄</span><span class="t"><b>${esc(x.name.replace(/\.pdf$/i,""))}</b><small>Ansehen</small></span></button>`}).join("")}</div>`;
+  box.querySelectorAll("[data-dfolder]").forEach(b=>b.onclick=()=>go({v:"drive",f:b.dataset.dfolder,t:b.dataset.dname,lv:r.lv,trail:(r.trail||[]).concat([r.f])}));
+  box.querySelectorAll("[data-dfile]").forEach(b=>b.onclick=()=>openPdf("/app/api/drive/file?f="+encodeURIComponent(r.f)+"&id="+encodeURIComponent(b.dataset.dfile)))}
+
+// ---------- demo for prospects ----------
+function demoHome(){
+  app.innerHTML=`<div class="demobar">Demo · Die Vollversion ist nur für Deutschparadies-Schüler</div>
+  <section class="hero"><div class="ph"><img src="${PHOTO}" alt="Saleh"></div><div><h1>Willkommen im Lernraum!</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div></section>
+  <div class="card" style="margin-top:12px"><h2 style="margin-top:0">Probiere eine echte Lektion aus</h2><p class="muted">Wortschatz, Grammatik, Übungen, Lesen, Hören und Sprechen – genau wie im Kurs.</p><div class="actions"><button class="btn gold" data-go-lesson="a11-1">A1.1 · Lektion 1 starten</button></div><div class="actions"><button class="btn ghost" data-p="srs">🗂️ Wortschatz-Trainer testen</button></div></div>
+  <div class="section-h"><h2>Das bekommst du als Schüler</h2></div>
+  <div class="tools">${[["📚","54 Lektionen","A1.1 bis B2.2"],["🎙️","Aussprache","mit Feedback"],["🎭","Rollenspiele","für den Alltag"],["📮","Hausaufgaben","mit Korrektur"],["🏅","Zertifikat","pro Niveau"],["🎓","telc B2","5 Modelltests"]].map(x=>`<div class="tool locked"><span class="ti">${x[0]}</span><b>${x[1]}</b><small>${x[2]} 🔒</small></div>`).join("")}</div>
+  <div class="card" style="margin-top:14px;text-align:center"><h2 style="margin-top:0">Lust auf mehr?</h2><p class="muted">Live-Kurse online in kleinen Gruppen (max. 4 Personen) mit Lehrer Saleh.</p><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a></div><div class="actions"><a class="btn ghost" style="text-align:center;text-decoration:none" href="/">deutschparadies.ro</a></div></div>
+  <footer>Deutschparadies · deutschparadies.ro<br><a class="linkbtn" href="./">Ich bin schon Schüler – anmelden</a></footer>`}
+function demoLocked(){app.innerHTML=`<div class="demobar">Demo</div><button class="back" data-home="">‹ Zurück</button><div class="card" style="text-align:center;margin-top:10px"><p style="font-size:2.4rem;margin:0">🔒</p><h2>Nur für Kursteilnehmer</h2><p class="muted">Diesen Teil gibt es in der Vollversion für Schüler von Deutschparadies.</p><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a></div></div>`}
+const DEMO_OK=r=>r.v==="srs"||((r.v==="lesson"||r.v==="mod")&&r.id==="a11-1");
+
+// ---------- telc exam mode (timer, audio once, one submit) ----------
+function telcExam(i){
+  const t=D.telc.tests[i];const key="dp_telc_exam_"+i;let start=+(sessionStorage.getItem(key)||0);if(!start){start=Date.now();try{sessionStorage.setItem(key,String(start))}catch(e){}}
+  const LIMIT=140*60*1000;
+  app.querySelectorAll("[data-chk]").forEach(b=>b.closest(".actions").hidden=true);
+  app.querySelectorAll(".tq details, .trs, [data-slow]").forEach(d=>d.hidden=true);
+  const bar=document.createElement("div");bar.className="exambar";bar.innerHTML=`<span>⏱ <b id="etime">140:00</b></span><span class="muted" style="font-size:.85rem">Prüfungsmodus · schriftlicher Teil</span><button class="btn gold" id="esub" style="flex:none;padding:8px 14px">Abgeben</button>`;
+  app.insertBefore(bar,app.firstChild);
+  const plays={};app.querySelectorAll("[data-play]").forEach(b=>{const id=b.dataset.play;const max=id==="h2"?2:1;const orig=b.onclick;b.onclick=()=>{plays[id]=(plays[id]||0)+1;if(plays[id]>max)return;orig&&orig();if(plays[id]>=max){b.disabled=true;b.textContent="✓ gehört"}}});
+  let ended=false;
+  const submit=()=>{if(ended)return;ended=true;clearInterval(tm);try{sessionStorage.removeItem(key)}catch(e){}
+    app.querySelectorAll("[data-chk]").forEach(b=>b.click());
+    app.querySelectorAll(".tq details, .trs").forEach(d=>d.hidden=false);
+    const sc=telcScore(i),pct=Math.round(sc.s/180*100);
+    sendResult({type:"telc",ref:"Modelltest "+(i+1),score:Math.round(sc.s*10)/10,total:180,pass:pct>=60});
+    bar.innerHTML=`<span><b>Prüfung beendet</b> · ${+sc.s.toFixed(1)}/180 · ${pct} % ${pct>=60?"✅ bestanden":"❌ unter 60 %"}</span><button class="btn ghost" id="eexit" style="flex:none;padding:8px 14px">Lösungen ansehen</button>`;
+    bar.querySelector("#eexit").onclick=()=>{bar.remove();window.scrollTo(0,0)};window.scrollTo(0,0)};
+  bar.querySelector("#esub").onclick=()=>{const b=bar.querySelector("#esub");if(b.dataset.sure){submit()}else{b.dataset.sure="1";b.textContent="Wirklich abgeben?";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="Abgeben"}},4000)}};
+  const tick=()=>{const left=Math.max(0,LIMIT-(Date.now()-start));const m=Math.floor(left/60000),s=Math.floor(left%60000/1000);const el=document.getElementById("etime");if(el)el.textContent=m+":"+String(s).padStart(2,"0");if(!left)submit()};
+  const tm=setInterval(()=>{if(!bar.isConnected){clearInterval(tm);return}tick()},1000);tick()}
+
+// ---------- teacher console ----------
+async function teacherConsole(box){
+  const st=await api("t/settings");
+  if(st._status===401){box.innerHTML=`<div class="card" style="margin-top:10px"><h2 style="margin-top:0">Anmelden</h2><p class="muted">Mit deinem Lehrer-Passwort siehst du Hausaufgaben, Ergebnisse und das Quiz vor der Stunde.</p><form id="tlf"><input class="gap" id="tpw" type="password" autocomplete="current-password" placeholder="Lehrer-Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Anmelden</button></form><div class="feedback bad" id="tlfb" hidden></div></div>`;
+    box.querySelector("#tlf").onsubmit=async e=>{e.preventDefault();const pw=box.querySelector("#tpw").value;const j=await api("t/login",{method:"POST",body:{admin:pw}});if(j._ok){try{sessionStorage.setItem("dp_vpw",pw);const va=document.getElementById("va");if(va&&!va.value)va.value=pw}catch(err){}teacherConsole(box)}else{const f=box.querySelector("#tlfb");f.hidden=false;f.textContent=j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":"Das Lehrer-Passwort ist falsch."}};return}
+  let tab="h";
+  box.innerHTML=`<div class="tabs" style="margin-top:10px"><button data-tt="h" aria-pressed="true">Hausaufgaben</button><button data-tt="r">Ergebnisse</button><button data-tt="q">Quiz</button><button data-tt="e">Probe-Codes</button></div><div id="tbody" style="margin-top:12px"></div><p class="note"><button class="linkbtn" id="tout">Lehrer abmelden</button></p>`;
+  const body=box.querySelector("#tbody");
+  box.querySelector("#tout").onclick=async()=>{await api("t/logout",{method:"POST"});teacherConsole(box)};
+  box.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{tab=b.dataset.tt;box.querySelectorAll("[data-tt]").forEach(x=>x.setAttribute("aria-pressed",x===b));show()});
+  const lvSel=(id,cur)=>`<select class="gap" id="${id}" style="font-size:1rem;padding:8px">${levelIds().map(x=>`<option${x===cur?" selected":""}>${x}</option>`).join("")}</select>`;
+  async function show(){body.innerHTML=`<p class="muted">Lädt …</p>`;
+    if(tab==="h"){const j=await api("t/hw");const items=j.items||[];
+      body.innerHTML=`<div class="chips"><button class="chip" style="width:auto" data-hf="neu" aria-pressed="true">Neu (${items.filter(x=>x.status!=="korrigiert").length})</button><button class="chip" style="width:auto" data-hf="all">Alle (${items.length})</button></div><div id="hwl" style="margin-top:10px"></div>`;
+      const list=f=>{const arr=items.filter(x=>f==="all"||x.status!=="korrigiert");body.querySelector("#hwl").innerHTML=arr.length?arr.map(it=>`<button class="row" data-hw="${it.id}" style="margin-top:8px"><span class="num">${it.status==="korrigiert"?"✓":"•"}</span><span class="t"><b>${esc(it.name)} · ${esc(it.title)}</b><small>${it.lv?it.lv+" · ":""}${fmtDate(it.ts)}${it.hasImg?" · 📷":""}${it.hasAudio?" · 🎙":""}</small></span></button>`).join(""):`<p class="muted">Nichts zu korrigieren.</p>`;
+        body.querySelectorAll("[data-hw]").forEach(b=>b.onclick=()=>openHw(items.find(x=>x.id===b.dataset.hw)))};
+      body.querySelectorAll("[data-hf]").forEach(b=>b.onclick=()=>{body.querySelectorAll("[data-hf]").forEach(x=>x.setAttribute("aria-pressed",x===b));list(b.dataset.hf)});list("neu")}
+    if(tab==="r"){const j=await api("t/results");const R=(j.results||[]).slice().reverse();const TY={quiz:"Quiz",final:"Abschlusstest",telc:"telc",rp:"Rollenspiel"};
+      const by={};R.forEach(x=>{const k=x.name.trim().toLowerCase();(by[k]=by[k]||{name:x.name,list:[]}).list.push(x)});
+      const groups=Object.values(by).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+      body.innerHTML=groups.length?`<p class="note">Ergebnisse von Schülern, die ihren Namen eingegeben haben.</p>`+groups.map(g=>`<details class="card" style="margin-top:8px"><summary><b>${esc(g.name)}</b> <span class="muted">· ${g.list.length} Ergebnisse · zuletzt ${fmtDate(g.list[0].ts)}</span></summary><div class="ctab"><table><tbody>${g.list.slice(0,40).map(x=>`<tr><td>${fmtDate(x.ts)}</td><td>${TY[x.type]||x.type}</td><td>${esc(x.ref)}</td><td><b>${x.score}/${x.total}</b>${x.type==="final"||x.type==="telc"?(x.pass?" ✅":" ❌"):""}</td></tr>${x.info?`<tr><td colspan="4" class="muted" style="font-size:.8rem">Fehler: ${esc(x.info)}</td></tr>`:""}`).join("")}</tbody></table></div></details>`).join(""):`<p class="muted">Noch keine Ergebnisse.</p>`}
+    if(tab==="q"){const cur=(st.settings&&st.settings.quiz)||{};const j=await api("t/settings");const Q=(j.settings&&j.settings.quiz)||cur;
+      body.innerHTML=`<div class="card"><h3 style="margin-top:0">Quiz vor der Stunde</h3><p class="muted">Wähle Niveau und Lektion. Alle Schüler sehen das Quiz auf der Startseite (10 Fragen). Die Ergebnisse siehst du unter „Ergebnisse“.</p>${lvSel("qlv","A1.1")}<select class="gap" id="qls" style="font-size:1rem;padding:8px;margin-top:8px"></select>
+        <div class="actions"><button class="btn" id="qgo">Quiz aktivieren</button><button class="btn ghost" id="qdel">Quiz entfernen</button></div><div id="qres"></div></div>
+        <div class="section-h"><h2>Aktive Quiz</h2></div><div id="qact"></div>`;
+      const act=Q2=>{const e=Object.entries(Q2);body.querySelector("#qact").innerHTML=e.length?e.map(([lv,q])=>{const f=findLesson(q.lesson);return `<div class="row" style="margin-top:6px"><span class="num">${lv.replace(".","")}</span><span class="t"><b>${lv} · Lektion ${f?f.l.n+": "+esc(f.l.title):esc(q.lesson)}</b><small>seit ${fmtDate(q.at)}</small></span></div>`}).join(""):`<p class="muted">Kein Quiz aktiv.</p>`};act(Q);
+      const lvS=body.querySelector("#qlv"),lsS=body.querySelector("#qls");const fill=()=>{lsS.innerHTML=lessonsOf(lvS.value).map(l=>`<option value="${l.id}">Lektion ${l.n}: ${esc(l.title)}</option>`).join("")};lvS.onchange=fill;fill();
+      body.querySelector("#qgo").onclick=async()=>{const k=await api("t/quiz",{method:"POST",body:{lv:lvS.value,lesson:lsS.value}});body.querySelector("#qres").innerHTML=k._ok?`<div class="feedback ok">Aktiviert für ${lvS.value}.</div>`:`<div class="feedback bad">Fehler.</div>`;if(k._ok)act(k.quiz)};
+      body.querySelector("#qdel").onclick=async()=>{const k=await api("t/quiz",{method:"POST",body:{lv:lvS.value,lesson:null}});body.querySelector("#qres").innerHTML=k._ok?`<div class="feedback ok">Quiz für ${lvS.value} entfernt.</div>`:`<div class="feedback bad">Fehler.</div>`;if(k._ok)act(k.quiz)}}
+    if(tab==="e"){const j=await api("t/codes");const items=j.items||[];const now=Date.now();
+      const link=c=>"https://deutschparadies.ro/app/?code="+c;
+      const msgRo=c=>"Salut! Uite accesul tău gratuit la Deutschparadies Lernraum (aplicația noastră pentru cursanți): "+link(c)+" – linkul este valabil 24 de ore.";
+      body.innerHTML=`<form id="cdf" class="card"><h3 style="margin-top:0">Probezugang für Interessenten</h3><p class="muted">Einen Link kannst du an viele Interessenten gleichzeitig schicken. Er funktioniert 24 Stunden ab jetzt. Alle sehen den Lernraum genau wie ein Schüler, bis die 24 Stunden vorbei sind. Löschst du den Code, funktioniert er sofort für niemanden mehr.</p><input class="gap" id="cdn" maxlength="60" placeholder="Notiz (z. B. Facebook-Anzeige Oktober, optional)"><button class="btn gold" type="submit" style="width:100%;margin-top:10px">Neuen Code erstellen</button><div id="cdres"></div></form>
+      <div class="section-h"><h2>Codes (${items.length})</h2></div>${items.length?items.map(c=>{const n=c.uses||0;const ex=c.exp||(c.created+864e5);const st=(ex>now?"gültig bis "+new Date(ex).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"abgelaufen")+" · "+(n?n+(n===1?" Person":" Personen"):"noch niemand");return `<div class="row" style="margin-top:6px;flex-wrap:wrap"><span class="t"><b style="letter-spacing:1px">${c.code}</b><small>${c.note?esc(c.note)+" · ":""}${st}</small></span>${ex>now?`<button class="btn ghost" data-copy="${esc(msgRo(c.code))}" style="flex:none;padding:6px 10px">📋</button>`:""}<button class="btn ghost" data-cdel="${c.code}" style="flex:none;padding:6px 10px">✕</button></div>`}).join(""):`<p class="muted">Noch keine Codes.</p>`}`;
+      body.querySelector("#cdf").onsubmit=async e=>{e.preventDefault();const k=await api("t/codes",{method:"POST",body:{note:body.querySelector("#cdn").value.trim()}});if(!k._ok){body.querySelector("#cdres").innerHTML=`<div class="feedback bad">Fehler.</div>`;return}
+        await show();body.querySelector("#cdres").innerHTML=`<div class="feedback ok"><span style="font-size:1.4rem;letter-spacing:2px">${k.code}</span><br><small style="word-break:break-all">${link(k.code)}</small><div class="actions"><button class="btn ghost" data-copy="${esc(msgRo(k.code))}" style="padding:8px">📋 Kopieren</button><a class="btn gold" style="text-align:center;text-decoration:none;padding:8px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msgRo(k.code))}">WhatsApp</a></div></div>`;
+        body.querySelectorAll("#cdres [data-copy]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="✓ Kopiert"}catch(e){b.textContent="Kopieren nicht möglich"}})};
+      body.querySelectorAll("[data-cdel]").forEach(b=>b.onclick=async()=>{if(!b.dataset.sure){b.dataset.sure="1";b.textContent="Löschen?";return}await api("t/codes",{method:"POST",body:{action:"delete",code:b.dataset.cdel}});show()})}
+    body.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="✓ Kopiert"}catch(e){b.textContent="Kopieren nicht möglich"}})}
+  function openHw(it){
+    body.innerHTML=`<button class="back" id="hwback">‹ Zurück zur Liste</button><div class="card"><span class="kind">${esc(it.name)}${it.lv?" · "+it.lv:""} · ${fmtDate(it.ts)}</span><h2 style="margin:4px 0">${esc(it.title)}</h2>${it.text?`<div class="ctext">${esc(it.text)}</div>`:""}<div id="hwimg"></div></div>
+    <form id="hcf" class="card" style="margin-top:10px"><h3 style="margin-top:0">Korrektur</h3><label class="kind">Korrigierter Text</label><textarea class="wta" id="hct" rows="9">${esc((it.fb&&it.fb.text)||it.text||"")}</textarea>
+     <div class="crit">${Object.keys(CRIT).map(k=>`<label class="kind" style="display:block;margin-top:10px">${k} · ${CRIT[k]}</label><div class="chips">${["A","B","C","D"].map(g=>`<label class="chip" style="width:auto"><input type="radio" name="c${k}" value="${g}" ${it.fb&&it.fb.crit&&it.fb.crit[k]===g?"checked":""}> ${g}</label>`).join("")}</div>`).join("")}</div>
+     <label class="kind" style="display:block;margin-top:12px">Kommentar für den Schüler</label><textarea class="wta" id="hcn" rows="3">${esc((it.fb&&it.fb.note)||"")}</textarea>
+     <button class="btn" type="submit" style="width:100%;margin-top:12px">Korrektur speichern</button><div id="hcr"></div>
+     <div class="actions"><button class="btn ghost" type="button" id="hdel" style="padding:8px">Abgabe löschen</button></div></form>`;
+    body.querySelector("#hwback").onclick=()=>show();
+    if(it.hasImg||it.hasAudio)api("t/hwimg?id="+encodeURIComponent(it.id)).then(r=>{const b=body.querySelector("#hwimg");if(!b)return;if(r.img)b.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:10px;border-radius:10px">`;if(r.audio)b.innerHTML=`<audio controls src="${r.audio}" style="width:100%;margin-top:10px"></audio>`});
+    const del=body.querySelector("#hdel");del.onclick=async()=>{if(!del.dataset.sure){del.dataset.sure="1";del.textContent="Wirklich löschen?";return}await api("t/hw?id="+encodeURIComponent(it.id),{method:"DELETE"});show()};
+    body.querySelector("#hcf").onsubmit=async e=>{e.preventDefault();const crit={};Object.keys(CRIT).forEach(k=>{const r=body.querySelector(`input[name=c${k}]:checked`);if(r)crit[k]=r.value});
+      const j=await api("t/hw",{method:"POST",body:{id:it.id,fb:{text:body.querySelector("#hct").value,note:body.querySelector("#hcn").value,crit}}});
+      body.querySelector("#hcr").innerHTML=j._ok?`<div class="feedback ok">Gespeichert! ${esc(it.name)} sieht die Korrektur jetzt.</div>`:`<div class="feedback bad">Speichern fehlgeschlagen.</div>`;if(j._ok){it.status="korrigiert"}}}
+  show()}
+
+// ---------- Beschwerde-Trainer (telc Schreiben, step by step) ----------
+const BES_SIT=[
+ {id:"aufzug",t:"Aufzug seit Wochen kaputt",to:"Hausverwaltung",sit:"Seit drei Wochen funktioniert der Aufzug in Ihrem Mietshaus nicht. Sie wohnen im fünften Stock und haben schon zweimal angerufen.",pts:["Grund Ihres Schreibens","Folgen für Sie und die anderen Mieter","Ihre bisherigen Versuche","Was Sie jetzt erwarten"]},
+ {id:"paket",t:"Bestellung beschädigt geliefert",to:"Online-Shop",sit:"Sie haben online eine Kaffeemaschine bestellt. Sie kam beschädigt und zu spät an.",pts:["Was Sie bestellt haben","Welche Probleme es gab","Warum das für Sie ärgerlich ist","Was Sie jetzt erwarten"]},
+ {id:"internet",t:"Internet funktioniert nicht",to:"Internetanbieter",sit:"Seit einer Woche haben Sie kein Internet. Sie arbeiten im Homeoffice. Der Techniker ist nicht gekommen.",pts:["Seit wann das Problem besteht","Folgen für Ihre Arbeit","Ihre Kontakte mit dem Kundenservice","Ihre Forderung"]},
+ {id:"reise",t:"Hotel entsprach nicht dem Angebot",to:"Reisebüro",sit:"Ihr Hotel im Urlaub war schmutzig, laut und hatte keinen Meerblick, obwohl das im Katalog stand.",pts:["Welche Reise Sie gebucht haben","Was nicht in Ordnung war","Wie die Reiseleitung reagiert hat","Was Sie erwarten"]},
+ {id:"kurs",t:"Sprachkurs oft ausgefallen",to:"Sprachschule",sit:"Ihr Abendkurs ist im letzten Monat dreimal ohne Information ausgefallen. Sie haben den Kurs schon bezahlt.",pts:["Welchen Kurs Sie besuchen","Was passiert ist","Warum das für Sie ein Problem ist","Was Sie von der Schule erwarten"]},
+ {id:"handy",t:"Reparatur dauert zu lange",to:"Elektrogeschäft",sit:"Sie haben Ihr Handy vor fünf Wochen zur Reparatur gebracht. Man hat Ihnen zwei Wochen versprochen.",pts:["Wann und was Sie abgegeben haben","Was man Ihnen versprochen hat","Folgen für Sie","Was Sie jetzt verlangen"]}];
+const BES_RM={
+ betreff:["Beschwerde über …","Reklamation: …","Mängel bei …"],
+ anrede:["Sehr geehrte Damen und Herren,","Sehr geehrte Frau …,","Sehr geehrter Herr …,"],
+ ein:["leider muss ich mich heute über … beschweren.","ich wende mich an Sie, weil …","hiermit möchte ich mich über … beschweren."],
+ pt:["Seit … funktioniert … nicht mehr.","Das ist besonders ärgerlich, weil …","Ich habe bereits am … angerufen, aber …","Leider hat sich bis heute nichts geändert.","Dadurch musste ich …","In Ihrem Angebot stand, dass …, aber …"],
+ ford:["Ich erwarte, dass Sie das Problem bis zum … beheben.","Ich bitte Sie daher, …","Ich möchte einen Teil des Preises zurückerstattet bekommen.","Sollte sich bis … nichts ändern, werde ich …"],
+ schluss:["Ich hoffe auf eine schnelle Lösung.","Für eine baldige Antwort wäre ich Ihnen dankbar.","Mit freundlichen Grüßen"]};
+function besView(r){
+  if(!r.id){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Schreiben · telc</span><h1>Beschwerde-Trainer</h1><p class="muted">Schreib eine Beschwerde Schritt für Schritt. Zu jedem Teil gibt es Redemittel. Am Ende prüft der Lernraum, ob alles drin ist.</p>
+    <div class="list" style="margin-top:12px">${BES_SIT.map(x=>`<button class="row" data-p="bes" data-id="${x.id}"><span class="num">✉️</span><span class="t"><b>${esc(x.t)}</b><small>an: ${esc(x.to)}</small></span></button>`).join("")}</div>`;return}
+  const sc=BES_SIT.find(x=>x.id===r.id);if(!sc)return go({v:"bes"});
+  const key="dp_bes_"+sc.id;let d={};try{d=JSON.parse(localStorage.getItem(key))||{}}catch(e){}
+  const F=[["betreff","Betreff",1],["anrede","Anrede",1],["ein","Einleitung: Warum schreiben Sie?",2]].concat(sc.pts.map((p,k)=>["p"+k,(k+1)+". "+p,3])).concat([["ford","Ihre Forderung",2],["schluss","Schluss und Gruß",2],["name","Ihr Name",1]]);
+  app.innerHTML=`<button class="back" data-p="bes">‹ Zurück</button><span class="kind" style="display:block">Beschwerde an: ${esc(sc.to)}</span><h1>${esc(sc.t)}</h1>
+  <div class="expl"><div class="lab">Situation</div>${esc(sc.sit)}<ol class="wpts" style="margin:8px 0 0">${sc.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ol></div>
+  ${F.map(f=>{const rm=f[0]==="betreff"?BES_RM.betreff:f[0]==="anrede"?BES_RM.anrede:f[0]==="ein"?BES_RM.ein:f[0]==="ford"?BES_RM.ford:f[0]==="schluss"?BES_RM.schluss:/^p\d/.test(f[0])?BES_RM.pt:[];
+    return `<div class="card bpart" style="margin-top:10px"><label class="kind" for="b_${f[0]}">${esc(f[1])}</label>${f[2]===1?`<input class="gap" id="b_${f[0]}" data-b="${f[0]}" value="${esc(d[f[0]]||(f[0]==="name"?myName():""))}">`:`<textarea class="wta" id="b_${f[0]}" data-b="${f[0]}" rows="${f[2]}">${esc(d[f[0]]||"")}</textarea>`}
+    ${rm.length?`<div class="chips rm">${rm.map(x=>`<button type="button" class="chip" style="width:auto;font-size:.85rem" data-ins="${esc(x)}" data-to="b_${f[0]}">${esc(x)}</button>`).join("")}</div>`:""}</div>`}).join("")}
+  <div class="card" style="margin-top:12px"><span class="kind">Prüfung</span><ul class="bchk" id="bchk"></ul><div class="wcount"><span id="bwc">0</span> Wörter (Ziel: ca. 150)</div></div>
+  <div class="card" style="margin-top:10px"><span class="kind">Dein Brief</span><div class="ctext" id="bprev"></div></div>
+  <div class="actions"><button class="btn gold" id="bsend">Als Hausaufgabe senden</button></div><div class="feedback" id="bfb" hidden></div>`;
+  const val=k=>{const e=app.querySelector("#b_"+k);return e?e.value.trim():""};
+  const letter=()=>{const parts=[val("betreff")?"Betreff: "+val("betreff").replace(/^Betreff:\s*/i,""):"","",val("anrede"),"",[val("ein")].concat(sc.pts.map((p,k)=>val("p"+k))).filter(Boolean).join(" "),"",val("ford"),"",val("schluss"),val("name")];return parts.join("\n").replace(/\n{3,}/g,"\n\n").trim()};
+  const check=()=>{const L=letter(),body=[val("ein")].concat(sc.pts.map((p,k)=>val("p"+k)),[val("ford"),val("schluss")]).join(" ");const wc=(body.match(/\S+/g)||[]).length;
+    const c=[["Betreff",!!val("betreff")],["Formelle Anrede (Sehr geehrte …)",/^sehr geehrte/i.test(val("anrede"))],["Einleitung mit Grund",(val("ein").match(/\S+/g)||[]).length>=5]]
+      .concat(sc.pts.map((p,k)=>["Punkt "+(k+1)+": "+p,(val("p"+k).match(/\S+/g)||[]).length>=8]))
+      .concat([["Klare Forderung (erwarte / bitte Sie / …)",/erwarte|bitte sie|fordere|verlange|zurückerstatt|erstatt/i.test(val("ford"))],["Gruß: Mit freundlichen Grüßen",/mit freundlichen grüßen/i.test(val("schluss"))],["Name am Ende",!!val("name")],["Immer „Sie“, nie „du“",!/\b(du|dich|dir|dein\w*)\b/i.test(L)],["Länge ca. 150 Wörter",wc>=120]]);
+    app.querySelector("#bchk").innerHTML=c.map(x=>`<li class="${x[1]?"ok":""}">${x[1]?"✅":"⬜"} ${esc(x[0])}</li>`).join("");app.querySelector("#bwc").textContent=wc;app.querySelector("#bprev").textContent=L;return c.every(x=>x[1])};
+  const saveD=()=>{const o={};F.forEach(f=>o[f[0]]=val(f[0]));try{localStorage.setItem(key,JSON.stringify(o))}catch(e){}};
+  app.querySelectorAll("[data-b]").forEach(e=>e.oninput=()=>{saveD();check()});
+  app.querySelectorAll("[data-ins]").forEach(b=>b.onclick=()=>{const t=app.querySelector("#"+b.dataset.to);const ins=b.dataset.ins;if(t.tagName==="INPUT"&&!/^p\d|ein|ford|schluss/.test(b.dataset.to.slice(2)))t.value=ins;else{const s=t.selectionStart!=null&&document.activeElement===t?t.selectionStart:t.value.length;t.value=t.value.slice(0,s)+(s&&!/\s$/.test(t.value.slice(0,s))?" ":"")+ins+t.value.slice(s)}t.focus();const i=t.value.indexOf("…");if(i>=0&&t.setSelectionRange)t.setSelectionRange(i,i+1);saveD();check()});
+  check();
+  app.querySelector("#bsend").onclick=async()=>{const fb=app.querySelector("#bfb");const ok=check();const name=val("name")||myName();
+    if(!name){fb.hidden=false;fb.className="feedback bad";fb.textContent="Bitte schreib deinen Namen ins letzte Feld.";return}
+    if(!ok&&!app.querySelector("#bsend").dataset.sure){app.querySelector("#bsend").dataset.sure="1";fb.hidden=false;fb.className="feedback bad";fb.textContent="Noch nicht alle Punkte sind erfüllt. Trotzdem senden? Dann tippe noch einmal auf den Button.";return}
+    setName(name);fb.hidden=false;fb.className="feedback";fb.textContent="Wird gesendet …";
+    const j=await api("hw",{method:"POST",body:{name,lv:S.hwLv||S.srsLv||"B1.1",title:"Beschwerde: "+sc.t,text:letter()}});
+    if(j._ok){hwAdd(j.id+"."+j.tok);addPts(30);fb.className="feedback ok";fb.textContent="Gesendet! Du findest die Korrektur unter Hausaufgaben.";try{localStorage.removeItem(key)}catch(e){}}
+    else{fb.className="feedback bad";fb.textContent=j._status===401?"Bitte öffne den Lernraum neu und gib das Passwort ein.":"Senden fehlgeschlagen. Dein Text ist gespeichert."}}}
+
+// ---------- voice recording for homework ----------
+function recorderUI(box,onDone){
+  if(!window.MediaRecorder||!navigator.mediaDevices){box.innerHTML=`<p class="note">Aufnehmen geht in diesem Browser nicht. Öffne den Lernraum in Chrome oder Safari.</p>`;return}
+  let rec=null,chunks=[],t0=0,tm=null,stream=null;
+  box.innerHTML=`<div class="actions"><button type="button" class="btn ghost" id="rstart">🎙 Aufnahme starten</button></div><div id="rstate" class="note"></div><audio id="rplay" controls hidden style="width:100%;margin-top:8px"></audio>`;
+  const st=box.querySelector("#rstate"),bt=box.querySelector("#rstart"),pl=box.querySelector("#rplay");
+  const stop=()=>{if(rec&&rec.state!=="inactive")rec.stop();clearInterval(tm)};
+  bt.onclick=async()=>{if(rec&&rec.state==="recording"){stop();return}
+    try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){st.textContent="Mikrofon nicht erlaubt. Bitte im Browser erlauben.";return}
+    const mime=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(m=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m))||"";
+    rec=new MediaRecorder(stream,mime?{mimeType:mime,audioBitsPerSecond:24000}:{audioBitsPerSecond:24000});chunks=[];
+    rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+    rec.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:rec.mimeType||"audio/webm"});const fr=new FileReader();fr.onload=()=>{const url=fr.result.replace(/^data:([^;,]+)[^,]*,/,(m,t)=>"data:"+t+";base64,");if(url.length>1350000){st.textContent="Die Aufnahme ist zu lang. Bitte höchstens 3 Minuten.";onDone(null);return}pl.src=URL.createObjectURL(blob);pl.hidden=false;st.textContent="Aufnahme fertig ("+Math.round((Date.now()-t0)/1000)+" s). Du kannst sie anhören oder neu aufnehmen.";bt.textContent="🎙 Neu aufnehmen";onDone(url)};fr.readAsDataURL(blob)};
+    rec.start(1000);t0=Date.now();bt.textContent="⏹ Aufnahme beenden";pl.hidden=true;onDone(null);
+    tm=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000);st.textContent="● Aufnahme läuft … "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0")+" (max. 3:00)";if(s>=180)stop()},500)}}
+
+// ---------- tap a word in reading texts ----------
+const COMMON_W={ich:["ich","eu","أنا","I"],du:["du","tu","إنت","you"],er:["er","el","هو","he"],sie:["sie","ea / ei / dumneavoastră (Sie)","هي / هم / حضرتك (Sie)","she / they / you (Sie)"],es:["es","el / ea (neutru)","هو / هي (محايد)","it"],wir:["wir","noi","إحنا","we"],ihr:["ihr","voi / ei (al ei)","انتو / بتاعها","you (pl.) / her"],mein:["mein","meu","بتاعي","my"],einem:["einem","unui / într-un (Dativ)","واحد (Dativ)","a (dative)"],einer:["einer","unei / o (Dativ fem.)","واحدة (Dativ)","a (dative)"],eines:["eines","al unui (Genitiv)","بتاع واحد (Genitiv)","of a"],bisschen:["bisschen","puțin","شوية","a bit"],deutsch:["Deutsch","germană","ألماني","German"],englisch:["Englisch","engleză","إنجليزي","English"],rumänisch:["Rumänisch","română","روماني","Romanian"],spanisch:["Spanisch","spaniolă","إسباني","Spanish"],arabisch:["Arabisch","arabă","عربي","Arabic"],rumänien:["Rumänien","România","رومانيا","Romania"],deutschland:["Deutschland","Germania","ألمانيا","Germany"],österreich:["Österreich","Austria","النمسا","Austria"],spanien:["Spanien","Spania","إسبانيا","Spain"],eins:["eins","unu","واحد","one"],zwei:["zwei","doi","اتنين","two"],drei:["drei","trei","تلاتة","three"],vier:["vier","patru","أربعة","four"],fünf:["fünf","cinci","خمسة","five"],sechs:["sechs","șase","ستة","six"],sieben:["sieben","șapte","سبعة","seven"],acht:["acht","opt","تمانية","eight"],neun:["neun","nouă","تسعة","nine"],zehn:["zehn","zece","عشرة","ten"],personen:["die Personen","persoanele","الأشخاص","people"],meine:["meine","mea / mei","بتاعتي","my"],dein:["dein","tău","بتاعك","your"],sein:["sein","a fi / al lui","يكون / بتاعه","to be / his"],bin:["bin (sein)","sunt","أنا (أكون)","am"],bist:["bist (sein)","ești","إنت (تكون)","are"],ist:["ist (sein)","este","هو/هي (يكون)","is"],sind:["sind (sein)","suntem / sunt","إحنا/هم (نكون)","are"],war:["war (sein)","a fost / eram","كان","was"],habe:["habe (haben)","am","عندي","have"],hast:["hast (haben)","ai","عندك","have"],hat:["hat (haben)","are","عنده","has"],haben:["haben","a avea","يملك / عنده","to have"],
+der:["der","articol hotărât (masc.)","أداة تعريف (مذكر)","the"],die:["die","articol hotărât (fem./pl.)","أداة تعريف (مؤنث/جمع)","the"],das:["das","articol hotărât (neutru) / asta","أداة تعريف (محايد) / ده","the / that"],den:["den","pe (Akk. masc.)","الـ (مفعول مذكر)","the"],dem:["dem","lui / la (Dativ)","الـ (Dativ)","the"],ein:["ein","un","واحد / أداة نكرة","a"],eine:["eine","o","واحدة / أداة نكرة","a"],einen:["einen","un (Akk.)","واحد (مفعول)","a"],nicht:["nicht","nu","مش / لا","not"],kein:["kein","niciun","ولا / مفيش","no"],keine:["keine","nicio","ولا / مفيش","no"],
+und:["und","și","و","and"],oder:["oder","sau","أو","or"],aber:["aber","dar","بس / لكن","but"],weil:["weil","pentru că","علشان","because"],dass:["dass","că","إن","that"],wenn:["wenn","dacă / când","لو / لما","if / when"],als:["als","când / decât","لما / من","when / than"],auch:["auch","și / de asemenea","كمان","also"],sehr:["sehr","foarte","جدًا","very"],noch:["noch","încă","لسه / كمان","still / yet"],schon:["schon","deja","خلاص / بالفعل","already"],jetzt:["jetzt","acum","دلوقتي","now"],heute:["heute","astăzi","النهارده","today"],hier:["hier","aici","هنا","here"],
+in:["in","în","في","in"],im:["im (in dem)","în","في الـ","in the"],aus:["aus","din","من","from"],mit:["mit","cu","مع","with"],von:["von","de la","من","from / of"],zu:["zu","la / spre","لـ / إلى","to"],zum:["zum (zu dem)","la","للـ","to the"],zur:["zur (zu der)","la","للـ","to the"],nach:["nach","după / spre","بعد / إلى","after / to"],bei:["bei","la","عند","at"],für:["für","pentru","علشان / لـ","for"],auf:["auf","pe","على","on"],an:["an","la / pe","على / عند","at / on"],am:["am (an dem)","la / în (zi)","في يوم","on the"],um:["um","la (ora)","الساعة","at"],
+was:["was","ce","إيه","what"],wer:["wer","cine","مين","who"],wie:["wie","cum","إزاي","how"],wo:["wo","unde","فين","where"],woher:["woher","de unde","منين","where from"],wann:["wann","când","إمتى","when"],warum:["warum","de ce","ليه","why"],ja:["ja","da","أيوه","yes"],nein:["nein","nu","لا","no"],man:["man","se (impersonal)","الواحد / بيتقال","one"],viel:["viel","mult","كتير","much"],gern:["gern","cu plăcere","بحب","gladly"],gerne:["gerne","cu plăcere","بحب","gladly"]};
+let WDICT=null;
+function wdict(){if(WDICT)return WDICT;WDICT=new Map();const multi=[];
+  for(const lv in D.lessons)for(const l of D.lessons[lv])for(const v of l.vocab||[]){let w=String(v[0]).replace(/\(.*?\)/g,"").split(",")[0].trim();const m=w.match(/^(der|die|das) (\S+)$/);if(m)w=m[2];if(/\s/.test(w)){multi.push([w.split(/\s+/)[0].toLowerCase(),v]);continue}const k=w.toLowerCase();if(!WDICT.has(k))WDICT.set(k,v)}
+  multi.forEach(([k,v])=>{if(!WDICT.has(k)&&k.length>2)WDICT.set(k,v)});
+  // every conjugated form of the verb list points to its infinitive
+  const forms=new Map();Object.keys(VERB_FULL).concat(Object.keys(verbList())).forEach(inf=>{const c=conjugate(inf);if(!c)return;c.pr.concat(c.pt).forEach(f=>{const k=f.split(" ")[0].toLowerCase();if(!forms.has(k))forms.set(k,inf)})});
+  forms.forEach((inf,k)=>{if(!WDICT.has(k)&&WDICT.has(inf))WDICT.set(k,WDICT.get(inf))});
+  return WDICT}
+function lookupWord(raw){const d=wdict(),w=raw.toLowerCase().replace(/[^a-zäöüß-]/g,"");if(!w)return null;if(d.has(w))return d.get(w);if(COMMON_W[w]){const c=COMMON_W[w];return [c[0],c[1],c[2],c[3],""]}
+  const tries=[w.replace(/(en|er|es|em|e|n|s|st|t)$/,""),w+"en",w.replace(/(e|st|t)$/,"")+"en",w.replace(/(ten|te|test|tet)$/,"")+"en",w.replace(/^ge/,"").replace(/(t|et|en)$/,"")+"en",w.replace(/(n|en|e|er|s)$/,"")];
+  for(const t of tries){if(d.has(t))return d.get(t);for(const a of ["e","en","n"])if(d.has(t+a))return d.get(t+a)}return null}
+function wordPop(word){document.querySelectorAll(".wpop").forEach(n=>n.remove());const v=lookupWord(word);const p=document.createElement("div");p.className="wpop";
+  p.innerHTML=`<div class="wpi"><button type="button" class="wpx" aria-label="Schließen">✕</button>${v?`<p class="fw" style="margin:0">${artHtml(v[0])} ${sayBtn(v[0])}</p><p class="ft"${rtl()} style="margin:6px 0 0;font-weight:700">${esc(tr(v))}</p>${v[4]?`<p class="note" style="margin-top:6px">${esc(v[4])}</p>`:""}`:`<p class="fw" style="margin:0">${esc(word)} ${sayBtn(word)}</p><p class="note">Dieses Wort ist nicht im Wortschatz des Lernraums.</p>`}</div>`;
+  document.body.appendChild(p);p.querySelector(".wpx").onclick=()=>p.remove();p.onclick=e=>{if(e.target===p)p.remove()}}
+function wrapWords(root){if(!root)return;root.querySelectorAll(".text-de").forEach(el=>{if(el.dataset.tw)return;el.dataset.tw="1";el.innerHTML=esc(el.textContent).replace(/([A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß-]*)/g,'<span class="tw">$1</span>');el.insertAdjacentHTML("beforebegin",'<p class="note" style="margin:6px 0 0">👆 Tippe auf ein Wort für die Übersetzung.</p>')})}
+document.addEventListener("click",e=>{const w=e.target.closest&&e.target.closest(".tw");if(w){e.preventDefault();wordPop(w.textContent)}});
+
+// ---------- Fehlerheft ----------
+const FH_OK=q=>q&&["mc","gap","order","rw"].includes(q.t);
+function fehlerView(r){
+  const list=(S.wrong||[]).filter(x=>FH_OK(x.q));
+  if(!r.go){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Wiederholen</span><h1>Fehlerheft</h1><p class="muted">Hier landen die Aufgaben, die du in Übungen und Tests falsch hattest. Wenn du sie richtig löst, verschwinden sie.</p>
+    <div class="stats" style="margin-top:12px"><div class="stat"><b>${list.length}</b><span>Fehler zum Üben</span></div></div>
+    <div class="actions"><button class="btn gold" data-p="fehler" data-go="1" ${list.length?"":"disabled"}>${list.length?"Jetzt üben ("+Math.min(10,list.length)+" Aufgaben)":"Keine Fehler – super! 🎉"}</button></div>
+    ${list.length?`<div class="list" style="margin-top:12px">${list.slice().reverse().slice(0,30).map(x=>{const f=findLesson(x.id);return `<div class="row"><span class="t"><b>${esc(x.q.q||(x.q.w||[]).join(" / "))}</b><small>${f?f.lv+" · Lektion "+f.l.n:""}</small></span></div>`}).join("")}</div>`:""}`;return}
+  const pick=shuffle(list).slice(0,10);
+  runQuiz({kind:"Fehlerheft",title:"Fehler wiederholen",qs:pick.map(x=>Object.assign({},x.q,{kind:x.q.t==="rw"?"gap":x.q.t,_ref:x})),noLog:true,done:(s,t,w)=>{
+    const wrongRefs=new Set(w.map(q=>q._ref));S.wrong=(S.wrong||[]).filter(x=>!pick.includes(x)||wrongRefs.has(x));save();
+    app.innerHTML=`<button class="back" data-p="fehler">‹ Zurück</button><h1>Fehlerheft</h1>${resultCard(s,t,0,`<p class="note">${s} Fehler sind jetzt aus deinem Heft verschwunden.</p>`)}<div class="actions"><button class="btn" data-p="fehler">Weiter</button></div>`}})}
+
+// ---------- weekly challenge ----------
+function weekId(){const d=new Date();d.setUTCHours(0,0,0,0);d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));const y=d.getUTCFullYear();const w=Math.ceil(((d-Date.UTC(y,0,1))/864e5+1)/7);return y+"-"+String(w).padStart(2,"0")}
+const _addPtsBase=addPts;let wkT=null;
+addPts=function(n){_addPtsBase(n);const id=weekId();if(!S.wk||S.wk.id!==id)S.wk={id,pts:0};S.wk.pts+=n;save();if(S.wkOn&&myName()&&S.wkLv&&WEB&&!DEMO){clearTimeout(wkT);wkT=setTimeout(()=>api("week",{method:"POST",body:{name:myName(),lv:S.wkLv,pts:S.wk.pts}}),20000)}};
+const shortName=n=>{const p=String(n).trim().split(/\s+/);return p[0]+(p[1]?" "+p[1][0]+".":"")};
+async function weekView(){
+  const id=weekId();if(!S.wk||S.wk.id!==id)S.wk={id,pts:0};
+  if(!S.wkOn||!myName()||!S.wkLv){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Wochen-Challenge</span><h1>Wer übt diese Woche am meisten?</h1><p class="muted">Jede Woche startet eine neue Runde. Deine Punkte aus allen Übungen zählen. Die anderen sehen nur deinen Vornamen und den ersten Buchstaben des Nachnamens.</p>
+    <form id="wkf" class="card" style="margin-top:12px"><label class="kind">Dein Vor- und Nachname</label><input class="gap" id="wkn" maxlength="40" value="${esc(myName())}"><label class="kind" style="display:block;margin-top:10px">Dein Niveau (deine Gruppe)</label><select class="gap" id="wkl">${levelIds().map(x=>`<option${x===(S.wkLv||S.hwLv||S.srsLv)?" selected":""}>${x}</option>`).join("")}</select><button class="btn gold" type="submit" style="width:100%;margin-top:12px">Mitmachen</button></form>`;
+    app.querySelector("#wkf").onsubmit=async e=>{e.preventDefault();const n=app.querySelector("#wkn").value.trim();if(n.length<2)return;setName(n);S.wkLv=app.querySelector("#wkl").value;S.wkOn=true;save();await api("week",{method:"POST",body:{name:n,lv:S.wkLv,pts:S.wk.pts}});weekView()};return}
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Wochen-Challenge · ${S.wkLv}</span><h1>Rangliste dieser Woche</h1><div id="wkl2"><p class="muted">Lädt …</p></div><p class="note">Die Woche endet am Sonntag um Mitternacht. <button class="linkbtn" id="wkoff">Nicht mehr mitmachen</button></p>`;
+  app.querySelector("#wkoff").onclick=()=>{S.wkOn=false;save();go({v:"home"})};
+  const j=await api("week",{method:"POST",body:{name:myName(),lv:S.wkLv,pts:S.wk.pts}});const box=app.querySelector("#wkl2");if(!box)return;
+  if(!j._ok){box.innerHTML=`<p class="muted">Konnte nicht geladen werden.</p>`;return}
+  const me=myName().toLowerCase();
+  box.innerHTML=`<div class="list">${j.list.map((x,i)=>`<div class="row" style="${x.name.toLowerCase()===me?"border-color:var(--gold);border-width:2px":""}"><span class="num ${i<3?"done":""}">${["🥇","🥈","🥉"][i]||i+1}</span><span class="t"><b>${esc(shortName(x.name))}${x.name.toLowerCase()===me?" (du)":""}</b><small>${x.pts} Punkte</small></span></div>`).join("")||`<p class="muted">Noch niemand dabei.</p>`}</div>`}
+
+// ---------- telc plan ----------
+function planView(){
+  const P=S.plan||{};
+  if(!P.date){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">telc-Plan</span><h1>Dein Weg zur Prüfung</h1><p class="muted">Gib dein Prüfungsdatum ein. Der Lernraum macht dir einen Plan Woche für Woche bis zur Prüfung.</p>
+    <form id="plf" class="card" style="margin-top:12px"><label class="kind" for="pld">Datum der Prüfung</label><input class="gap" type="date" id="pld" min="${new Date().toISOString().slice(0,10)}"><label class="kind" style="display:block;margin-top:10px" for="pll">Prüfung</label><select class="gap" id="pll"><option value="B1">telc Deutsch B1</option><option value="B2" selected>telc Deutsch B2</option></select><button class="btn gold" type="submit" style="width:100%;margin-top:12px">Plan erstellen</button></form>`;
+    app.querySelector("#plf").onsubmit=e=>{e.preventDefault();const d=app.querySelector("#pld").value;if(!d)return;S.plan={date:d,lv:app.querySelector("#pll").value,done:{}};save();planView()};return}
+  const exam=new Date(P.date+"T09:00:00"),days=Math.ceil((exam-Date.now())/864e5),weeks=Math.max(1,Math.ceil(days/7));
+  const tests=D.telc.tests.length,B2=P.lv==="B2";
+  const plan=[];for(let w=0;w<weeks;w++){const left=weeks-w;const t=[];
+    t.push("Wortschatz-Trainer an 5 Tagen");
+    t.push(B2?"2 Beschwerden im Beschwerde-Trainer schreiben":"1 Beschwerde im Beschwerde-Trainer schreiben");
+    t.push("3 Rollenspiele "+(B2?"(B1.2 – B2.2)":"(A2.2 – B1.2)")+" sprechen");
+    t.push("Fehlerheft leer machen");
+    if(B2){const ti=tests-left;if(ti>=0&&ti<tests)t.push("Modelltest "+(ti+1)+" im Prüfungsmodus (140 Min.)");else t.push("Leseverstehen und Sprachbausteine aus einem Modelltest üben")}
+    else t.push("2 Lektionen B1.1/B1.2 komplett durcharbeiten");
+    t.push("Präsentation aufnehmen und als Hausaufgabe senden");
+    if(left===1)t.push("Letzte Woche: Redemittel wiederholen und gut schlafen 😊");plan.push(t)}
+  const done=P.done||{};const all=plan.flat().length,ok=Object.keys(done).filter(k=>done[k]).length;
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">telc Deutsch ${P.lv} · ${new Date(P.date).toLocaleDateString("de-DE")}</span><h1>${days>0?"Noch "+days+" Tage":"Viel Erfolg in der Prüfung!"}</h1>
+  <div class="goal" style="margin-top:8px"><i style="width:${Math.round(ok/all*100)}%"></i></div><p class="note">${ok} von ${all} Aufgaben erledigt</p>
+  ${plan.map((t,w)=>`<div class="card" style="margin-top:10px"><h3 style="margin:0 0 6px">Woche ${w+1}${w===0?" (diese Woche)":""}</h3>${t.map((x,k)=>{const id=w+"_"+k;return `<label class="chk"><input type="checkbox" data-pl="${id}" ${done[id]?"checked":""}> ${esc(x)}</label>`}).join("")}</div>`).join("")}
+  <p class="note"><button class="linkbtn" id="plreset">Neues Datum eingeben</button></p>`;
+  app.querySelectorAll("[data-pl]").forEach(c=>c.onchange=()=>{S.plan.done=S.plan.done||{};S.plan.done[c.dataset.pl]=c.checked;if(c.checked)addPts(5);save()});
+  app.querySelector("#plreset").onclick=()=>{S.plan={};save();planView()}}
+
+// ---------- install as app ----------
+let BIP=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();BIP=e});
+function installView(){
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),standalone=window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches;
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Lernraum auf dem Handy</span><h1>Als App installieren</h1>
+  ${standalone?`<div class="feedback ok">Der Lernraum ist schon als App installiert. 🎉</div>`:""}
+  <p class="muted">Dann öffnest du den Lernraum mit einem Tipp – mit dem Deutschparadies-Symbol auf deinem Startbildschirm, wie jede andere App.</p>
+  ${BIP?`<div class="actions"><button class="btn gold" id="bip">📲 Jetzt installieren</button></div>`:""}
+  <div class="card" style="margin-top:12px${ios?"":";order:2"}"><h3 style="margin-top:0">iPhone (Safari)</h3><ol class="wpts"><li>Öffne <b>deutschparadies.ro/app</b> in <b>Safari</b>.</li><li>Tippe unten auf <b>Teilen</b> (Quadrat mit Pfeil nach oben).</li><li>Wähle <b>Zum Home-Bildschirm</b>.</li><li>Tippe oben rechts auf <b>Hinzufügen</b>.</li></ol></div>
+  <div class="card" style="margin-top:10px"><h3 style="margin-top:0">Android (Chrome)</h3><ol class="wpts"><li>Öffne <b>deutschparadies.ro/app</b> in <b>Chrome</b>.</li><li>Tippe oben rechts auf <b>⋮</b> (drei Punkte).</li><li>Wähle <b>App installieren</b> oder <b>Zum Startbildschirm hinzufügen</b>.</li><li>Bestätige mit <b>Installieren</b>.</li></ol></div>`;
+  const b=app.querySelector("#bip");if(b)b.onclick=async()=>{BIP.prompt();try{await BIP.userChoice}catch(e){}BIP=null;installView()}}
+
+// ---------- small Romanian subtitles under every section ----------
+const RO_SUB={"Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
+ "Materialien":"Materiale","Buch":"Carte","Dialoge":"Dialoguri","Texte":"Texte","Videos":"Videoclipuri","Allgemeine Dialoge Grammatik":"Dialoguri generale de gramatică","telc B2 · Prüfungstraining":"Pregătire pentru examenul telc B2",
+ "Wortschatz":"Vocabular","Grammatik":"Gramatică","Übungen":"Exerciții","Lesen":"Citire","Hören":"Ascultare","Sprechen":"Vorbire","Schreiben":"Scriere","Video":"Video",
+ "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul"};
+function roSubs(root){if(!root)return;root.querySelectorAll(".section-h h2,.tool b,.mat b,.mod b,.vbox .vt b,.row .t b,.stat span,.quizcall b,.tabs button").forEach(el=>{if(el.dataset.ro)return;const t=el.textContent.trim();let ro=RO_SUB[t];if(!ro&&/^Quiz vor der Stunde/.test(t))ro="Quiz înainte de oră";el.dataset.ro="1";if(!ro)return;const s=document.createElement("small");s.className="ro-sub";s.lang="ro";s.textContent=ro;el.appendChild(s)})}
+new MutationObserver(()=>{roSubs(app);wrapWords(app)}).observe(app,{childList:true,subtree:true});
+
+const PLUS_VIEWS={bes:besView,fehler:fehlerView,week:weekView,plan:planView,install:installView,srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-p]");if(!b)return;e.preventDefault();e.stopPropagation();
+  const r={v:b.dataset.p};["lv","id","tab","q","go"].forEach(k=>{if(b.dataset[k]!==undefined)r[k]=b.dataset[k]});if(b.dataset.f){r.f=b.dataset.f;r.t=b.dataset.t;r.lv=b.dataset.lv}go(r)},true);
+// ===================== /Lernraum Plus =====================
+
+/* PLUS:END */
 try{history.replaceState(route,"")}catch(e){}
 loadAccess().then(render);loadVideos();
 })();
