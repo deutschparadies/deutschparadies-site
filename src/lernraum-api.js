@@ -181,7 +181,7 @@ export async function lernApi(request, env, path, deps) {
     if (p === "t/hw" && M === "GET") {
       const keys = await listAll(env, "hw:", 300);
       const items = [];
-      for (const k of keys) { const it = await env.APPKV.get(k, "json"); if (it) { const { img, tok, ...rest } = it; rest.hasImg = !!img; items.push(rest); } }
+      for (const k of keys) { const it = await env.APPKV.get(k, "json"); if (it) { const { img, audio, tok, ...rest } = it; rest.hasImg = !!img; rest.hasAudio = !!audio; items.push(rest); } }
       items.sort((a, b) => b.ts - a.ts);
       return json({ items });
     }
@@ -207,7 +207,7 @@ export async function lernApi(request, env, path, deps) {
       const id = new URL(request.url).searchParams.get("id") || "";
       if (!HWID.test(id)) return json({ error: "bad" }, 400);
       const it = await env.APPKV.get("hw:" + id, "json");
-      return json({ img: (it && it.img) || null });
+      return json({ img: (it && it.img) || null, audio: (it && it.audio) || null });
     }
     if (p === "t/results" && M === "GET") {
       return json({ results: (await env.APPKV.get("res:all", "json")) || [] });
@@ -259,6 +259,23 @@ export async function lernApi(request, env, path, deps) {
     });
   }
 
+  if (p === "week") {
+    const wk = weekKey();
+    const all = (await env.APPKV.get("week:" + wk, "json")) || {};
+    if (M === "POST") {
+      const b = (await body(request)) || {};
+      const name = str(b.name, 40), lv = LEVELS.includes(b.lv) ? b.lv : "";
+      const pts = Math.max(0, Math.min(100000, Math.round(+b.pts || 0)));
+      if (!name || !lv) return json({ error: "bad" }, 400);
+      const key = lv + "|" + name.toLowerCase();
+      const prev = all[key];
+      all[key] = { name, lv, pts: Math.max(pts, prev ? prev.pts : 0), ts: Date.now() };
+      await env.APPKV.put("week:" + wk, JSON.stringify(all), { expirationTtl: 86400 * 21 });
+    }
+    const lv = new URL(request.url).searchParams.get("lv") || "";
+    const list = Object.values(all).filter((x) => !lv || x.lv === lv).sort((a, b) => b.pts - a.pts).slice(0, 20);
+    return json({ week: wk, list });
+  }
   if (p === "quiz" && M === "GET") {
     return json({ quiz: (await getSettings(env)).quiz || {} });
   }
@@ -270,7 +287,7 @@ export async function lernApi(request, env, path, deps) {
       const [id, tok] = pair.split(".");
       if (!HWID.test(id || "") || !/^[a-f0-9]{16}$/.test(tok || "")) continue;
       const it = await env.APPKV.get("hw:" + id, "json");
-      if (it && it.tok === tok) { const { img, tok: t, ...rest } = it; rest.hasImg = !!img; items.push(rest); }
+      if (it && it.tok === tok) { const { img, audio, tok: t, ...rest } = it; rest.hasImg = !!img; rest.hasAudio = !!audio; items.push(rest); }
     }
     items.sort((a, b) => b.ts - a.ts);
     return json({ items });
@@ -282,9 +299,11 @@ export async function lernApi(request, env, path, deps) {
     const name = str(b.name, 60), title = str(b.title, 120), text = str(b.text, 8000);
     const lv = LEVELS.includes(b.lv) ? b.lv : "";
     const img = typeof b.img === "string" && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(b.img) && b.img.length < 1400000 ? b.img : null;
-    if (!name || !title || (!text && !img)) return json({ error: "empty" }, 400);
+    const audio = typeof b.audio === "string" && /^data:audio\/(webm|ogg|mp4|mpeg|aac|x-m4a)(;codecs=[\w.]+)?;base64,[A-Za-z0-9+/=]+$/.test(b.audio) && b.audio.length < 1400000 ? b.audio : null;
+    if (img && audio) return json({ error: "big" }, 413);
+    if (!name || !title || (!text && !img && !audio)) return json({ error: "empty" }, 400);
     const id = Date.now().toString(36) + "-" + rand(4), tok = rand(8);
-    await env.APPKV.put("hw:" + id, JSON.stringify({ id, tok, name, lv, title, text, img, ts: Date.now(), status: "neu", fb: null }));
+    await env.APPKV.put("hw:" + id, JSON.stringify({ id, tok, name, lv, title, text, img, audio, ts: Date.now(), status: "neu", fb: null }));
     return json({ ok: true, id, tok });
   }
   if (p === "hwimg" && M === "GET") {
@@ -292,7 +311,7 @@ export async function lernApi(request, env, path, deps) {
     const id = u.searchParams.get("id") || "", tok = u.searchParams.get("tok") || "";
     if (!HWID.test(id)) return json({ error: "bad" }, 400);
     const it = await env.APPKV.get("hw:" + id, "json");
-    return json({ img: it && it.tok === tok ? it.img || null : null });
+    return json(it && it.tok === tok ? { img: it.img || null, audio: it.audio || null } : { img: null, audio: null });
   }
   if (p === "result" && M === "POST") {
     const b = (await body(request)) || {};
@@ -308,6 +327,11 @@ export async function lernApi(request, env, path, deps) {
   return json({ error: "notfound" }, 404);
 }
 
+function weekKey() {
+  const d = new Date(); d.setUTCHours(0, 0, 0, 0); d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const y = d.getUTCFullYear(); const w = Math.ceil(((d - Date.UTC(y, 0, 1)) / 864e5 + 1) / 7);
+  return y + "-" + String(w).padStart(2, "0");
+}
 async function listAll(env, prefix, max) {
   const keys = [];
   let cursor;

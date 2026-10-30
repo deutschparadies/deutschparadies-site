@@ -230,6 +230,12 @@ button.mat{font:inherit;text-align:left;cursor:pointer}
 .ro-sub{display:block;font-family:var(--body);font-size:.72rem;font-weight:400;font-style:italic;letter-spacing:0;text-transform:none;color:var(--muted);line-height:1.3;margin-top:1px}
 .mat b::after{content:none!important}
 .tabs button .ro-sub{font-size:.66rem}
+.tw{cursor:pointer;border-radius:4px}.tw:hover,.tw:active{background:var(--ok-bg)}
+.wpop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.25);display:flex;align-items:flex-end}
+.wpi{position:relative;width:100%;background:var(--surface);color:var(--ink);border-radius:18px 18px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -8px 30px rgba(0,0,0,.2)}
+.wpi .fw{font-family:var(--display);font-size:1.5rem}.wpx{position:absolute;top:10px;right:max(14px,env(safe-area-inset-right,0px));border:0;background:none;font-size:1.2rem;color:var(--muted);cursor:pointer}
+.bchk{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:4px;font-size:.92rem}.bchk li{color:var(--muted)}.bchk li.ok{color:var(--ink)}
+.chips.rm{margin-top:8px}.chips.rm .chip{padding:6px 10px}
 /* PLUSCSS:END */
 </style>
 
@@ -5353,14 +5359,19 @@ function plusHome(){
    ${t("gram","🔎","Grammatik & Verben","Suchen · Konjugieren · Artikel")}
    ${t("hw","📮","Hausaufgaben","Abgeben · Korrektur lesen")}
    ${t("final","🏅","Abschlusstest","Test + Zertifikat pro Niveau")}
-  </div>`}
+   ${t("bes","✉️","Beschwerde-Trainer","telc-Schreiben Schritt für Schritt")}
+   ${t("fehler","📕","Fehlerheft",((S.wrong||[]).filter(x=>FH_OK(x.q)).length||"Keine")+" Fehler zum Üben")}
+   ${t("week","🏆","Wochen-Challenge",S.wkOn&&S.wk&&S.wk.id===weekId()?S.wk.pts+" Punkte diese Woche":"Wer übt am meisten?")}
+   ${t("plan","📅","telc-Plan",S.plan&&S.plan.date?"Noch "+Math.max(0,Math.ceil((new Date(S.plan.date+"T09:00:00")-Date.now())/864e5))+" Tage":"Plan bis zur Prüfung")}
+  </div>
+  <div class="actions"><button class="btn ghost" data-p="install">📲 Lernraum als App installieren</button></div>`}
 async function loadQuizCalls(){if(!WEB||DEMO)return;const j=await api("quiz");const box=document.getElementById("quizcalls");if(!box||!j._ok)return;const done=S.quizDone||{};
   box.innerHTML=Object.entries(j.quiz||{}).map(([lv,q])=>{const f=findLesson(q.lesson);if(!f)return "";const key=q.lesson+":"+q.at;return `<button class="quizcall" data-p="quiz" data-id="${q.lesson}" data-q="${key}"><span class="ti">${done[key]?"✅":"📝"}</span><span><b>Quiz vor der Stunde · ${lv}${done[key]?" (erledigt)":""}</b><small>Lektion ${f.l.n}: ${esc(f.l.title)} · 10 Fragen</small></span></button>`}).join("")}
 
 // ---------- generic question runner (quiz + final test) ----------
 function vocabPool(lessons){const out=[];lessons.forEach(l=>(l.vocab||[]).forEach(v=>out.push(v)));return out}
 function vocQ(v,pool){const others=shuffle(pool.filter(x=>x!==v&&tr(x)!==tr(v))).slice(0,3).map(tr);const o=shuffle([tr(v)].concat(others));return {kind:"voc",q:v[0],o,a:o.indexOf(tr(v))}}
-function exQs(lessons,n){const ex=[];lessons.forEach(l=>(l.ex||[]).forEach(e=>{if(e.t==="mc"||e.t==="gap"||e.t==="order")ex.push(e)}));return shuffle(ex).slice(0,n).map(e=>Object.assign({kind:e.t},e))}
+function exQs(lessons,n){const ex=[];lessons.forEach(l=>(l.ex||[]).forEach(e=>{if(e.t==="mc"||e.t==="gap"||e.t==="order")ex.push([e,l.id])}));return shuffle(ex).slice(0,n).map(([e,id])=>Object.assign({kind:e.t,_lid:id,_orig:e},e))}
 function runQuiz(opt){
   const qs=opt.qs;let i=0,score=0;const wrong=[];
   function next(){if(i>=qs.length)return opt.done(score,qs.length,wrong);draw()}
@@ -5374,7 +5385,7 @@ function runQuiz(opt){
     <div class="progress" style="margin-top:8px"><div class="goal"><i style="width:${i/qs.length*100}%"></i></div><span>${i+1}/${qs.length}</span></div>
     <div class="card">${body}<div class="feedback" id="qfb" hidden></div></div><div class="actions" id="qnext" hidden><button class="btn" id="qn">${i<qs.length-1?"Weiter":"Ergebnis"}</button></div>`;
     const fb=app.querySelector("#qfb");let answered=false;
-    const finish=(ok,sol)=>{if(answered)return;answered=true;if(ok){score++;addPts(5)}else wrong.push(q);fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.innerHTML=ok?"Richtig!":`Leider falsch.<small>Richtig: ${esc(sol)}</small>`;app.querySelector("#qnext").hidden=false;app.querySelector("#qn").onclick=()=>{i++;next()}};
+    const finish=(ok,sol)=>{if(answered)return;answered=true;if(ok){score++;addPts(5)}else{wrong.push(q);if(!opt.noLog&&q._lid&&q._orig){S.wrong=(S.wrong||[]).concat([{id:q._lid,q:q._orig}]).slice(-50);save()}}fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.innerHTML=ok?"Richtig!":`Leider falsch.<small>Richtig: ${esc(sol)}</small>`;app.querySelector("#qnext").hidden=false;app.querySelector("#qn").onclick=()=>{i++;next()}};
     if(q.kind==="mc"||q.kind==="voc")app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{if(answered)return;const k=+b.dataset.k;app.querySelectorAll("[data-k]").forEach(x=>{if(+x.dataset.k===q.a)x.classList.add("ok")});if(k!==q.a)b.classList.add("bad");finish(k===q.a,q.o[q.a])});
     if(q.kind==="gap"){const inp=app.querySelector("#qin");const ans=[].concat(q.a);app.querySelector("#qok").onclick=()=>finish(ans.some(a=>norm(a)===norm(inp.value)),ans[0]);inp.onkeydown=e=>{if(e.key==="Enter")app.querySelector("#qok").click()};setTimeout(()=>inp.focus(),30)}
     if(q.kind==="order"){const built=[];const bEl=app.querySelector("#built");const upd=()=>{bEl.textContent=built.map(k=>q._w[k]).join(" ");app.querySelectorAll(".wbtn").forEach(b=>b.disabled=built.includes(+b.dataset.w))};
@@ -5589,24 +5600,25 @@ function hwView(){
    <label class="kind" style="display:block;margin-top:12px">Aufgabe</label><input class="gap" id="ht" list="hwdl" maxlength="120" placeholder="z. B. Beschwerde an die Hausverwaltung"><datalist id="hwdl">${tasks.map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
    <label class="kind" style="display:block;margin-top:12px">Dein Text</label><textarea class="wta" id="htx" rows="9" placeholder="Schreib deinen Text hier …"></textarea><div class="wcount"><span id="hwc">0</span> Wörter</div>
    <label class="kind" style="display:block;margin-top:12px">Oder ein Foto (Heft / Blatt)</label><input type="file" id="himg" accept="image/*" class="gap" style="font-size:.95rem"><img id="hprev" alt="" hidden style="width:100%;margin-top:8px;border-radius:10px">
+   <label class="kind" style="display:block;margin-top:12px">Oder eine Sprachaufnahme (Sprechen, max. 3 Min.)</label><div id="hrec"></div>
    <button class="btn" type="submit" style="width:100%;margin-top:14px">Abgeben</button><div class="feedback" id="hfb" hidden></div></form>
   <div class="section-h"><h2>Meine Abgaben</h2></div><div id="hlist"><p class="muted">Lädt …</p></div>`;
   app.querySelector("#hlv").onchange=e=>{S.hwLv=e.target.value;save();hwView()};
-  let img=null;const fb=app.querySelector("#hfb");const msg=(t,ok)=>{fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.textContent=t};
+  let img=null,audio=null;const fb=app.querySelector("#hfb");recorderUI(app.querySelector("#hrec"),a=>{audio=a});const msg=(t,ok)=>{fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.textContent=t};
   const ta=app.querySelector("#htx");const key="dp_hw_draft";try{ta.value=localStorage.getItem(key)||""}catch(e){}
   const cnt=()=>app.querySelector("#hwc").textContent=(ta.value.trim().match(/\S+/g)||[]).length;cnt();ta.oninput=()=>{cnt();try{localStorage.setItem(key,ta.value)}catch(e){}};
   app.querySelector("#himg").onchange=async e=>{const f=e.target.files[0];if(!f)return;msg("Foto wird vorbereitet …",true);try{img=await compressImage(f);const p=app.querySelector("#hprev");p.src=img;p.hidden=false;fb.hidden=true}catch(err){img=null;msg("Das Foto konnte nicht gelesen werden.")}};
   app.querySelector("#hwf").onsubmit=async e=>{e.preventDefault();const name=app.querySelector("#hn").value.trim(),title=app.querySelector("#ht").value.trim(),text=ta.value.trim(),hlv=app.querySelector("#hlv").value;
-    if(name.length<2)return msg("Bitte schreib deinen Namen.");if(!title)return msg("Bitte schreib, welche Aufgabe das ist.");if(!text&&!img)return msg("Bitte schreib einen Text oder füge ein Foto hinzu.");
-    setName(name);msg("Wird gesendet …",true);const j=await api("hw",{method:"POST",body:{name,lv:hlv,title,text,img}});
-    if(j._ok){hwAdd(j.id+"."+j.tok);try{localStorage.removeItem(key)}catch(e){}addPts(20);msg("Abgegeben! Saleh korrigiert deine Aufgabe bald.",true);ta.value="";cnt();img=null;app.querySelector("#hprev").hidden=true;app.querySelector("#ht").value="";app.querySelector("#himg").value="";loadList()}
+    if(name.length<2)return msg("Bitte schreib deinen Namen.");if(!title)return msg("Bitte schreib, welche Aufgabe das ist.");if(!text&&!img&&!audio)return msg("Bitte schreib einen Text, füge ein Foto hinzu oder nimm etwas auf.");if(img&&audio)return msg("Bitte schick Foto und Aufnahme getrennt (zwei Abgaben).");
+    setName(name);msg("Wird gesendet …",true);const j=await api("hw",{method:"POST",body:{name,lv:hlv,title,text,img,audio}});
+    if(j._ok){hwAdd(j.id+"."+j.tok);try{localStorage.removeItem(key)}catch(e){}addPts(20);msg("Abgegeben! Saleh korrigiert deine Aufgabe bald.",true);ta.value="";cnt();img=null;audio=null;recorderUI(app.querySelector("#hrec"),a=>{audio=a});app.querySelector("#hprev").hidden=true;app.querySelector("#ht").value="";app.querySelector("#himg").value="";loadList()}
     else msg(j._status===401?"Bitte öffne den Lernraum neu und gib das Passwort ein.":j.error==="big"?"Das Foto ist zu groß.":j._status===0?"Keine Verbindung. Dein Text ist gespeichert – versuch es später noch einmal.":"Senden fehlgeschlagen. Bitte noch einmal versuchen.")};
   async function loadList(){const box=app.querySelector("#hlist");const mine=hwMine();if(!mine.length){box.innerHTML=`<p class="muted">Noch keine Abgaben auf diesem Handy.</p>`;return}
     const j=await api("hw?mine="+encodeURIComponent(mine.join(",")));if(!box.isConnected)return;if(!j._ok){box.innerHTML=`<p class="muted">Konnte nicht geladen werden.</p>`;return}
     const toks={};mine.forEach(x=>{const [id,t]=x.split(".");toks[id]=t});
     box.innerHTML=j.items.length?j.items.map(it=>`<div class="card hwi" style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(it.title)}</b><span class="st ${it.status==="korrigiert"?"ok":""}">${it.status==="korrigiert"?"✓ Korrigiert":"Eingereicht"}</span></div><small class="muted">${fmtDate(it.ts)} · ${esc(it.name)}</small>
-      ${it.text?`<details style="margin-top:6px"><summary>Mein Text</summary><div class="ctext">${esc(it.text)}</div></details>`:""}${it.hasImg?`<button class="btn ghost" style="margin-top:8px;padding:8px" data-hwimg="${it.id}">Foto ansehen</button><div class="imgbox"></div>`:""}${fbHtml(it.fb)}</div>`).join(""):`<p class="muted">Noch keine Abgaben.</p>`;
-    box.querySelectorAll("[data-hwimg]").forEach(b=>b.onclick=async()=>{b.disabled=true;const id=b.dataset.hwimg;const r=await api("hwimg?id="+encodeURIComponent(id)+"&tok="+encodeURIComponent(toks[id]||""));if(r.img)b.nextElementSibling.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:8px;border-radius:10px">`;b.remove()})}
+      ${it.text?`<details style="margin-top:6px"><summary>Mein Text</summary><div class="ctext">${esc(it.text)}</div></details>`:""}${it.hasImg||it.hasAudio?`<button class="btn ghost" style="margin-top:8px;padding:8px" data-hwimg="${it.id}">${it.hasAudio?"Aufnahme anhören":"Foto ansehen"}</button><div class="imgbox"></div>`:""}${fbHtml(it.fb)}</div>`).join(""):`<p class="muted">Noch keine Abgaben.</p>`;
+    box.querySelectorAll("[data-hwimg]").forEach(b=>b.onclick=async()=>{b.disabled=true;const id=b.dataset.hwimg;const r=await api("hwimg?id="+encodeURIComponent(id)+"&tok="+encodeURIComponent(toks[id]||""));if(r.img)b.nextElementSibling.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:8px;border-radius:10px">`;if(r.audio)b.nextElementSibling.innerHTML=`<audio controls src="${r.audio}" style="width:100%;margin-top:8px"></audio>`;b.remove()})}
   loadList()}
 
 // ---------- protected Drive folders (Buch / Dialoge / Texte) ----------
@@ -5674,7 +5686,7 @@ async function teacherConsole(box){
   async function show(){body.innerHTML=`<p class="muted">Lädt …</p>`;
     if(tab==="h"){const j=await api("t/hw");const items=j.items||[];
       body.innerHTML=`<div class="chips"><button class="chip" style="width:auto" data-hf="neu" aria-pressed="true">Neu (${items.filter(x=>x.status!=="korrigiert").length})</button><button class="chip" style="width:auto" data-hf="all">Alle (${items.length})</button></div><div id="hwl" style="margin-top:10px"></div>`;
-      const list=f=>{const arr=items.filter(x=>f==="all"||x.status!=="korrigiert");body.querySelector("#hwl").innerHTML=arr.length?arr.map(it=>`<button class="row" data-hw="${it.id}" style="margin-top:8px"><span class="num">${it.status==="korrigiert"?"✓":"•"}</span><span class="t"><b>${esc(it.name)} · ${esc(it.title)}</b><small>${it.lv?it.lv+" · ":""}${fmtDate(it.ts)}${it.hasImg?" · 📷":""}</small></span></button>`).join(""):`<p class="muted">Nichts zu korrigieren.</p>`;
+      const list=f=>{const arr=items.filter(x=>f==="all"||x.status!=="korrigiert");body.querySelector("#hwl").innerHTML=arr.length?arr.map(it=>`<button class="row" data-hw="${it.id}" style="margin-top:8px"><span class="num">${it.status==="korrigiert"?"✓":"•"}</span><span class="t"><b>${esc(it.name)} · ${esc(it.title)}</b><small>${it.lv?it.lv+" · ":""}${fmtDate(it.ts)}${it.hasImg?" · 📷":""}${it.hasAudio?" · 🎙":""}</small></span></button>`).join(""):`<p class="muted">Nichts zu korrigieren.</p>`;
         body.querySelectorAll("[data-hw]").forEach(b=>b.onclick=()=>openHw(items.find(x=>x.id===b.dataset.hw)))};
       body.querySelectorAll("[data-hf]").forEach(b=>b.onclick=()=>{body.querySelectorAll("[data-hf]").forEach(x=>x.setAttribute("aria-pressed",x===b));list(b.dataset.hf)});list("neu")}
     if(tab==="r"){const j=await api("t/results");const R=(j.results||[]).slice().reverse();const TY={quiz:"Quiz",final:"Abschlusstest",telc:"telc",rp:"Rollenspiel"};
@@ -5707,22 +5719,176 @@ async function teacherConsole(box){
      <button class="btn" type="submit" style="width:100%;margin-top:12px">Korrektur speichern</button><div id="hcr"></div>
      <div class="actions"><button class="btn ghost" type="button" id="hdel" style="padding:8px">Abgabe löschen</button></div></form>`;
     body.querySelector("#hwback").onclick=()=>show();
-    if(it.hasImg)api("t/hwimg?id="+encodeURIComponent(it.id)).then(r=>{const b=body.querySelector("#hwimg");if(b&&r.img)b.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:10px;border-radius:10px">`});
+    if(it.hasImg||it.hasAudio)api("t/hwimg?id="+encodeURIComponent(it.id)).then(r=>{const b=body.querySelector("#hwimg");if(!b)return;if(r.img)b.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:10px;border-radius:10px">`;if(r.audio)b.innerHTML=`<audio controls src="${r.audio}" style="width:100%;margin-top:10px"></audio>`});
     const del=body.querySelector("#hdel");del.onclick=async()=>{if(!del.dataset.sure){del.dataset.sure="1";del.textContent="Wirklich löschen?";return}await api("t/hw?id="+encodeURIComponent(it.id),{method:"DELETE"});show()};
     body.querySelector("#hcf").onsubmit=async e=>{e.preventDefault();const crit={};Object.keys(CRIT).forEach(k=>{const r=body.querySelector(`input[name=c${k}]:checked`);if(r)crit[k]=r.value});
       const j=await api("t/hw",{method:"POST",body:{id:it.id,fb:{text:body.querySelector("#hct").value,note:body.querySelector("#hcn").value,crit}}});
       body.querySelector("#hcr").innerHTML=j._ok?`<div class="feedback ok">Gespeichert! ${esc(it.name)} sieht die Korrektur jetzt.</div>`:`<div class="feedback bad">Speichern fehlgeschlagen.</div>`;if(j._ok){it.status="korrigiert"}}}
   show()}
 
+// ---------- Beschwerde-Trainer (telc Schreiben, step by step) ----------
+const BES_SIT=[
+ {id:"aufzug",t:"Aufzug seit Wochen kaputt",to:"Hausverwaltung",sit:"Seit drei Wochen funktioniert der Aufzug in Ihrem Mietshaus nicht. Sie wohnen im fünften Stock und haben schon zweimal angerufen.",pts:["Grund Ihres Schreibens","Folgen für Sie und die anderen Mieter","Ihre bisherigen Versuche","Was Sie jetzt erwarten"]},
+ {id:"paket",t:"Bestellung beschädigt geliefert",to:"Online-Shop",sit:"Sie haben online eine Kaffeemaschine bestellt. Sie kam beschädigt und zu spät an.",pts:["Was Sie bestellt haben","Welche Probleme es gab","Warum das für Sie ärgerlich ist","Was Sie jetzt erwarten"]},
+ {id:"internet",t:"Internet funktioniert nicht",to:"Internetanbieter",sit:"Seit einer Woche haben Sie kein Internet. Sie arbeiten im Homeoffice. Der Techniker ist nicht gekommen.",pts:["Seit wann das Problem besteht","Folgen für Ihre Arbeit","Ihre Kontakte mit dem Kundenservice","Ihre Forderung"]},
+ {id:"reise",t:"Hotel entsprach nicht dem Angebot",to:"Reisebüro",sit:"Ihr Hotel im Urlaub war schmutzig, laut und hatte keinen Meerblick, obwohl das im Katalog stand.",pts:["Welche Reise Sie gebucht haben","Was nicht in Ordnung war","Wie die Reiseleitung reagiert hat","Was Sie erwarten"]},
+ {id:"kurs",t:"Sprachkurs oft ausgefallen",to:"Sprachschule",sit:"Ihr Abendkurs ist im letzten Monat dreimal ohne Information ausgefallen. Sie haben den Kurs schon bezahlt.",pts:["Welchen Kurs Sie besuchen","Was passiert ist","Warum das für Sie ein Problem ist","Was Sie von der Schule erwarten"]},
+ {id:"handy",t:"Reparatur dauert zu lange",to:"Elektrogeschäft",sit:"Sie haben Ihr Handy vor fünf Wochen zur Reparatur gebracht. Man hat Ihnen zwei Wochen versprochen.",pts:["Wann und was Sie abgegeben haben","Was man Ihnen versprochen hat","Folgen für Sie","Was Sie jetzt verlangen"]}];
+const BES_RM={
+ betreff:["Beschwerde über …","Reklamation: …","Mängel bei …"],
+ anrede:["Sehr geehrte Damen und Herren,","Sehr geehrte Frau …,","Sehr geehrter Herr …,"],
+ ein:["leider muss ich mich heute über … beschweren.","ich wende mich an Sie, weil …","hiermit möchte ich mich über … beschweren."],
+ pt:["Seit … funktioniert … nicht mehr.","Das ist besonders ärgerlich, weil …","Ich habe bereits am … angerufen, aber …","Leider hat sich bis heute nichts geändert.","Dadurch musste ich …","In Ihrem Angebot stand, dass …, aber …"],
+ ford:["Ich erwarte, dass Sie das Problem bis zum … beheben.","Ich bitte Sie daher, …","Ich möchte einen Teil des Preises zurückerstattet bekommen.","Sollte sich bis … nichts ändern, werde ich …"],
+ schluss:["Ich hoffe auf eine schnelle Lösung.","Für eine baldige Antwort wäre ich Ihnen dankbar.","Mit freundlichen Grüßen"]};
+function besView(r){
+  if(!r.id){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Schreiben · telc</span><h1>Beschwerde-Trainer</h1><p class="muted">Schreib eine Beschwerde Schritt für Schritt. Zu jedem Teil gibt es Redemittel. Am Ende prüft der Lernraum, ob alles drin ist.</p>
+    <div class="list" style="margin-top:12px">${BES_SIT.map(x=>`<button class="row" data-p="bes" data-id="${x.id}"><span class="num">✉️</span><span class="t"><b>${esc(x.t)}</b><small>an: ${esc(x.to)}</small></span></button>`).join("")}</div>`;return}
+  const sc=BES_SIT.find(x=>x.id===r.id);if(!sc)return go({v:"bes"});
+  const key="dp_bes_"+sc.id;let d={};try{d=JSON.parse(localStorage.getItem(key))||{}}catch(e){}
+  const F=[["betreff","Betreff",1],["anrede","Anrede",1],["ein","Einleitung: Warum schreiben Sie?",2]].concat(sc.pts.map((p,k)=>["p"+k,(k+1)+". "+p,3])).concat([["ford","Ihre Forderung",2],["schluss","Schluss und Gruß",2],["name","Ihr Name",1]]);
+  app.innerHTML=`<button class="back" data-p="bes">‹ Zurück</button><span class="kind" style="display:block">Beschwerde an: ${esc(sc.to)}</span><h1>${esc(sc.t)}</h1>
+  <div class="expl"><div class="lab">Situation</div>${esc(sc.sit)}<ol class="wpts" style="margin:8px 0 0">${sc.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ol></div>
+  ${F.map(f=>{const rm=f[0]==="betreff"?BES_RM.betreff:f[0]==="anrede"?BES_RM.anrede:f[0]==="ein"?BES_RM.ein:f[0]==="ford"?BES_RM.ford:f[0]==="schluss"?BES_RM.schluss:/^p\d/.test(f[0])?BES_RM.pt:[];
+    return `<div class="card bpart" style="margin-top:10px"><label class="kind" for="b_${f[0]}">${esc(f[1])}</label>${f[2]===1?`<input class="gap" id="b_${f[0]}" data-b="${f[0]}" value="${esc(d[f[0]]||(f[0]==="name"?myName():""))}">`:`<textarea class="wta" id="b_${f[0]}" data-b="${f[0]}" rows="${f[2]}">${esc(d[f[0]]||"")}</textarea>`}
+    ${rm.length?`<div class="chips rm">${rm.map(x=>`<button type="button" class="chip" style="width:auto;font-size:.85rem" data-ins="${esc(x)}" data-to="b_${f[0]}">${esc(x)}</button>`).join("")}</div>`:""}</div>`}).join("")}
+  <div class="card" style="margin-top:12px"><span class="kind">Prüfung</span><ul class="bchk" id="bchk"></ul><div class="wcount"><span id="bwc">0</span> Wörter (Ziel: ca. 150)</div></div>
+  <div class="card" style="margin-top:10px"><span class="kind">Dein Brief</span><div class="ctext" id="bprev"></div></div>
+  <div class="actions"><button class="btn gold" id="bsend">Als Hausaufgabe senden</button></div><div class="feedback" id="bfb" hidden></div>`;
+  const val=k=>{const e=app.querySelector("#b_"+k);return e?e.value.trim():""};
+  const letter=()=>{const parts=[val("betreff")?"Betreff: "+val("betreff").replace(/^Betreff:\s*/i,""):"","",val("anrede"),"",[val("ein")].concat(sc.pts.map((p,k)=>val("p"+k))).filter(Boolean).join(" "),"",val("ford"),"",val("schluss"),val("name")];return parts.join("\n").replace(/\n{3,}/g,"\n\n").trim()};
+  const check=()=>{const L=letter(),body=[val("ein")].concat(sc.pts.map((p,k)=>val("p"+k)),[val("ford"),val("schluss")]).join(" ");const wc=(body.match(/\S+/g)||[]).length;
+    const c=[["Betreff",!!val("betreff")],["Formelle Anrede (Sehr geehrte …)",/^sehr geehrte/i.test(val("anrede"))],["Einleitung mit Grund",(val("ein").match(/\S+/g)||[]).length>=5]]
+      .concat(sc.pts.map((p,k)=>["Punkt "+(k+1)+": "+p,(val("p"+k).match(/\S+/g)||[]).length>=8]))
+      .concat([["Klare Forderung (erwarte / bitte Sie / …)",/erwarte|bitte sie|fordere|verlange|zurückerstatt|erstatt/i.test(val("ford"))],["Gruß: Mit freundlichen Grüßen",/mit freundlichen grüßen/i.test(val("schluss"))],["Name am Ende",!!val("name")],["Immer „Sie“, nie „du“",!/\b(du|dich|dir|dein\w*)\b/i.test(L)],["Länge ca. 150 Wörter",wc>=120]]);
+    app.querySelector("#bchk").innerHTML=c.map(x=>`<li class="${x[1]?"ok":""}">${x[1]?"✅":"⬜"} ${esc(x[0])}</li>`).join("");app.querySelector("#bwc").textContent=wc;app.querySelector("#bprev").textContent=L;return c.every(x=>x[1])};
+  const saveD=()=>{const o={};F.forEach(f=>o[f[0]]=val(f[0]));try{localStorage.setItem(key,JSON.stringify(o))}catch(e){}};
+  app.querySelectorAll("[data-b]").forEach(e=>e.oninput=()=>{saveD();check()});
+  app.querySelectorAll("[data-ins]").forEach(b=>b.onclick=()=>{const t=app.querySelector("#"+b.dataset.to);const ins=b.dataset.ins;if(t.tagName==="INPUT"&&!/^p\d|ein|ford|schluss/.test(b.dataset.to.slice(2)))t.value=ins;else{const s=t.selectionStart!=null&&document.activeElement===t?t.selectionStart:t.value.length;t.value=t.value.slice(0,s)+(s&&!/\s$/.test(t.value.slice(0,s))?" ":"")+ins+t.value.slice(s)}t.focus();const i=t.value.indexOf("…");if(i>=0&&t.setSelectionRange)t.setSelectionRange(i,i+1);saveD();check()});
+  check();
+  app.querySelector("#bsend").onclick=async()=>{const fb=app.querySelector("#bfb");const ok=check();const name=val("name")||myName();
+    if(!name){fb.hidden=false;fb.className="feedback bad";fb.textContent="Bitte schreib deinen Namen ins letzte Feld.";return}
+    if(!ok&&!app.querySelector("#bsend").dataset.sure){app.querySelector("#bsend").dataset.sure="1";fb.hidden=false;fb.className="feedback bad";fb.textContent="Noch nicht alle Punkte sind erfüllt. Trotzdem senden? Dann tippe noch einmal auf den Button.";return}
+    setName(name);fb.hidden=false;fb.className="feedback";fb.textContent="Wird gesendet …";
+    const j=await api("hw",{method:"POST",body:{name,lv:S.hwLv||S.srsLv||"B1.1",title:"Beschwerde: "+sc.t,text:letter()}});
+    if(j._ok){hwAdd(j.id+"."+j.tok);addPts(30);fb.className="feedback ok";fb.textContent="Gesendet! Du findest die Korrektur unter Hausaufgaben.";try{localStorage.removeItem(key)}catch(e){}}
+    else{fb.className="feedback bad";fb.textContent=j._status===401?"Bitte öffne den Lernraum neu und gib das Passwort ein.":"Senden fehlgeschlagen. Dein Text ist gespeichert."}}}
+
+// ---------- voice recording for homework ----------
+function recorderUI(box,onDone){
+  if(!window.MediaRecorder||!navigator.mediaDevices){box.innerHTML=`<p class="note">Aufnehmen geht in diesem Browser nicht. Öffne den Lernraum in Chrome oder Safari.</p>`;return}
+  let rec=null,chunks=[],t0=0,tm=null,stream=null;
+  box.innerHTML=`<div class="actions"><button type="button" class="btn ghost" id="rstart">🎙 Aufnahme starten</button></div><div id="rstate" class="note"></div><audio id="rplay" controls hidden style="width:100%;margin-top:8px"></audio>`;
+  const st=box.querySelector("#rstate"),bt=box.querySelector("#rstart"),pl=box.querySelector("#rplay");
+  const stop=()=>{if(rec&&rec.state!=="inactive")rec.stop();clearInterval(tm)};
+  bt.onclick=async()=>{if(rec&&rec.state==="recording"){stop();return}
+    try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){st.textContent="Mikrofon nicht erlaubt. Bitte im Browser erlauben.";return}
+    const mime=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(m=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m))||"";
+    rec=new MediaRecorder(stream,mime?{mimeType:mime,audioBitsPerSecond:24000}:{audioBitsPerSecond:24000});chunks=[];
+    rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+    rec.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:rec.mimeType||"audio/webm"});const fr=new FileReader();fr.onload=()=>{const url=fr.result.replace(/^data:([^;,]+)[^,]*,/,(m,t)=>"data:"+t+";base64,");if(url.length>1350000){st.textContent="Die Aufnahme ist zu lang. Bitte höchstens 3 Minuten.";onDone(null);return}pl.src=URL.createObjectURL(blob);pl.hidden=false;st.textContent="Aufnahme fertig ("+Math.round((Date.now()-t0)/1000)+" s). Du kannst sie anhören oder neu aufnehmen.";bt.textContent="🎙 Neu aufnehmen";onDone(url)};fr.readAsDataURL(blob)};
+    rec.start(1000);t0=Date.now();bt.textContent="⏹ Aufnahme beenden";pl.hidden=true;onDone(null);
+    tm=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000);st.textContent="● Aufnahme läuft … "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0")+" (max. 3:00)";if(s>=180)stop()},500)}}
+
+// ---------- tap a word in reading texts ----------
+const COMMON_W={ich:["ich","eu","أنا","I"],du:["du","tu","إنت","you"],er:["er","el","هو","he"],sie:["sie","ea / ei / dumneavoastră (Sie)","هي / هم / حضرتك (Sie)","she / they / you (Sie)"],es:["es","el / ea (neutru)","هو / هي (محايد)","it"],wir:["wir","noi","إحنا","we"],ihr:["ihr","voi / ei (al ei)","انتو / بتاعها","you (pl.) / her"],mein:["mein","meu","بتاعي","my"],einem:["einem","unui / într-un (Dativ)","واحد (Dativ)","a (dative)"],einer:["einer","unei / o (Dativ fem.)","واحدة (Dativ)","a (dative)"],eines:["eines","al unui (Genitiv)","بتاع واحد (Genitiv)","of a"],bisschen:["bisschen","puțin","شوية","a bit"],deutsch:["Deutsch","germană","ألماني","German"],englisch:["Englisch","engleză","إنجليزي","English"],rumänisch:["Rumänisch","română","روماني","Romanian"],spanisch:["Spanisch","spaniolă","إسباني","Spanish"],arabisch:["Arabisch","arabă","عربي","Arabic"],rumänien:["Rumänien","România","رومانيا","Romania"],deutschland:["Deutschland","Germania","ألمانيا","Germany"],österreich:["Österreich","Austria","النمسا","Austria"],spanien:["Spanien","Spania","إسبانيا","Spain"],eins:["eins","unu","واحد","one"],zwei:["zwei","doi","اتنين","two"],drei:["drei","trei","تلاتة","three"],vier:["vier","patru","أربعة","four"],fünf:["fünf","cinci","خمسة","five"],sechs:["sechs","șase","ستة","six"],sieben:["sieben","șapte","سبعة","seven"],acht:["acht","opt","تمانية","eight"],neun:["neun","nouă","تسعة","nine"],zehn:["zehn","zece","عشرة","ten"],personen:["die Personen","persoanele","الأشخاص","people"],meine:["meine","mea / mei","بتاعتي","my"],dein:["dein","tău","بتاعك","your"],sein:["sein","a fi / al lui","يكون / بتاعه","to be / his"],bin:["bin (sein)","sunt","أنا (أكون)","am"],bist:["bist (sein)","ești","إنت (تكون)","are"],ist:["ist (sein)","este","هو/هي (يكون)","is"],sind:["sind (sein)","suntem / sunt","إحنا/هم (نكون)","are"],war:["war (sein)","a fost / eram","كان","was"],habe:["habe (haben)","am","عندي","have"],hast:["hast (haben)","ai","عندك","have"],hat:["hat (haben)","are","عنده","has"],haben:["haben","a avea","يملك / عنده","to have"],
+der:["der","articol hotărât (masc.)","أداة تعريف (مذكر)","the"],die:["die","articol hotărât (fem./pl.)","أداة تعريف (مؤنث/جمع)","the"],das:["das","articol hotărât (neutru) / asta","أداة تعريف (محايد) / ده","the / that"],den:["den","pe (Akk. masc.)","الـ (مفعول مذكر)","the"],dem:["dem","lui / la (Dativ)","الـ (Dativ)","the"],ein:["ein","un","واحد / أداة نكرة","a"],eine:["eine","o","واحدة / أداة نكرة","a"],einen:["einen","un (Akk.)","واحد (مفعول)","a"],nicht:["nicht","nu","مش / لا","not"],kein:["kein","niciun","ولا / مفيش","no"],keine:["keine","nicio","ولا / مفيش","no"],
+und:["und","și","و","and"],oder:["oder","sau","أو","or"],aber:["aber","dar","بس / لكن","but"],weil:["weil","pentru că","علشان","because"],dass:["dass","că","إن","that"],wenn:["wenn","dacă / când","لو / لما","if / when"],als:["als","când / decât","لما / من","when / than"],auch:["auch","și / de asemenea","كمان","also"],sehr:["sehr","foarte","جدًا","very"],noch:["noch","încă","لسه / كمان","still / yet"],schon:["schon","deja","خلاص / بالفعل","already"],jetzt:["jetzt","acum","دلوقتي","now"],heute:["heute","astăzi","النهارده","today"],hier:["hier","aici","هنا","here"],
+in:["in","în","في","in"],im:["im (in dem)","în","في الـ","in the"],aus:["aus","din","من","from"],mit:["mit","cu","مع","with"],von:["von","de la","من","from / of"],zu:["zu","la / spre","لـ / إلى","to"],zum:["zum (zu dem)","la","للـ","to the"],zur:["zur (zu der)","la","للـ","to the"],nach:["nach","după / spre","بعد / إلى","after / to"],bei:["bei","la","عند","at"],für:["für","pentru","علشان / لـ","for"],auf:["auf","pe","على","on"],an:["an","la / pe","على / عند","at / on"],am:["am (an dem)","la / în (zi)","في يوم","on the"],um:["um","la (ora)","الساعة","at"],
+was:["was","ce","إيه","what"],wer:["wer","cine","مين","who"],wie:["wie","cum","إزاي","how"],wo:["wo","unde","فين","where"],woher:["woher","de unde","منين","where from"],wann:["wann","când","إمتى","when"],warum:["warum","de ce","ليه","why"],ja:["ja","da","أيوه","yes"],nein:["nein","nu","لا","no"],man:["man","se (impersonal)","الواحد / بيتقال","one"],viel:["viel","mult","كتير","much"],gern:["gern","cu plăcere","بحب","gladly"],gerne:["gerne","cu plăcere","بحب","gladly"]};
+let WDICT=null;
+function wdict(){if(WDICT)return WDICT;WDICT=new Map();const multi=[];
+  for(const lv in D.lessons)for(const l of D.lessons[lv])for(const v of l.vocab||[]){let w=String(v[0]).replace(/\(.*?\)/g,"").split(",")[0].trim();const m=w.match(/^(der|die|das) (\S+)$/);if(m)w=m[2];if(/\s/.test(w)){multi.push([w.split(/\s+/)[0].toLowerCase(),v]);continue}const k=w.toLowerCase();if(!WDICT.has(k))WDICT.set(k,v)}
+  multi.forEach(([k,v])=>{if(!WDICT.has(k)&&k.length>2)WDICT.set(k,v)});
+  // every conjugated form of the verb list points to its infinitive
+  const forms=new Map();Object.keys(VERB_FULL).concat(Object.keys(verbList())).forEach(inf=>{const c=conjugate(inf);if(!c)return;c.pr.concat(c.pt).forEach(f=>{const k=f.split(" ")[0].toLowerCase();if(!forms.has(k))forms.set(k,inf)})});
+  forms.forEach((inf,k)=>{if(!WDICT.has(k)&&WDICT.has(inf))WDICT.set(k,WDICT.get(inf))});
+  return WDICT}
+function lookupWord(raw){const d=wdict(),w=raw.toLowerCase().replace(/[^a-zäöüß-]/g,"");if(!w)return null;if(d.has(w))return d.get(w);if(COMMON_W[w]){const c=COMMON_W[w];return [c[0],c[1],c[2],c[3],""]}
+  const tries=[w.replace(/(en|er|es|em|e|n|s|st|t)$/,""),w+"en",w.replace(/(e|st|t)$/,"")+"en",w.replace(/(ten|te|test|tet)$/,"")+"en",w.replace(/^ge/,"").replace(/(t|et|en)$/,"")+"en",w.replace(/(n|en|e|er|s)$/,"")];
+  for(const t of tries){if(d.has(t))return d.get(t);for(const a of ["e","en","n"])if(d.has(t+a))return d.get(t+a)}return null}
+function wordPop(word){document.querySelectorAll(".wpop").forEach(n=>n.remove());const v=lookupWord(word);const p=document.createElement("div");p.className="wpop";
+  p.innerHTML=`<div class="wpi"><button type="button" class="wpx" aria-label="Schließen">✕</button>${v?`<p class="fw" style="margin:0">${artHtml(v[0])} ${sayBtn(v[0])}</p><p class="ft"${rtl()} style="margin:6px 0 0;font-weight:700">${esc(tr(v))}</p>${v[4]?`<p class="note" style="margin-top:6px">${esc(v[4])}</p>`:""}`:`<p class="fw" style="margin:0">${esc(word)} ${sayBtn(word)}</p><p class="note">Dieses Wort ist nicht im Wortschatz des Lernraums.</p>`}</div>`;
+  document.body.appendChild(p);p.querySelector(".wpx").onclick=()=>p.remove();p.onclick=e=>{if(e.target===p)p.remove()}}
+function wrapWords(root){if(!root)return;root.querySelectorAll(".text-de").forEach(el=>{if(el.dataset.tw)return;el.dataset.tw="1";el.innerHTML=esc(el.textContent).replace(/([A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß-]*)/g,'<span class="tw">$1</span>');el.insertAdjacentHTML("beforebegin",'<p class="note" style="margin:6px 0 0">👆 Tippe auf ein Wort für die Übersetzung.</p>')})}
+document.addEventListener("click",e=>{const w=e.target.closest&&e.target.closest(".tw");if(w){e.preventDefault();wordPop(w.textContent)}});
+
+// ---------- Fehlerheft ----------
+const FH_OK=q=>q&&["mc","gap","order","rw"].includes(q.t);
+function fehlerView(r){
+  const list=(S.wrong||[]).filter(x=>FH_OK(x.q));
+  if(!r.go){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Wiederholen</span><h1>Fehlerheft</h1><p class="muted">Hier landen die Aufgaben, die du in Übungen und Tests falsch hattest. Wenn du sie richtig löst, verschwinden sie.</p>
+    <div class="stats" style="margin-top:12px"><div class="stat"><b>${list.length}</b><span>Fehler zum Üben</span></div></div>
+    <div class="actions"><button class="btn gold" data-p="fehler" data-go="1" ${list.length?"":"disabled"}>${list.length?"Jetzt üben ("+Math.min(10,list.length)+" Aufgaben)":"Keine Fehler – super! 🎉"}</button></div>
+    ${list.length?`<div class="list" style="margin-top:12px">${list.slice().reverse().slice(0,30).map(x=>{const f=findLesson(x.id);return `<div class="row"><span class="t"><b>${esc(x.q.q||(x.q.w||[]).join(" / "))}</b><small>${f?f.lv+" · Lektion "+f.l.n:""}</small></span></div>`}).join("")}</div>`:""}`;return}
+  const pick=shuffle(list).slice(0,10);
+  runQuiz({kind:"Fehlerheft",title:"Fehler wiederholen",qs:pick.map(x=>Object.assign({},x.q,{kind:x.q.t==="rw"?"gap":x.q.t,_ref:x})),noLog:true,done:(s,t,w)=>{
+    const wrongRefs=new Set(w.map(q=>q._ref));S.wrong=(S.wrong||[]).filter(x=>!pick.includes(x)||wrongRefs.has(x));save();
+    app.innerHTML=`<button class="back" data-p="fehler">‹ Zurück</button><h1>Fehlerheft</h1>${resultCard(s,t,0,`<p class="note">${s} Fehler sind jetzt aus deinem Heft verschwunden.</p>`)}<div class="actions"><button class="btn" data-p="fehler">Weiter</button></div>`}})}
+
+// ---------- weekly challenge ----------
+function weekId(){const d=new Date();d.setUTCHours(0,0,0,0);d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));const y=d.getUTCFullYear();const w=Math.ceil(((d-Date.UTC(y,0,1))/864e5+1)/7);return y+"-"+String(w).padStart(2,"0")}
+const _addPtsBase=addPts;let wkT=null;
+addPts=function(n){_addPtsBase(n);const id=weekId();if(!S.wk||S.wk.id!==id)S.wk={id,pts:0};S.wk.pts+=n;save();if(S.wkOn&&myName()&&S.wkLv&&WEB&&!DEMO){clearTimeout(wkT);wkT=setTimeout(()=>api("week",{method:"POST",body:{name:myName(),lv:S.wkLv,pts:S.wk.pts}}),20000)}};
+const shortName=n=>{const p=String(n).trim().split(/\s+/);return p[0]+(p[1]?" "+p[1][0]+".":"")};
+async function weekView(){
+  const id=weekId();if(!S.wk||S.wk.id!==id)S.wk={id,pts:0};
+  if(!S.wkOn||!myName()||!S.wkLv){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Wochen-Challenge</span><h1>Wer übt diese Woche am meisten?</h1><p class="muted">Jede Woche startet eine neue Runde. Deine Punkte aus allen Übungen zählen. Die anderen sehen nur deinen Vornamen und den ersten Buchstaben des Nachnamens.</p>
+    <form id="wkf" class="card" style="margin-top:12px"><label class="kind">Dein Vor- und Nachname</label><input class="gap" id="wkn" maxlength="40" value="${esc(myName())}"><label class="kind" style="display:block;margin-top:10px">Dein Niveau (deine Gruppe)</label><select class="gap" id="wkl">${levelIds().map(x=>`<option${x===(S.wkLv||S.hwLv||S.srsLv)?" selected":""}>${x}</option>`).join("")}</select><button class="btn gold" type="submit" style="width:100%;margin-top:12px">Mitmachen</button></form>`;
+    app.querySelector("#wkf").onsubmit=async e=>{e.preventDefault();const n=app.querySelector("#wkn").value.trim();if(n.length<2)return;setName(n);S.wkLv=app.querySelector("#wkl").value;S.wkOn=true;save();await api("week",{method:"POST",body:{name:n,lv:S.wkLv,pts:S.wk.pts}});weekView()};return}
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Wochen-Challenge · ${S.wkLv}</span><h1>Rangliste dieser Woche</h1><div id="wkl2"><p class="muted">Lädt …</p></div><p class="note">Die Woche endet am Sonntag um Mitternacht. <button class="linkbtn" id="wkoff">Nicht mehr mitmachen</button></p>`;
+  app.querySelector("#wkoff").onclick=()=>{S.wkOn=false;save();go({v:"home"})};
+  const j=await api("week",{method:"POST",body:{name:myName(),lv:S.wkLv,pts:S.wk.pts}});const box=app.querySelector("#wkl2");if(!box)return;
+  if(!j._ok){box.innerHTML=`<p class="muted">Konnte nicht geladen werden.</p>`;return}
+  const me=myName().toLowerCase();
+  box.innerHTML=`<div class="list">${j.list.map((x,i)=>`<div class="row" style="${x.name.toLowerCase()===me?"border-color:var(--gold);border-width:2px":""}"><span class="num ${i<3?"done":""}">${["🥇","🥈","🥉"][i]||i+1}</span><span class="t"><b>${esc(shortName(x.name))}${x.name.toLowerCase()===me?" (du)":""}</b><small>${x.pts} Punkte</small></span></div>`).join("")||`<p class="muted">Noch niemand dabei.</p>`}</div>`}
+
+// ---------- telc plan ----------
+function planView(){
+  const P=S.plan||{};
+  if(!P.date){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">telc-Plan</span><h1>Dein Weg zur Prüfung</h1><p class="muted">Gib dein Prüfungsdatum ein. Der Lernraum macht dir einen Plan Woche für Woche bis zur Prüfung.</p>
+    <form id="plf" class="card" style="margin-top:12px"><label class="kind" for="pld">Datum der Prüfung</label><input class="gap" type="date" id="pld" min="${new Date().toISOString().slice(0,10)}"><label class="kind" style="display:block;margin-top:10px" for="pll">Prüfung</label><select class="gap" id="pll"><option value="B1">telc Deutsch B1</option><option value="B2" selected>telc Deutsch B2</option></select><button class="btn gold" type="submit" style="width:100%;margin-top:12px">Plan erstellen</button></form>`;
+    app.querySelector("#plf").onsubmit=e=>{e.preventDefault();const d=app.querySelector("#pld").value;if(!d)return;S.plan={date:d,lv:app.querySelector("#pll").value,done:{}};save();planView()};return}
+  const exam=new Date(P.date+"T09:00:00"),days=Math.ceil((exam-Date.now())/864e5),weeks=Math.max(1,Math.ceil(days/7));
+  const tests=D.telc.tests.length,B2=P.lv==="B2";
+  const plan=[];for(let w=0;w<weeks;w++){const left=weeks-w;const t=[];
+    t.push("Wortschatz-Trainer an 5 Tagen");
+    t.push(B2?"2 Beschwerden im Beschwerde-Trainer schreiben":"1 Beschwerde im Beschwerde-Trainer schreiben");
+    t.push("3 Rollenspiele "+(B2?"(B1.2 – B2.2)":"(A2.2 – B1.2)")+" sprechen");
+    t.push("Fehlerheft leer machen");
+    if(B2){const ti=tests-left;if(ti>=0&&ti<tests)t.push("Modelltest "+(ti+1)+" im Prüfungsmodus (140 Min.)");else t.push("Leseverstehen und Sprachbausteine aus einem Modelltest üben")}
+    else t.push("2 Lektionen B1.1/B1.2 komplett durcharbeiten");
+    t.push("Präsentation aufnehmen und als Hausaufgabe senden");
+    if(left===1)t.push("Letzte Woche: Redemittel wiederholen und gut schlafen 😊");plan.push(t)}
+  const done=P.done||{};const all=plan.flat().length,ok=Object.keys(done).filter(k=>done[k]).length;
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">telc Deutsch ${P.lv} · ${new Date(P.date).toLocaleDateString("de-DE")}</span><h1>${days>0?"Noch "+days+" Tage":"Viel Erfolg in der Prüfung!"}</h1>
+  <div class="goal" style="margin-top:8px"><i style="width:${Math.round(ok/all*100)}%"></i></div><p class="note">${ok} von ${all} Aufgaben erledigt</p>
+  ${plan.map((t,w)=>`<div class="card" style="margin-top:10px"><h3 style="margin:0 0 6px">Woche ${w+1}${w===0?" (diese Woche)":""}</h3>${t.map((x,k)=>{const id=w+"_"+k;return `<label class="chk"><input type="checkbox" data-pl="${id}" ${done[id]?"checked":""}> ${esc(x)}</label>`}).join("")}</div>`).join("")}
+  <p class="note"><button class="linkbtn" id="plreset">Neues Datum eingeben</button></p>`;
+  app.querySelectorAll("[data-pl]").forEach(c=>c.onchange=()=>{S.plan.done=S.plan.done||{};S.plan.done[c.dataset.pl]=c.checked;if(c.checked)addPts(5);save()});
+  app.querySelector("#plreset").onclick=()=>{S.plan={};save();planView()}}
+
+// ---------- install as app ----------
+let BIP=null;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();BIP=e});
+function installView(){
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),standalone=window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches;
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Lernraum auf dem Handy</span><h1>Als App installieren</h1>
+  ${standalone?`<div class="feedback ok">Der Lernraum ist schon als App installiert. 🎉</div>`:""}
+  <p class="muted">Dann öffnest du den Lernraum mit einem Tipp – mit dem Deutschparadies-Symbol auf deinem Startbildschirm, wie jede andere App.</p>
+  ${BIP?`<div class="actions"><button class="btn gold" id="bip">📲 Jetzt installieren</button></div>`:""}
+  <div class="card" style="margin-top:12px${ios?"":";order:2"}"><h3 style="margin-top:0">iPhone (Safari)</h3><ol class="wpts"><li>Öffne <b>deutschparadies.ro/app</b> in <b>Safari</b>.</li><li>Tippe unten auf <b>Teilen</b> (Quadrat mit Pfeil nach oben).</li><li>Wähle <b>Zum Home-Bildschirm</b>.</li><li>Tippe oben rechts auf <b>Hinzufügen</b>.</li></ol></div>
+  <div class="card" style="margin-top:10px"><h3 style="margin-top:0">Android (Chrome)</h3><ol class="wpts"><li>Öffne <b>deutschparadies.ro/app</b> in <b>Chrome</b>.</li><li>Tippe oben rechts auf <b>⋮</b> (drei Punkte).</li><li>Wähle <b>App installieren</b> oder <b>Zum Startbildschirm hinzufügen</b>.</li><li>Bestätige mit <b>Installieren</b>.</li></ol></div>`;
+  const b=app.querySelector("#bip");if(b)b.onclick=async()=>{BIP.prompt();try{await BIP.userChoice}catch(e){}BIP=null;installView()}}
+
 // ---------- small Romanian subtitles under every section ----------
 const RO_SUB={"Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
  "Materialien":"Materiale","Buch":"Carte","Dialoge":"Dialoguri","Texte":"Texte","Videos":"Videoclipuri","Allgemeine Dialoge Grammatik":"Dialoguri generale de gramatică","telc B2 · Prüfungstraining":"Pregătire pentru examenul telc B2",
  "Wortschatz":"Vocabular","Grammatik":"Gramatică","Übungen":"Exerciții","Lesen":"Citire","Hören":"Ascultare","Sprechen":"Vorbire","Schreiben":"Scriere","Video":"Video",
- "Punkte":"Puncte","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul"};
+ "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul"};
 function roSubs(root){if(!root)return;root.querySelectorAll(".section-h h2,.tool b,.mat b,.mod b,.vbox .vt b,.row .t b,.stat span,.quizcall b,.tabs button").forEach(el=>{if(el.dataset.ro)return;const t=el.textContent.trim();let ro=RO_SUB[t];if(!ro&&/^Quiz vor der Stunde/.test(t))ro="Quiz înainte de oră";el.dataset.ro="1";if(!ro)return;const s=document.createElement("small");s.className="ro-sub";s.lang="ro";s.textContent=ro;el.appendChild(s)})}
-new MutationObserver(()=>roSubs(app)).observe(app,{childList:true,subtree:true});
+new MutationObserver(()=>{roSubs(app);wrapWords(app)}).observe(app,{childList:true,subtree:true});
 
-const PLUS_VIEWS={srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
+const PLUS_VIEWS={bes:besView,fehler:fehlerView,week:weekView,plan:planView,install:installView,srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-p]");if(!b)return;e.preventDefault();e.stopPropagation();
   const r={v:b.dataset.p};["lv","id","tab","q","go"].forEach(k=>{if(b.dataset[k]!==undefined)r[k]=b.dataset[k]});if(b.dataset.f){r.f=b.dataset.f;r.t=b.dataset.t;r.lv=b.dataset.lv}go(r)},true);
 // ===================== /Lernraum Plus =====================
