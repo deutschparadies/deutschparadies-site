@@ -9,7 +9,8 @@
 //   fail:<ip>           -> failed login counter (15 min)
 //   drv:<folderId>      -> cached folder listing (10 min)
 
-const SESSION_TTL = 60 * 60 * 24 * 30; // students stay logged in for 30 days
+const SESSION_TTL = 60 * 60 * 24 * 30;
+const TRIAL_MS = 24 * 60 * 60 * 1000; // trial code: one day after first use // students stay logged in for 30 days
 const TEACHER_TTL = 60 * 60 * 12;
 
 function hex(bytes) { return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join(""); }
@@ -45,11 +46,13 @@ export async function sessionOf(request, env) {
 }
 export async function validSession(request, env) {
   const s = await sessionOf(request, env);
-  return s && (s.k === "l" || s.k === "s") ? s : null;
+  if (!s) return null;
+  if (s.k === "d") return s.exp > Date.now() ? s : null; // one-day trial
+  return s.k === "l" || s.k === "s" ? s : null;
 }
-async function newSession(env, val) {
+async function newSession(env, val, ttl) {
   const tok = rand(32);
-  await env.APPKV.put("sess:" + tok, JSON.stringify(val), { expirationTtl: SESSION_TTL });
+  await env.APPKV.put("sess:" + tok, JSON.stringify(val), { expirationTtl: ttl || SESSION_TTL });
   return tok;
 }
 async function teacherOk(request, env) {
@@ -114,6 +117,19 @@ export async function lernApi(request, env, path, deps) {
     if (M !== "POST") return json({ error: "method" }, 405);
     if (await tooManyFails(request, env)) return json({ error: "wait" }, 429);
     const b = await body(request);
+    // one-time trial code from the teacher: works once, then the trial lasts one day
+    if (b && typeof b.code === "string") {
+      const code = b.code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+      if (!/^[A-Z0-9]{8}$/.test(code)) { await addFail(request, env); return json({ error: "wrong" }, 403); }
+      const c = await env.APPKV.get("code:" + code, "json");
+      if (!c) { await addFail(request, env); return json({ error: "wrong" }, 403); }
+      if (c.used) return json({ error: "used" }, 403);
+      const exp = Date.now() + TRIAL_MS;
+      c.used = Date.now(); c.exp = exp;
+      await env.APPKV.put("code:" + code, JSON.stringify(c), { expirationTtl: 86400 * 60 });
+      const tok = await newSession(env, { k: "d", exp, code }, Math.ceil(TRIAL_MS / 1000));
+      return json({ ok: true, trial: { exp } }, 200, { "set-cookie": cookie("dp_s", tok, Math.ceil(TRIAL_MS / 1000)) });
+    }
     const pw = b && typeof b.pw === "string" ? b.pw : "";
     if (!pw || pw.length > 200) return json({ error: "bad" }, 400);
     const acc = await deps.currentAccess(request, env);
@@ -127,7 +143,8 @@ export async function lernApi(request, env, path, deps) {
     return json({ ok: true }, 200, { "set-cookie": cookie("dp_s", "x", 0) });
   }
   if (p === "me") {
-    return (await validSession(request, env)) ? json({ ok: true }) : json({ error: "login" }, 401);
+    const v = await validSession(request, env);
+    return v ? json({ ok: true, trial: v.k === "d" ? { exp: v.exp } : null }) : json({ error: "login" }, 401);
   }
 
   // ---------- teacher login ----------
@@ -196,6 +213,22 @@ export async function lernApi(request, env, path, deps) {
       return json({ results: (await env.APPKV.get("res:all", "json")) || [] });
     }
     if (p === "t/settings") return json({ settings: await getSettings(env) });
+    if (p === "t/codes" && M === "GET") {
+      const keys = await listAll(env, "code:", 300);
+      const items = [];
+      for (const k of keys) { const c = await env.APPKV.get(k, "json"); if (c) items.push({ code: k.slice(5), ...c }); }
+      items.sort((a, b) => b.created - a.created);
+      return json({ items });
+    }
+    if (p === "t/codes" && M === "POST") {
+      const b = (await body(request)) || {};
+      if (b.action === "delete") { const c = String(b.code || "").toUpperCase(); if (/^[A-Z0-9]{8}$/.test(c)) await env.APPKV.delete("code:" + c); return json({ ok: true }); }
+      const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      const code = [...crypto.getRandomValues(new Uint8Array(8))].map((x) => A[x % A.length]).join("");
+      const item = { created: Date.now(), note: str(b.note, 60), used: null };
+      await env.APPKV.put("code:" + code, JSON.stringify(item), { expirationTtl: 86400 * 60 });
+      return json({ ok: true, code, ...item });
+    }
     return json({ error: "notfound" }, 404);
   }
 

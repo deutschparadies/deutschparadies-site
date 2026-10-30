@@ -4621,7 +4621,7 @@ function home(){
   const cur=route.lv||"A1.1";
   const goal=Math.min(100,Math.round(S.todayPts/GOAL*100));
   const lastL=S.last&&findLesson(S.last);
-  app.innerHTML=`${DEMO?`<div class="demobar">Demo · Lektion 1 (A1.1) und der Wortschatz-Trainer sind offen. Alles andere gibt es für Kursteilnehmer. <a href="${WA}" target="_blank" rel="noopener">Kurs anfragen</a></div>`:""}
+  app.innerHTML=`${!realUnlocked()&&trialOk()?`<div class="demobar">Probezugang · noch ${Math.max(1,Math.ceil((trialExp()-Date.now())/3600000))} Std. · <a href="${WA}" target="_blank" rel="noopener">Kurs anfragen</a></div>`:""}
   <section class="hero">
     <div class="ph"><img src="${PHOTO}" alt="Saleh"></div>
     <div><h1>Hallo${myName()?", "+esc(myName().split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
@@ -4944,7 +4944,10 @@ function telcView(i){
 const FALLBACK_ACCESS={"v": 1, "salt": "dp-lernraum-2026", "hash": "5d8d316d1a7fc0552b54e85ae3e76fafa278d645f77267961069baed06aab256"};let ACCESS=null;
 async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 async function loadAccess(){try{const r=await fetch(window.__DP_WEB?"/app/access.json":"access.json",{cache:"no-store"});if(r.ok){const j=await r.json();if(j&&j.hash)ACCESS=j}}catch(e){}if(!ACCESS)ACCESS=FALLBACK_ACCESS}
-function unlocked(){try{return localStorage.getItem("dp_unlock")===ACCESS.hash}catch(e){return window.__dpUnlock===ACCESS.hash}}
+function realUnlocked(){try{return localStorage.getItem("dp_unlock")===ACCESS.hash}catch(e){return window.__dpUnlock===ACCESS.hash}}
+function trialExp(){try{return +localStorage.getItem("dp_trial_exp")||0}catch(e){return +(window.__dpTrial||0)}}
+function trialOk(){return !!window.__DP_WEB&&trialExp()>Date.now()}
+function unlocked(){return realUnlocked()||trialOk()}
 function setUnlocked(h){window.__dpUnlock=h;try{localStorage.setItem("dp_unlock",h)}catch(e){}}
 
 /* ---- Dialog viewer: PDFs are only sent to a logged-in session and drawn on canvas (no download link, no print, no text layer) ---- */
@@ -4955,10 +4958,22 @@ function askPdfPassword(ov,body,u){body.innerHTML='<form id="pdfPw" class="pdfpw
 async function openPdf(u){if(DEMO){demoLocked();return}document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401||(r.status===403&&!/\/api\/drive\//.test(u))){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
 document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-pdf]");if(!a)return;e.preventDefault();openPdf(a.dataset.pdf)});
 function lockScreen(){
-  app.innerHTML=`<div class="lock"><img class="lock-logo" alt="Deutschparadies" src="${document.querySelector("header .logo").src}"><h1>Deutschparadies Lernraum</h1><p class="muted">Nur für Kursteilnehmer. Bitte gib das Passwort ein, das du von deinem Lehrer bekommen hast.</p>
-  <form id="lf"><input class="gap" id="lpw" type="password" autocomplete="current-password" placeholder="Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button></form><div class="feedback bad" id="lfb" hidden>Falsches Passwort. Versuch es noch einmal.</div></div>`;
+  const web=!!window.__DP_WEB,expired=web&&trialExp()&&!trialOk();
+  const urlCode=web?((location.search.match(/[?&]code=([A-Za-z0-9-]+)/)||[])[1]||""):"";
+  app.innerHTML=`<div class="lock"><img class="lock-logo" alt="Deutschparadies" src="${document.querySelector("header .logo").src}"><h1>Deutschparadies Lernraum</h1>
+  ${expired?`<div class="feedback bad" style="margin-bottom:12px">Dein Probezugang ist abgelaufen. Lust auf den Kurs? <a href="${WA}" target="_blank" rel="noopener">Schreib uns auf WhatsApp</a>.</div>`:""}
+  <p class="muted">Nur für Kursteilnehmer. Bitte gib das Passwort ein, das du von deinem Lehrer bekommen hast.</p>
+  <form id="lf"><input class="gap" id="lpw" type="password" autocomplete="current-password" placeholder="Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button></form><div class="feedback bad" id="lfb" hidden>Falsches Passwort. Versuch es noch einmal.</div>
+  ${web?`<details class="card" style="margin-top:16px;text-align:left" ${urlCode?"open":""}><summary style="cursor:pointer;font-weight:700">Ich habe einen Probe-Code</summary><form id="cf" style="margin-top:10px"><input class="gap" id="ccode" value="${esc(urlCode)}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. K7M2Q9XA"><button class="btn gold" type="submit" style="width:100%;margin-top:10px">Probezugang starten</button></form><div class="feedback bad" id="cfb" hidden></div><p class="note">Der Code funktioniert nur einmal. Danach kannst du den Lernraum 24 Stunden lang ausprobieren.</p></details>`:""}</div>`;
   app.querySelector("#lf").onsubmit=async e=>{e.preventDefault();const v=app.querySelector("#lpw").value;const h=await sha(ACCESS.salt+v);if(h===ACCESS.hash){setUnlocked(h);if(window.__DP_WEB)await fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw:v})}).catch(()=>{});render()}else{app.querySelector("#lfb").hidden=false}};
-  setTimeout(()=>{const i=app.querySelector("#lpw");i&&i.focus()},50);
+  const cf=app.querySelector("#cf");
+  if(cf){const cfb=app.querySelector("#cfb");
+    const go2=async()=>{const code=app.querySelector("#ccode").value.trim();if(!code)return;cfb.hidden=true;const j=await api("login",{method:"POST",body:{code}});
+      if(j._ok&&j.trial){window.__dpTrial=j.trial.exp;try{localStorage.setItem("dp_trial_exp",String(j.trial.exp))}catch(err){}try{history.replaceState(route,"",location.pathname)}catch(err){}route={v:"home"};return render()}
+      cfb.hidden=false;cfb.textContent=j.error==="used"?"Dieser Code wurde schon benutzt. Jeder Code funktioniert nur einmal.":j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":j._status===0?"Keine Verbindung. Bitte später noch einmal versuchen.":"Dieser Code ist nicht gültig."};
+    cf.onsubmit=e=>{e.preventDefault();go2()};
+    if(urlCode&&!expired)go2()}
+  setTimeout(()=>{const i=app.querySelector(urlCode?"#ccode":"#lpw");i&&i.focus()},50);
 }
 const IS_LEHRER=/[?&]lehrer\b/.test(location.search);
 function videoAdmin(){
@@ -5302,7 +5317,7 @@ const VERB_FULL={
 
 // ===================== Lernraum Plus =====================
 const WEB=!!window.__DP_WEB;
-const DEMO=WEB&&/[?&]demo\b/.test(location.search);
+const DEMO=false; // the limited demo was replaced by one-time trial codes
 const WA="https://wa.me/40771237705?text="+encodeURIComponent("Salut! Am încercat Lernraum (demo) și vreau să mă înscriu la un curs de germană.");
 const myName=()=>{try{return localStorage.getItem("dp_name")||""}catch(e){return ""}};
 const setName=n=>{try{localStorage.setItem("dp_name",n)}catch(e){}};
@@ -5648,7 +5663,7 @@ async function teacherConsole(box){
   if(st._status===401){box.innerHTML=`<div class="card" style="margin-top:10px"><h2 style="margin-top:0">Anmelden</h2><p class="muted">Mit deinem Lehrer-Passwort siehst du Hausaufgaben, Ergebnisse und das Quiz vor der Stunde.</p><form id="tlf"><input class="gap" id="tpw" type="password" autocomplete="current-password" placeholder="Lehrer-Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Anmelden</button></form><div class="feedback bad" id="tlfb" hidden></div></div>`;
     box.querySelector("#tlf").onsubmit=async e=>{e.preventDefault();const pw=box.querySelector("#tpw").value;const j=await api("t/login",{method:"POST",body:{admin:pw}});if(j._ok){try{sessionStorage.setItem("dp_vpw",pw);const va=document.getElementById("va");if(va&&!va.value)va.value=pw}catch(err){}teacherConsole(box)}else{const f=box.querySelector("#tlfb");f.hidden=false;f.textContent=j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":"Das Lehrer-Passwort ist falsch."}};return}
   let tab="h";
-  box.innerHTML=`<div class="tabs" style="margin-top:10px"><button data-tt="h" aria-pressed="true">Hausaufgaben</button><button data-tt="r">Ergebnisse</button><button data-tt="q">Quiz</button><button data-tt="e">Demo</button></div><div id="tbody" style="margin-top:12px"></div><p class="note"><button class="linkbtn" id="tout">Lehrer abmelden</button></p>`;
+  box.innerHTML=`<div class="tabs" style="margin-top:10px"><button data-tt="h" aria-pressed="true">Hausaufgaben</button><button data-tt="r">Ergebnisse</button><button data-tt="q">Quiz</button><button data-tt="e">Probe-Codes</button></div><div id="tbody" style="margin-top:12px"></div><p class="note"><button class="linkbtn" id="tout">Lehrer abmelden</button></p>`;
   const body=box.querySelector("#tbody");
   box.querySelector("#tout").onclick=async()=>{await api("t/logout",{method:"POST"});teacherConsole(box)};
   box.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{tab=b.dataset.tt;box.querySelectorAll("[data-tt]").forEach(x=>x.setAttribute("aria-pressed",x===b));show()});
@@ -5671,7 +5686,15 @@ async function teacherConsole(box){
       const lvS=body.querySelector("#qlv"),lsS=body.querySelector("#qls");const fill=()=>{lsS.innerHTML=lessonsOf(lvS.value).map(l=>`<option value="${l.id}">Lektion ${l.n}: ${esc(l.title)}</option>`).join("")};lvS.onchange=fill;fill();
       body.querySelector("#qgo").onclick=async()=>{const k=await api("t/quiz",{method:"POST",body:{lv:lvS.value,lesson:lsS.value}});body.querySelector("#qres").innerHTML=k._ok?`<div class="feedback ok">Aktiviert für ${lvS.value}.</div>`:`<div class="feedback bad">Fehler.</div>`;if(k._ok)act(k.quiz)};
       body.querySelector("#qdel").onclick=async()=>{const k=await api("t/quiz",{method:"POST",body:{lv:lvS.value,lesson:null}});body.querySelector("#qres").innerHTML=k._ok?`<div class="feedback ok">Quiz für ${lvS.value} entfernt.</div>`:`<div class="feedback bad">Fehler.</div>`;if(k._ok)act(k.quiz)}}
-    if(tab==="e"){body.innerHTML=`<div class="card"><h3 style="margin-top:0">Demo für Interessenten</h3><p class="muted">Diesen Link kannst du Interessenten schicken. Sie sehen nur Lektion 1 von A1.1 – ohne Passwort:</p><p><b>https://deutschparadies.ro/app/?demo</b></p><div class="actions"><button class="btn ghost" data-copy="https://deutschparadies.ro/app/?demo" style="padding:8px">📋 Link kopieren</button><a class="btn gold" style="text-align:center;text-decoration:none;padding:8px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("Probiere den Deutschparadies Lernraum aus: https://deutschparadies.ro/app/?demo")}">WhatsApp</a></div></div>`}
+    if(tab==="e"){const j=await api("t/codes");const items=j.items||[];const now=Date.now();
+      const link=c=>"https://deutschparadies.ro/app/?code="+c;
+      const msgRo=c=>"Salut! Uite accesul tău gratuit de o zi la Deutschparadies Lernraum (aplicația noastră pentru cursanți): "+link(c)+" – linkul funcționează o singură dată.";
+      body.innerHTML=`<form id="cdf" class="card"><h3 style="margin-top:0">Probezugang für Interessenten</h3><p class="muted">Jeder Code funktioniert nur einmal. Wer ihn benutzt, sieht den Lernraum 24 Stunden lang genau wie ein Schüler.</p><input class="gap" id="cdn" maxlength="60" placeholder="Für wen? (z. B. Name oder Telefon, optional)"><button class="btn gold" type="submit" style="width:100%;margin-top:10px">Neuen Code erstellen</button><div id="cdres"></div></form>
+      <div class="section-h"><h2>Codes (${items.length})</h2></div>${items.length?items.map(c=>{const st=!c.used?"Noch nicht benutzt":c.exp>now?"Aktiv bis "+new Date(c.exp).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):"Benutzt am "+fmtDate(c.used)+" · abgelaufen";return `<div class="row" style="margin-top:6px;flex-wrap:wrap"><span class="t"><b style="letter-spacing:1px">${c.code}</b><small>${c.note?esc(c.note)+" · ":""}${st}</small></span>${c.used?"":`<button class="btn ghost" data-copy="${esc(msgRo(c.code))}" style="flex:none;padding:6px 10px">📋</button>`}<button class="btn ghost" data-cdel="${c.code}" style="flex:none;padding:6px 10px">✕</button></div>`}).join(""):`<p class="muted">Noch keine Codes.</p>`}`;
+      body.querySelector("#cdf").onsubmit=async e=>{e.preventDefault();const k=await api("t/codes",{method:"POST",body:{note:body.querySelector("#cdn").value.trim()}});if(!k._ok){body.querySelector("#cdres").innerHTML=`<div class="feedback bad">Fehler.</div>`;return}
+        await show();body.querySelector("#cdres").innerHTML=`<div class="feedback ok"><span style="font-size:1.4rem;letter-spacing:2px">${k.code}</span><br><small style="word-break:break-all">${link(k.code)}</small><div class="actions"><button class="btn ghost" data-copy="${esc(msgRo(k.code))}" style="padding:8px">📋 Kopieren</button><a class="btn gold" style="text-align:center;text-decoration:none;padding:8px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msgRo(k.code))}">WhatsApp</a></div></div>`;
+        body.querySelectorAll("#cdres [data-copy]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="✓ Kopiert"}catch(e){b.textContent="Kopieren nicht möglich"}})};
+      body.querySelectorAll("[data-cdel]").forEach(b=>b.onclick=async()=>{if(!b.dataset.sure){b.dataset.sure="1";b.textContent="Löschen?";return}await api("t/codes",{method:"POST",body:{action:"delete",code:b.dataset.cdel}});show()})}
     body.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="✓ Kopiert"}catch(e){b.textContent="Kopieren nicht möglich"}})}
   function openHw(it){
     body.innerHTML=`<button class="back" id="hwback">‹ Zurück zur Liste</button><div class="card"><span class="kind">${esc(it.name)}${it.lv?" · "+it.lv:""} · ${fmtDate(it.ts)}</span><h2 style="margin:4px 0">${esc(it.title)}</h2>${it.text?`<div class="ctext">${esc(it.text)}</div>`:""}<div id="hwimg"></div></div>
