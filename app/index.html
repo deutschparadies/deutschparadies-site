@@ -221,7 +221,7 @@ button.mat{font:inherit;text-align:left;cursor:pointer}
 .chip.ok{border-color:var(--ok);background:var(--ok-bg)}.chip.bad{border-color:var(--bad);background:var(--bad-bg)}
 .exambar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;background:var(--brand);color:#f4f1e6;border-radius:12px;padding:10px 12px;margin-bottom:10px}
 .exambar b{font-size:1.15rem}.exambar .muted{color:rgba(255,255,255,.75)}
-.demobar{background:var(--gold);color:var(--gold-ink);font-weight:700;text-align:center;border-radius:10px;padding:8px 10px;margin-bottom:10px;font-size:.9rem}
+.demobar{background:var(--gold);color:var(--gold-ink);font-weight:700;text-align:center;border-radius:10px;padding:8px 10px;margin-bottom:10px;font-size:.9rem}.demobar a{color:inherit}
 .st{font-size:.8rem;border-radius:20px;padding:3px 10px;background:var(--bg);border:1px solid var(--line)}.st.ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok)}
 .ctext{white-space:pre-wrap;background:var(--bg);border-radius:10px;padding:10px;margin-top:6px;font-size:.98rem;line-height:1.5}
 .corr{margin-top:10px;border-left:4px solid var(--ok);padding-left:10px}
@@ -4604,7 +4604,7 @@ try{const r=JSON.parse(sessionStorage.getItem("dp_route"));if(r)route=r}catch(e)
 function render(){
   if(!ACCESS)return;
   if(IS_LEHRER&&window.__DP_WEB&&!window.__lehrerShown){window.__lehrerShown=1;return pwChangeWeb()}
-  if(DEMO){if(route.v==="home")return demoHome();if(!DEMO_OK(route))return demoLocked()}
+  if(DEMO){if(route.v!=="home"&&route.v!=="level"&&!DEMO_OK(route))return demoLocked()}
   else if(!unlocked())return lockScreen();
   document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.lang));
   touchDay();
@@ -4621,7 +4621,7 @@ function home(){
   const cur=route.lv||"A1.1";
   const goal=Math.min(100,Math.round(S.todayPts/GOAL*100));
   const lastL=S.last&&findLesson(S.last);
-  app.innerHTML=`
+  app.innerHTML=`${DEMO?`<div class="demobar">Demo · Lektion 1 (A1.1) und der Wortschatz-Trainer sind offen. Alles andere gibt es für Kursteilnehmer. <a href="${WA}" target="_blank" rel="noopener">Kurs anfragen</a></div>`:""}
   <section class="hero">
     <div class="ph"><img src="${PHOTO}" alt="Saleh"></div>
     <div><h1>Hallo${myName()?", "+esc(myName().split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
@@ -4637,7 +4637,7 @@ function home(){
   <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
   <div id="lvlList"></div>
   ${allgDialoge()}
-  <footer>Deutschparadies · deutschparadies.ro<br><button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button></footer>`;
+  <footer>Deutschparadies · deutschparadies.ro<br>${DEMO?`<a class="linkbtn" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a>`:`<button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button>`}</footer>`;
   levelList(cur, app.querySelector("#lvlList"));
 }
 
@@ -4952,7 +4952,7 @@ let PDFJS_LIB=null;
 function loadPdfJs(){if(PDFJS_LIB)return Promise.resolve(PDFJS_LIB);return new Promise((ok,no)=>{if(window.pdfjsLib){PDFJS_LIB=window.pdfjsLib;return ok(PDFJS_LIB)}const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";PDFJS_LIB=window.pdfjsLib;ok(PDFJS_LIB)};s.onerror=no;document.head.appendChild(s)})}
 async function renderPdf(data,body){const lib=await loadPdfJs();const doc=await lib.getDocument({data}).promise;body.innerHTML="";const dpr=window.devicePixelRatio||1;const w=Math.min((body.clientWidth||800)-24,900);for(let i=1;i<=doc.numPages;i++){const page=await doc.getPage(i);const v0=page.getViewport({scale:1});const vp=page.getViewport({scale:(w/v0.width)*dpr});const cv=document.createElement("canvas");cv.width=Math.floor(vp.width);cv.height=Math.floor(vp.height);cv.style.width=(cv.width/dpr)+"px";cv.className="pdfpg";body.appendChild(cv);await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise}}
 function askPdfPassword(ov,body,u){body.innerHTML='<form id="pdfPw" class="pdfpw"><p>Bitte gib das Schüler-Passwort ein, um diesen Dialog zu öffnen.</p><input id="pdfPwIn" type="password" autocomplete="current-password" required><button type="submit">Öffnen</button><p id="pdfPwErr" hidden>Falsches Passwort.</p></form>';body.querySelector("#pdfPw").onsubmit=async e=>{e.preventDefault();const pw=body.querySelector("#pdfPwIn").value;const r=await fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw})}).catch(()=>null);if(r&&r.ok){ov.remove();openPdf(u)}else{body.querySelector("#pdfPwErr").hidden=false}}}
-async function openPdf(u){document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401||(r.status===403&&!/\/api\/drive\//.test(u))){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
+async function openPdf(u){if(DEMO){demoLocked();return}document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401||(r.status===403&&!/\/api\/drive\//.test(u))){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
 document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-pdf]");if(!a)return;e.preventDefault();openPdf(a.dataset.pdf)});
 function lockScreen(){
   app.innerHTML=`<div class="lock"><img class="lock-logo" alt="Deutschparadies" src="${document.querySelector("header .logo").src}"><h1>Deutschparadies Lernraum</h1><p class="muted">Nur für Kursteilnehmer. Bitte gib das Passwort ein, das du von deinem Lehrer bekommen hast.</p>
