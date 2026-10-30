@@ -227,6 +227,9 @@ button.mat{font:inherit;text-align:left;cursor:pointer}
 .corr{margin-top:10px;border-left:4px solid var(--ok);padding-left:10px}
 .chk{display:block;padding:6px 0}
 .wta{width:100%;font:inherit;border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);color:var(--ink)}
+.ro-sub{display:block;font-family:var(--body);font-size:.72rem;font-weight:400;font-style:italic;letter-spacing:0;text-transform:none;color:var(--muted);line-height:1.3;margin-top:1px}
+.mat b::after{content:none!important}
+.tabs button .ro-sub{font-size:.66rem}
 /* PLUSCSS:END */
 </style>
 
@@ -5710,6 +5713,14 @@ async function teacherConsole(box){
       const j=await api("t/hw",{method:"POST",body:{id:it.id,fb:{text:body.querySelector("#hct").value,note:body.querySelector("#hcn").value,crit}}});
       body.querySelector("#hcr").innerHTML=j._ok?`<div class="feedback ok">Gespeichert! ${esc(it.name)} sieht die Korrektur jetzt.</div>`:`<div class="feedback bad">Speichern fehlgeschlagen.</div>`;if(j._ok){it.status="korrigiert"}}}
   show()}
+
+// ---------- small Romanian subtitles under every section ----------
+const RO_SUB={"Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
+ "Materialien":"Materiale","Buch":"Carte","Dialoge":"Dialoguri","Texte":"Texte","Videos":"Videoclipuri","Allgemeine Dialoge Grammatik":"Dialoguri generale de gramatică","telc B2 · Prüfungstraining":"Pregătire pentru examenul telc B2",
+ "Wortschatz":"Vocabular","Grammatik":"Gramatică","Übungen":"Exerciții","Lesen":"Citire","Hören":"Ascultare","Sprechen":"Vorbire","Schreiben":"Scriere","Video":"Video",
+ "Punkte":"Puncte","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul"};
+function roSubs(root){if(!root)return;root.querySelectorAll(".section-h h2,.tool b,.mat b,.mod b,.vbox .vt b,.row .t b,.stat span,.quizcall b,.tabs button").forEach(el=>{if(el.dataset.ro)return;const t=el.textContent.trim();let ro=RO_SUB[t];if(!ro&&/^Quiz vor der Stunde/.test(t))ro="Quiz înainte de oră";el.dataset.ro="1";if(!ro)return;const s=document.createElement("small");s.className="ro-sub";s.lang="ro";s.textContent=ro;el.appendChild(s)})}
+new MutationObserver(()=>roSubs(app)).observe(app,{childList:true,subtree:true});
 
 const PLUS_VIEWS={srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-p]");if(!b)return;e.preventDefault();e.stopPropagation();
