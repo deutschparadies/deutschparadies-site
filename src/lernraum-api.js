@@ -10,7 +10,7 @@
 //   drv:<folderId>      -> cached folder listing (10 min)
 
 const SESSION_TTL = 60 * 60 * 24 * 30;
-const TRIAL_MS = 24 * 60 * 60 * 1000; // trial code: one day after first use // students stay logged in for 30 days
+const TRIAL_MS = 24 * 60 * 60 * 1000; // trial link: valid one day after it was created // students stay logged in for 30 days
 const TEACHER_TTL = 60 * 60 * 12;
 
 function hex(bytes) { return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join(""); }
@@ -47,7 +47,7 @@ export async function sessionOf(request, env) {
 export async function validSession(request, env) {
   const s = await sessionOf(request, env);
   if (!s) return null;
-  if (s.k === "d") return s.exp > Date.now() ? s : null; // one-day trial
+  if (s.k === "d") return s.exp > Date.now() && (!s.code || (await env.APPKV.get("code:" + s.code))) ? s : null; // trial link (stops when the teacher deletes the code)
   return s.k === "l" || s.k === "s" ? s : null;
 }
 async function newSession(env, val, ttl) {
@@ -117,21 +117,18 @@ export async function lernApi(request, env, path, deps) {
     if (M !== "POST") return json({ error: "method" }, 405);
     if (await tooManyFails(request, env)) return json({ error: "wait" }, 429);
     const b = await body(request);
-    // trial code from the teacher: shareable, each person gets one day from their first use
+    // trial code from the teacher: shareable, valid for 24 hours after it was created
     if (b && typeof b.code === "string") {
       const code = b.code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
       if (!/^[A-Z0-9]{8}$/.test(code)) { await addFail(request, env); return json({ error: "wrong" }, 403); }
       const c = await env.APPKV.get("code:" + code, "json");
       if (!c) { await addFail(request, env); return json({ error: "wrong" }, 403); }
-      // one code can be shared with many people; every person/device gets 24 hours from its first use
+      // one code can be shared with many people; the link itself works for 24 hours after it was created
+      const exp = c.exp || (c.created + TRIAL_MS);
+      if (exp <= Date.now()) return json({ error: "expired" }, 403);
       const dev = (await deps.sha256Hex((request.headers.get("cf-connecting-ip") || "x") + "|" + (request.headers.get("user-agent") || ""))).slice(0, 24);
       const ukey = "codeuse:" + code + ":" + dev;
-      let first = +((await env.APPKV.get(ukey)) || 0);
-      const isNew = !first;
-      if (isNew) { first = Date.now(); await env.APPKV.put(ukey, String(first), { expirationTtl: 86400 * 90 }); }
-      const exp = first + TRIAL_MS;
-      if (exp <= Date.now()) return json({ error: "expired" }, 403);
-      if (isNew) { c.uses = (c.uses || 0) + 1; c.lastUse = Date.now(); await env.APPKV.put("code:" + code, JSON.stringify(c)); }
+      if (!(await env.APPKV.get(ukey))) { await env.APPKV.put(ukey, "1", { expirationTtl: 86400 * 8 }); c.uses = (c.uses || 0) + 1; c.lastUse = Date.now(); await env.APPKV.put("code:" + code, JSON.stringify(c), { expirationTtl: 86400 * 7 }); }
       const tok = await newSession(env, { k: "d", exp, code }, Math.max(60, Math.ceil((exp - Date.now()) / 1000)));
       return json({ ok: true, trial: { exp } }, 200, { "set-cookie": cookie("dp_s", tok, Math.max(60, Math.ceil((exp - Date.now()) / 1000))) });
     }
@@ -230,8 +227,8 @@ export async function lernApi(request, env, path, deps) {
       if (b.action === "delete") { const c = String(b.code || "").toUpperCase(); if (/^[A-Z0-9]{8}$/.test(c)) await env.APPKV.delete("code:" + c); return json({ ok: true }); }
       const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
       const code = [...crypto.getRandomValues(new Uint8Array(8))].map((x) => A[x % A.length]).join("");
-      const item = { created: Date.now(), note: str(b.note, 60), uses: 0 };
-      await env.APPKV.put("code:" + code, JSON.stringify(item));
+      const item = { created: Date.now(), exp: Date.now() + TRIAL_MS, note: str(b.note, 60), uses: 0 };
+      await env.APPKV.put("code:" + code, JSON.stringify(item), { expirationTtl: 86400 * 7 });
       return json({ ok: true, code, ...item });
     }
     return json({ error: "notfound" }, 404);
