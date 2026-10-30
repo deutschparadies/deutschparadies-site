@@ -4627,7 +4627,7 @@ function render(){
 }
 
 function home(){
-  const cur=route.lv||"A1.1";
+  const cur=route.lv||S.lastLv||"A1.1";
   const goal=Math.min(100,Math.round(S.todayPts/GOAL*100));
   const lastL=S.last&&findLesson(S.last);
   app.innerHTML=`${!realUnlocked()&&trialOk()?`<div class="demobar">Probezugang · noch ${Math.max(1,Math.ceil((trialExp()-Date.now())/3600000))} Std. · <a href="${WA}" target="_blank" rel="noopener">Kurs anfragen</a></div>`:""}
@@ -5068,7 +5068,7 @@ document.addEventListener("click",e=>{
   if(b.dataset.pw)return pwChange();
   if(b.dataset.telc!==undefined)return go({v:"telc",i:b.dataset.telc});
   if(b.dataset.l){S.lang=b.dataset.l;save();return render()}
-  if(b.dataset.lv){route={v:"home",lv:b.dataset.lv};return render()}
+  if(b.dataset.lv){route={v:"home",lv:b.dataset.lv};S.lastLv=b.dataset.lv;save();try{history.replaceState(route,"");sessionStorage.setItem("dp_route",JSON.stringify(route))}catch(e){}return render()}
   if(b.dataset.goLesson)return go({v:"lesson",id:b.dataset.goLesson});
   if(b.dataset.mod)return go({v:"mod",id:route.id,m:b.dataset.mod});
   if("home" in b.dataset)return go({v:"home",lv:b.dataset.home});
