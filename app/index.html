@@ -4605,7 +4605,6 @@ function render(){
   if(!ACCESS)return;
   if(IS_LEHRER&&window.__DP_WEB&&!window.__lehrerShown){window.__lehrerShown=1;return pwChangeWeb()}
   if(DEMO){if(route.v==="home")return demoHome();if(!DEMO_OK(route))return demoLocked()}
-  else if(WEB){if(ME===undefined)return authCheck();if(!ME)return loginScreen()}
   else if(!unlocked())return lockScreen();
   document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.lang));
   touchDay();
@@ -4625,7 +4624,7 @@ function home(){
   app.innerHTML=`
   <section class="hero">
     <div class="ph"><img src="${PHOTO}" alt="Saleh"></div>
-    <div><h1>Hallo${isStudent()?", "+esc(ME.name.split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
+    <div><h1>Hallo${myName()?", "+esc(myName().split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
   </section>
   <div class="stats">
     <div class="stat"><b>${S.points}</b><span>Punkte</span></div>
@@ -4638,7 +4637,7 @@ function home(){
   <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
   <div id="lvlList"></div>
   ${allgDialoge()}
-  <footer>Deutschparadies · deutschparadies.ro<br><button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button>${WEB&&ME?` · <button class="linkbtn" data-logout="1">Abmelden${isStudent()?" ("+esc(ME.user)+")":""}</button>`:""}</footer>`;
+  <footer>Deutschparadies · deutschparadies.ro<br><button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button></footer>`;
   levelList(cur, app.querySelector("#lvlList"));
 }
 
@@ -4953,12 +4952,12 @@ let PDFJS_LIB=null;
 function loadPdfJs(){if(PDFJS_LIB)return Promise.resolve(PDFJS_LIB);return new Promise((ok,no)=>{if(window.pdfjsLib){PDFJS_LIB=window.pdfjsLib;return ok(PDFJS_LIB)}const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";PDFJS_LIB=window.pdfjsLib;ok(PDFJS_LIB)};s.onerror=no;document.head.appendChild(s)})}
 async function renderPdf(data,body){const lib=await loadPdfJs();const doc=await lib.getDocument({data}).promise;body.innerHTML="";const dpr=window.devicePixelRatio||1;const w=Math.min((body.clientWidth||800)-24,900);for(let i=1;i<=doc.numPages;i++){const page=await doc.getPage(i);const v0=page.getViewport({scale:1});const vp=page.getViewport({scale:(w/v0.width)*dpr});const cv=document.createElement("canvas");cv.width=Math.floor(vp.width);cv.height=Math.floor(vp.height);cv.style.width=(cv.width/dpr)+"px";cv.className="pdfpg";body.appendChild(cv);await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise}}
 function askPdfPassword(ov,body,u){body.innerHTML='<form id="pdfPw" class="pdfpw"><p>Bitte gib das Schüler-Passwort ein, um diesen Dialog zu öffnen.</p><input id="pdfPwIn" type="password" autocomplete="current-password" required><button type="submit">Öffnen</button><p id="pdfPwErr" hidden>Falsches Passwort.</p></form>';body.querySelector("#pdfPw").onsubmit=async e=>{e.preventDefault();const pw=body.querySelector("#pdfPwIn").value;const r=await fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw})}).catch(()=>null);if(r&&r.ok){ov.remove();openPdf(u)}else{body.querySelector("#pdfPwErr").hidden=false}}}
-async function openPdf(u){document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401&&WEB){ov.remove();ME=null;return render()}if(r.status===403&&!WEB){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
+async function openPdf(u){document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401||(r.status===403&&!/\/api\/drive\//.test(u))){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
 document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-pdf]");if(!a)return;e.preventDefault();openPdf(a.dataset.pdf)});
 function lockScreen(){
   app.innerHTML=`<div class="lock"><img class="lock-logo" alt="Deutschparadies" src="${document.querySelector("header .logo").src}"><h1>Deutschparadies Lernraum</h1><p class="muted">Nur für Kursteilnehmer. Bitte gib das Passwort ein, das du von deinem Lehrer bekommen hast.</p>
   <form id="lf"><input class="gap" id="lpw" type="password" autocomplete="current-password" placeholder="Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button></form><div class="feedback bad" id="lfb" hidden>Falsches Passwort. Versuch es noch einmal.</div></div>`;
-  app.querySelector("#lf").onsubmit=async e=>{e.preventDefault();const v=app.querySelector("#lpw").value;const h=await sha(ACCESS.salt+v);if(h===ACCESS.hash){setUnlocked(h);if(window.__DP_WEB)fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw:v})}).catch(()=>{});render()}else{app.querySelector("#lfb").hidden=false}};
+  app.querySelector("#lf").onsubmit=async e=>{e.preventDefault();const v=app.querySelector("#lpw").value;const h=await sha(ACCESS.salt+v);if(h===ACCESS.hash){setUnlocked(h);if(window.__DP_WEB)await fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw:v})}).catch(()=>{});render()}else{app.querySelector("#lfb").hidden=false}};
   setTimeout(()=>{const i=app.querySelector("#lpw");i&&i.focus()},50);
 }
 const IS_LEHRER=/[?&]lehrer\b/.test(location.search);
@@ -5305,8 +5304,11 @@ const VERB_FULL={
 const WEB=!!window.__DP_WEB;
 const DEMO=WEB&&/[?&]demo\b/.test(location.search);
 const WA="https://wa.me/40771237705?text="+encodeURIComponent("Salut! Am încercat Lernraum (demo) și vreau să mă înscriu la un curs de germană.");
-let ME; // undefined = not checked yet, null = logged out, {kind:"student"|"legacy", ...}
-const isStudent=()=>!!(ME&&ME.kind==="student");
+const myName=()=>{try{return localStorage.getItem("dp_name")||""}catch(e){return ""}};
+const setName=n=>{try{localStorage.setItem("dp_name",n)}catch(e){}};
+function sendResult(b){const name=myName();if(!WEB||DEMO||!name)return;b.name=name;api("result",{method:"POST",body:b})}
+function askName(title,cb){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>${esc(title)}</h1><form id="nf" class="card"><label class="kind">Dein Vor- und Nachname</label><input class="gap" id="nn" maxlength="60" autocomplete="name" value="${esc(myName())}"><p class="note">Damit dein Lehrer Saleh sieht, dass das von dir ist.</p><button class="btn" type="submit" style="width:100%;margin-top:10px">Weiter</button></form>`;
+  const f=app.querySelector("#nf");f.onsubmit=e=>{e.preventDefault();const n=app.querySelector("#nn").value.trim();if(n.length<2)return;setName(n);cb(n)};setTimeout(()=>app.querySelector("#nn").focus(),30)}
 async function api(p,opt){opt=opt||{};const o={method:opt.method||"GET",headers:{},credentials:"same-origin",cache:"no-store"};
   if(opt.body!==undefined){o.headers["content-type"]="application/json";o.body=typeof opt.body==="string"?opt.body:JSON.stringify(opt.body)}
   if(opt.keepalive)o.keepalive=true;
@@ -5319,56 +5321,23 @@ const tr=x=>x[LI[L()]]||x[1];
 const levelIds=()=>D.levels.map(l=>l.id);
 function artHtml(de){const m=String(de).match(/^(der|die|das) (.*)$/);return m?`<span class="art-${m[1]}">${m[1]}</span> ${esc(m[2])}`:esc(de)}
 
-// ---------- progress sync (students only) ----------
-const _save=save;let syncT=null,lastSync=0;
-save=function(){S._ts=Date.now();_save();queueSync()};
-function queueSync(){if(!isStudent())return;clearTimeout(syncT);syncT=setTimeout(pushSync,Date.now()-lastSync>180000?15000:180000)}
-function pushSync(ka){if(!isStudent())return;lastSync=Date.now();const b=JSON.stringify({S});api("progress",{method:"PUT",body:b,keepalive:!!ka&&b.length<60000})}
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&isStudent()&&syncT){clearTimeout(syncT);syncT=null;pushSync(true)}});
-async function syncDown(){const j=await api("progress");if(!j._ok)return;const srv=j.progress&&j.progress.S;
-  const mine=S._sid===ME.id;
-  if(srv&&(!mine||(srv._ts||0)>(S._ts||0))){Object.keys(S).forEach(k=>delete S[k]);Object.assign(S,{lang:"ro",points:0,today:"",todayPts:0,streak:0,last:"",done:{},wrong:[]},srv)}
-  else if(!srv&&S._sid&&!mine){const lang=S.lang;Object.keys(S).forEach(k=>delete S[k]);Object.assign(S,{lang,points:0,today:"",todayPts:0,streak:0,last:"",done:{},wrong:[]})}
-  S._sid=ME.id;_save();if(!srv)pushSync()}
-
-// ---------- login ----------
-async function authCheck(){app.innerHTML=`<p class="muted" style="text-align:center;margin-top:40px">Lädt …</p>`;
-  const j=await api("me");
-  if(j._ok){ME=j;if(isStudent())await syncDown()}
-  else if(j._status===0&&unlocked()){ME={kind:"legacy",offline:true}}
-  else ME=null;
-  render()}
-function loginScreen(){
-  app.innerHTML=`<div class="lock"><img class="lock-logo" alt="Deutschparadies" src="${document.querySelector("header .logo").src}"><h1>Deutschparadies Lernraum</h1><p class="muted">Nur für Kursteilnehmer. Melde dich mit deinem Benutzernamen und deinem Passwort an.</p>
-  <form id="lf"><input class="gap" id="luser" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Benutzername (z. B. maria.popescu)">
-  <input class="gap" id="lpw" type="password" autocomplete="current-password" placeholder="Passwort" style="margin-top:10px">
-  <button class="btn" type="submit" style="width:100%;margin-top:10px">Anmelden</button></form>
-  <p class="note">Du hast nur das Kurs-Passwort? Lass das Feld „Benutzername“ leer.</p>
-  <div class="feedback bad" id="lfb" hidden></div>
-  <p class="note" style="margin-top:18px"><a href="?demo">Noch kein Schüler? Probiere die Demo aus.</a></p></div>`;
-  const fb=app.querySelector("#lfb");
-  app.querySelector("#lf").onsubmit=async e=>{e.preventDefault();const user=app.querySelector("#luser").value.trim(),pw=app.querySelector("#lpw").value;if(!pw)return;
-    fb.hidden=true;const j=await api("login",{method:"POST",body:{user,pw}});
-    if(j._ok){ME=j.me;if(ACCESS)setUnlocked(ACCESS.hash);if(isStudent())await syncDown();route={v:"home",lv:isStudent()?ME.lv:undefined};return render()}
-    fb.hidden=false;fb.textContent=j.error==="legacy_off"?"Bitte melde dich mit deinem Benutzernamen an.":j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":j._status===0?"Keine Verbindung. Bitte später noch einmal versuchen.":"Benutzername oder Passwort ist falsch."};
-  setTimeout(()=>{const i=app.querySelector("#luser");i&&i.focus()},50)}
-async function logout(){await api("logout",{method:"POST"});if(isStudent())pushSync(true);ME=null;try{localStorage.removeItem("dp_unlock")}catch(e){}route={v:"home"};render()}
-
 // ---------- home tools ----------
 function plusHome(){
-  const q=isStudent()&&ME.quiz&&S.quizDone!==ME.quiz.lesson+":"+ME.quiz.at&&findLesson(ME.quiz.lesson);
-  const t=(p,ico,b,s,extra)=>`<button class="tool" data-p="${p}"${extra||""}><span class="ti">${ico}</span><b>${b}</b><small>${s}</small></button>`;
-  const due=srsDue(isStudent()?ME.lv:null);
-  return `${q?`<button class="quizcall" data-p="quiz"><span class="ti">📝</span><span><b>Quiz vor der nächsten Stunde</b><small>${q.lv} · Lektion ${q.l.n}: ${esc(q.l.title)} · 10 Fragen</small></span></button>`:""}
+  const t=(p,ico,b,s)=>`<button class="tool" data-p="${p}"><span class="ti">${ico}</span><b>${b}</b><small>${s}</small></button>`;
+  const due=srsDue(S.srsLv||null);
+  setTimeout(loadQuizCalls,0);
+  return `<div id="quizcalls"></div>
   <div class="section-h"><h2>Trainieren</h2></div>
   <div class="tools">
    ${t("srs","🗂️","Wortschatz-Trainer",due?due+" Wörter heute fällig":"Karteikarten mit System")}
    ${t("pron","🎙️","Aussprache","Hören · Nachsprechen · Feedback")}
    ${t("rp","🎭","Rollenspiele","Dialoge sprechen wie im Alltag")}
    ${t("gram","🔎","Grammatik & Verben","Suchen · Konjugieren · Artikel")}
-   ${t("hw","📮","Hausaufgaben",isStudent()?"Abgeben · Korrektur lesen":"Mit eigenem Konto")}
+   ${t("hw","📮","Hausaufgaben","Abgeben · Korrektur lesen")}
    ${t("final","🏅","Abschlusstest","Test + Zertifikat pro Niveau")}
   </div>`}
+async function loadQuizCalls(){if(!WEB||DEMO)return;const j=await api("quiz");const box=document.getElementById("quizcalls");if(!box||!j._ok)return;const done=S.quizDone||{};
+  box.innerHTML=Object.entries(j.quiz||{}).map(([lv,q])=>{const f=findLesson(q.lesson);if(!f)return "";const key=q.lesson+":"+q.at;return `<button class="quizcall" data-p="quiz" data-id="${q.lesson}" data-q="${key}"><span class="ti">${done[key]?"✅":"📝"}</span><span><b>Quiz vor der Stunde · ${lv}${done[key]?" (erledigt)":""}</b><small>Lektion ${f.l.n}: ${esc(f.l.title)} · 10 Fragen</small></span></button>`}).join("")}
 
 // ---------- generic question runner (quiz + final test) ----------
 function vocabPool(lessons){const out=[];lessons.forEach(l=>(l.vocab||[]).forEach(v=>out.push(v)));return out}
@@ -5399,11 +5368,13 @@ function resultCard(score,total,passPct,extra){const pct=Math.round(score/total*
   return `<div class="card" style="text-align:center"><span class="kind">Ergebnis</span><h2 style="font-size:2rem;margin:6px 0">${score} / ${total}</h2><div class="goal"><i style="width:${pct}%"></i></div><p style="margin-top:8px">${pct} %${pass===null?"":pass?" · <b>Bestanden!</b>":" · noch nicht bestanden (ab "+passPct+" %)"}</p>${extra||""}</div>`}
 
 // ---------- pre-lesson quiz ----------
-function quizView(){
-  if(!isStudent()||!ME.quiz)return go({v:"home"});const f=findLesson(ME.quiz.lesson);if(!f)return go({v:"home"});
+function quizView(r){
+  const f=findLesson(r.id);if(!f)return go({v:"home"});
+  if(!myName())return askName("Quiz vor der Stunde",()=>quizView(r));
   const pool=vocabPool([f.l]);const ex=exQs([f.l],7);const voc=shuffle(pool).slice(0,10-ex.length).map(v=>vocQ(v,pool));
-  runQuiz({kind:"Quiz vor der Stunde",title:`Lektion ${f.l.n}: ${f.l.title}`,qs:shuffle(ex.concat(voc)),done:(s,t,w)=>{
-    S.quizDone=ME.quiz.lesson+":"+ME.quiz.at;save();api("result",{method:"POST",body:{type:"quiz",ref:f.l.id,score:s,total:t,info:w.map(q=>q.q).slice(0,6).join(" | ").slice(0,380)}});
+  runQuiz({kind:"Quiz vor der Stunde · "+myName(),title:`Lektion ${f.l.n}: ${f.l.title}`,qs:shuffle(ex.concat(voc)),done:(s,t,w)=>{
+    S.quizDone=S.quizDone||{};if(r.q)S.quizDone[r.q]=1;save();
+    sendResult({type:"quiz",ref:f.l.id,score:s,total:t,info:w.map(q=>q.q).slice(0,6).join(" | ").slice(0,380)});
     app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>Quiz fertig!</h1>${resultCard(s,t,0,`<p class="note">Dein Lehrer sieht dein Ergebnis vor der Stunde.</p>`)}<div class="actions"><button class="btn" data-go-lesson="${f.l.id}">Lektion wiederholen</button></div>`}})}
 
 // ---------- final test + certificate ----------
@@ -5411,23 +5382,23 @@ function finalView(r){
   if(DEMO)return demoLocked();
   const lv=r.lv;
   if(!lv){const best=S.final||{};
-    app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Abschlusstest</span><h1>Niveau abschließen</h1><p class="muted">25 Fragen aus allen Lektionen des Niveaus. Ab 70 % hast du bestanden${isStudent()?" und bekommst dein Lernraum-Zertifikat":""}.</p>
-    <div class="list" style="margin-top:12px">${levelIds().filter(id=>lessonsOf(id).length).map(id=>`<button class="row" data-p="final" data-lv="${id}"><span class="num ${best[id]&&best[id].pass?"done":""}">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${best[id]?"Bestes Ergebnis: "+best[id].pct+" %":"Noch nicht gemacht"}</small></span>${best[id]&&best[id].pass&&isStudent()?`<span class="pct">🏅</span>`:""}</button>`).join("")}</div>`;return}
+    app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Abschlusstest</span><h1>Niveau abschließen</h1><p class="muted">25 Fragen aus allen Lektionen des Niveaus. Ab 70 % hast du bestanden und bekommst dein Lernraum-Zertifikat.</p>
+    <div class="list" style="margin-top:12px">${levelIds().filter(id=>lessonsOf(id).length).map(id=>`<button class="row" data-p="final" data-lv="${id}"><span class="num ${best[id]&&best[id].pass?"done":""}">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${best[id]?"Bestes Ergebnis: "+best[id].pct+" %":"Noch nicht gemacht"}</small></span>${best[id]&&best[id].pass?`<span class="pct">🏅</span>`:""}</button>`).join("")}</div>`;return}
   const ls=lessonsOf(lv);const pool=vocabPool(ls);const ex=exQs(ls,15);const voc=shuffle(pool).slice(0,25-ex.length).map(v=>vocQ(v,pool));
   runQuiz({kind:"Abschlusstest",title:"Niveau "+lv,qs:shuffle(ex.concat(voc)),done:(s,t)=>{
     const pct=Math.round(s/t*100),pass=pct>=70;S.final=S.final||{};const prev=S.final[lv];if(!prev||pct>prev.pct)S.final[lv]={pct,pass,ts:Date.now()};save();
-    if(isStudent())api("result",{method:"POST",body:{type:"final",ref:lv,score:s,total:t,pass}});
+    sendResult({type:"final",ref:lv,score:s,total:t,pass});
     app.innerHTML=`<button class="back" data-p="final">‹ Zurück</button><h1>Abschlusstest ${lv}</h1>${resultCard(s,t,70)}
-    ${pass&&isStudent()?`<div class="actions"><button class="btn gold" id="cert">🏅 Zertifikat erstellen</button></div><div id="certbox"></div>`:pass?`<p class="note">Für ein Zertifikat mit deinem Namen brauchst du ein eigenes Konto. Frag deinen Lehrer.</p>`:`<div class="actions"><button class="btn" data-p="final" data-lv="${lv}">Noch einmal versuchen</button></div>`}`;
-    const cb=app.querySelector("#cert");if(cb)cb.onclick=()=>makeCert(lv,pct,app.querySelector("#certbox"))}})}
-function makeCert(lv,pct,box){
+    ${pass?`<div class="card" style="margin-top:12px"><label class="kind">Name auf dem Zertifikat</label><input class="gap" id="cname" maxlength="60" value="${esc(myName())}"><div class="actions"><button class="btn gold" id="cert">🏅 Zertifikat erstellen</button></div></div><div id="certbox"></div>`:`<div class="actions"><button class="btn" data-p="final" data-lv="${lv}">Noch einmal versuchen</button></div>`}`;
+    const cb=app.querySelector("#cert");if(cb)cb.onclick=()=>{const n=app.querySelector("#cname").value.trim();if(n.length<2){app.querySelector("#cname").focus();return}setName(n);makeCert(lv,pct,n,app.querySelector("#certbox"))}}})}
+function makeCert(lv,pct,name,box){
   const W=1754,H=1240,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   x.fillStyle="#fbf8f0";x.fillRect(0,0,W,H);x.strokeStyle="#173226";x.lineWidth=18;x.strokeRect(40,40,W-80,H-80);x.strokeStyle="#e3a72e";x.lineWidth=4;x.strokeRect(78,78,W-156,H-156);
   const done=()=>{x.textAlign="center";x.fillStyle="#173226";
     x.font="700 30px Georgia, serif";x.fillText("DEUTSCHPARADIES · LERNRAUM",W/2,330);
     x.font="700 96px Georgia, serif";x.fillText("Zertifikat",W/2,450);
     x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("Hiermit wird bestätigt, dass",W/2,540);
-    x.fillStyle="#15231c";x.font="italic 700 80px Georgia, serif";x.fillText(ME.name,W/2,650);
+    x.fillStyle="#15231c";x.font="italic 700 80px Georgia, serif";x.fillText(name,W/2,650);
     x.strokeStyle="#e3a72e";x.lineWidth=3;x.beginPath();x.moveTo(W/2-420,680);x.lineTo(W/2+420,680);x.stroke();
     x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("den Abschlusstest für das Niveau",W/2,760);
     x.fillStyle="#173226";x.font="700 64px Georgia, serif";x.fillText(lv+" · "+pct+" %",W/2,850);
@@ -5435,7 +5406,7 @@ function makeCert(lv,pct,box){
     x.textAlign="left";x.fillStyle="#15231c";x.font="30px Georgia, serif";x.fillText(fmtDate(Date.now()),190,1060);x.fillText("Datum",190,1100);
     x.textAlign="right";x.fillText("Saleh",W-190,1060);x.fillText("Lehrer · Deutschparadies",W-190,1100);
     x.textAlign="center";x.fillStyle="#9aa59e";x.font="22px Georgia, serif";x.fillText("Interne Lernbestätigung des Deutschparadies Lernraums – kein offizielles Sprachzertifikat.",W/2,1150);
-    c.toBlob(b=>{const u=URL.createObjectURL(b);box.innerHTML=`<div class="card" style="margin-top:12px"><img src="${u}" alt="Zertifikat" style="width:100%;border-radius:8px"><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${u}" download="Zertifikat_${lv}_${ME.name.replace(/\s+/g,"_")}.png">Bild speichern</a></div></div>`},"image/png")};
+    c.toBlob(b=>{const u=URL.createObjectURL(b);box.innerHTML=`<div class="card" style="margin-top:12px"><img src="${u}" alt="Zertifikat" style="width:100%;border-radius:8px"><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${u}" download="Zertifikat_${lv}_${name.replace(/\s+/g,"_")}.png">Bild speichern</a></div></div>`},"image/png")};
   const logo=new Image();logo.onload=()=>{x.save();x.beginPath();x.arc(W/2,210,70,0,Math.PI*2);x.closePath();x.fillStyle="#fff";x.fill();x.clip();x.drawImage(logo,W/2-70,140,140,140);x.restore();done()};logo.onerror=done;logo.src=document.querySelector("header .logo").src}
 
 // ---------- vocabulary trainer (spaced repetition, Leitner boxes) ----------
@@ -5443,7 +5414,7 @@ const BOXDAYS=[0,1,3,7,14,30];
 function srsDeck(lv){const out=[];(lv?[lv]:levelIds()).forEach(id=>lessonsOf(id).forEach(l=>{if(DEMO&&l.id!=="a11-1")return;(l.vocab||[]).forEach((v,k)=>out.push({key:l.id+":"+k,v,lv:id}))}));return out}
 function srsDue(lv){if(!lv)return 0;const s=S.srs||{},t=dayNum();return srsDeck(lv).filter(c=>s[c.key]&&s[c.key][1]<=t).length}
 function srsView(r){
-  S.srs=S.srs||{};const lv=DEMO?"A1.1":(r.lv||S.srsLv||(isStudent()?ME.lv:"A1.1"));if(!DEMO){S.srsLv=lv}
+  S.srs=S.srs||{};const lv=DEMO?"A1.1":(r.lv||S.srsLv||"A1.1");if(!DEMO){S.srsLv=lv}
   const deck=srsDeck(lv),t=dayNum(),s=S.srs;
   const due=deck.filter(c=>s[c.key]&&s[c.key][1]<=t),fresh=deck.filter(c=>!s[c.key]);
   const learned=deck.filter(c=>s[c.key]&&s[c.key][0]>=4).length;
@@ -5480,7 +5451,7 @@ function listenOnce(onRes,onErr){if(!Rec){onErr("norec");return}let r;try{r=new 
 const REC_HELP="Die Spracherkennung funktioniert am besten in Chrome (Android) oder Safari (iPhone, mit aktivierter Diktierfunktion). Du kannst trotzdem anhören und laut nachsprechen.";
 function pronView(r){
   if(DEMO)return demoLocked();
-  const lv=r.lv||S.pronLv||(isStudent()?ME.lv:"A1.1");S.pronLv=lv;
+  const lv=r.lv||S.pronLv||S.srsLv||"A1.1";S.pronLv=lv;
   const pool=[];lessonsOf(lv).forEach(l=>{(l.speak||[]).forEach(s=>{if(!/…|\.\.\./.test(s))pool.push(s)});(l.vocab||[]).forEach(v=>{if(v[4]&&v[4].split(" ").length>=3)pool.push(v[4])})});
   if(!pool.length){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>Aussprache</h1><p class="muted">Für dieses Niveau gibt es noch keine Sätze.</p>`;return}
   const s=r.s&&pool.includes(r.s)?r.s:pool[Math.floor(Math.random()*pool.length)];
@@ -5501,7 +5472,7 @@ function pronView(r){
 // ---------- role plays ----------
 function rpList(){
   if(DEMO)return demoLocked();
-  const mine=isStudent()?ME.lv:null;const order=levelIds().slice().sort((a,b)=>(b===mine)-(a===mine));
+  const mine=S.srsLv||null;const order=levelIds().slice().sort((a,b)=>(b===mine)-(a===mine));
   app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Rollenspiele</span><h1>Sprich wie im echten Leben</h1><p class="muted">Dein Gesprächspartner spricht, du antwortest – mit dem Mikrofon oder schriftlich.</p>
   ${order.map(id=>{const list=RP.filter(x=>x.lv===id);if(!list.length)return "";return `<div class="section-h"><h2>${id}</h2></div><div class="list">${list.map(x=>{const best=(S.rp||{})[x.id];return `<button class="row" data-p="rpp" data-id="${x.id}"><span class="num ${best===x.turns.length?"done":""}">🎭</span><span class="t"><b>${esc(x.t)}</b><small${rtl()}>${esc(x.sit[L()])}</small></span><span class="pct">${best!==undefined?best+"/"+x.turns.length:""}</span></button>`}).join("")}</div>`}).join("")}`}
 function rpPlay(r){
@@ -5511,7 +5482,7 @@ function rpPlay(r){
   const check=(txt,turn)=>{const n=" "+norm(txt)+" ";return turn.k.every(g=>g.some(w=>n.includes(norm(w))))};
   function draw(){
     if(i>=sc.turns.length){S.rp=S.rp||{};S.rp[sc.id]=Math.max(S.rp[sc.id]||0,score);save();
-      if(isStudent())api("result",{method:"POST",body:{type:"rp",ref:sc.id,score,total:sc.turns.length}});
+      sendResult({type:"rp",ref:sc.id,score,total:sc.turns.length});
       app.innerHTML=`<button class="back" data-p="rp">‹ Zurück</button><h1>${esc(sc.t)}</h1>${resultCard(score,sc.turns.length,0)}<div class="card" style="margin-top:12px">${log.join("")}</div><div class="actions"><button class="btn" data-p="rpp" data-id="${sc.id}">Noch einmal</button></div>`;return}
     const t=sc.turns[i];
     app.innerHTML=`<button class="back" data-p="rp">‹ Zurück</button><span class="kind" style="display:block">Rollenspiel · ${sc.lv}</span><h1>${esc(sc.t)}</h1>
@@ -5588,29 +5559,36 @@ function compressImage(file){return new Promise((ok,no)=>{const img=new Image();
 const CRIT={I:"Aufgabenerfüllung",II:"Kommunikative Gestaltung",III:"Formale Richtigkeit"};
 function fbHtml(fb){if(!fb)return "";const cr=Object.keys(CRIT).filter(k=>fb.crit&&fb.crit[k]).map(k=>`<span class="chip" style="width:auto;cursor:default;font-size:.85rem">${k} ${CRIT[k]}: <b>${fb.crit[k]}</b></span>`).join("");
   return `<div class="corr"><span class="kind">Korrektur von Saleh · ${fmtDate(fb.ts)}</span>${cr?`<div class="chips" style="margin:6px 0">${cr}</div>`:""}${fb.text?`<div class="ctext">${esc(fb.text)}</div>`:""}${fb.note?`<p><b>Kommentar:</b> ${esc(fb.note)}</p>`:""}</div>`}
+const hwMine=()=>{try{return JSON.parse(localStorage.getItem("dp_hw_mine"))||[]}catch(e){return []}};
+const hwAdd=x=>{const a=hwMine();a.unshift(x);try{localStorage.setItem("dp_hw_mine",JSON.stringify(a.slice(0,60)))}catch(e){}};
 function hwView(){
   if(DEMO)return demoLocked();
-  if(!isStudent()){app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><h1>Hausaufgaben</h1><div class="card"><p>Für die Hausaufgaben im Lernraum brauchst du ein eigenes Konto mit Benutzernamen.</p><p class="muted">Frag deinen Lehrer Saleh nach deinem Zugang.</p></div>`;return}
-  const tasks=lessonsOf(ME.lv).filter(l=>l.write).map(l=>`Lektion ${l.n}: ${l.write.title}`);
-  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Hausaufgaben · ${ME.lv}</span><h1>Hausaufgabe abgeben</h1>
-  <form id="hwf" class="card"><label class="kind">Aufgabe</label><input class="gap" id="ht" list="hwdl" maxlength="120" placeholder="z. B. Beschwerde an die Hausverwaltung"><datalist id="hwdl">${tasks.map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
+  const lv=S.hwLv||S.srsLv||"A1.1";
+  const tasks=lessonsOf(lv).filter(l=>l.write).map(l=>`Lektion ${l.n}: ${l.write.title}`);
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Hausaufgaben</span><h1>Hausaufgabe abgeben</h1>
+  <form id="hwf" class="card"><label class="kind">Dein Vor- und Nachname</label><input class="gap" id="hn" maxlength="60" autocomplete="name" value="${esc(myName())}">
+   <label class="kind" style="display:block;margin-top:12px">Niveau</label><select class="gap" id="hlv">${levelIds().map(x=>`<option${x===lv?" selected":""}>${x}</option>`).join("")}</select>
+   <label class="kind" style="display:block;margin-top:12px">Aufgabe</label><input class="gap" id="ht" list="hwdl" maxlength="120" placeholder="z. B. Beschwerde an die Hausverwaltung"><datalist id="hwdl">${tasks.map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
    <label class="kind" style="display:block;margin-top:12px">Dein Text</label><textarea class="wta" id="htx" rows="9" placeholder="Schreib deinen Text hier …"></textarea><div class="wcount"><span id="hwc">0</span> Wörter</div>
    <label class="kind" style="display:block;margin-top:12px">Oder ein Foto (Heft / Blatt)</label><input type="file" id="himg" accept="image/*" class="gap" style="font-size:.95rem"><img id="hprev" alt="" hidden style="width:100%;margin-top:8px;border-radius:10px">
    <button class="btn" type="submit" style="width:100%;margin-top:14px">Abgeben</button><div class="feedback" id="hfb" hidden></div></form>
   <div class="section-h"><h2>Meine Abgaben</h2></div><div id="hlist"><p class="muted">Lädt …</p></div>`;
+  app.querySelector("#hlv").onchange=e=>{S.hwLv=e.target.value;save();hwView()};
   let img=null;const fb=app.querySelector("#hfb");const msg=(t,ok)=>{fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.textContent=t};
-  const ta=app.querySelector("#htx");const key="dp_hw_draft_"+ME.id;try{ta.value=localStorage.getItem(key)||""}catch(e){}
+  const ta=app.querySelector("#htx");const key="dp_hw_draft";try{ta.value=localStorage.getItem(key)||""}catch(e){}
   const cnt=()=>app.querySelector("#hwc").textContent=(ta.value.trim().match(/\S+/g)||[]).length;cnt();ta.oninput=()=>{cnt();try{localStorage.setItem(key,ta.value)}catch(e){}};
   app.querySelector("#himg").onchange=async e=>{const f=e.target.files[0];if(!f)return;msg("Foto wird vorbereitet …",true);try{img=await compressImage(f);const p=app.querySelector("#hprev");p.src=img;p.hidden=false;fb.hidden=true}catch(err){img=null;msg("Das Foto konnte nicht gelesen werden.")}};
-  app.querySelector("#hwf").onsubmit=async e=>{e.preventDefault();const title=app.querySelector("#ht").value.trim(),text=ta.value.trim();
-    if(!title)return msg("Bitte schreib, welche Aufgabe das ist.");if(!text&&!img)return msg("Bitte schreib einen Text oder füge ein Foto hinzu.");
-    msg("Wird gesendet …",true);const j=await api("hw",{method:"POST",body:{title,text,img}});
-    if(j._ok){try{localStorage.removeItem(key)}catch(e){}addPts(20);msg("Abgegeben! Saleh korrigiert deine Aufgabe bald.",true);ta.value="";cnt();img=null;app.querySelector("#hprev").hidden=true;app.querySelector("#hwf").reset();loadList()}
-    else msg(j.error==="big"?"Das Foto ist zu groß.":j._status===0?"Keine Verbindung. Dein Text ist gespeichert – versuch es später noch einmal.":"Senden fehlgeschlagen. Bitte noch einmal versuchen.")};
-  async function loadList(){const box=app.querySelector("#hlist");const j=await api("hw");if(!box.isConnected)return;if(!j._ok){box.innerHTML=`<p class="muted">Konnte nicht geladen werden.</p>`;return}
-    box.innerHTML=j.items.length?j.items.map(it=>`<div class="card hwi" style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(it.title)}</b><span class="st ${it.status==="korrigiert"?"ok":""}">${it.status==="korrigiert"?"✓ Korrigiert":"Eingereicht"}</span></div><small class="muted">${fmtDate(it.ts)}</small>
+  app.querySelector("#hwf").onsubmit=async e=>{e.preventDefault();const name=app.querySelector("#hn").value.trim(),title=app.querySelector("#ht").value.trim(),text=ta.value.trim(),hlv=app.querySelector("#hlv").value;
+    if(name.length<2)return msg("Bitte schreib deinen Namen.");if(!title)return msg("Bitte schreib, welche Aufgabe das ist.");if(!text&&!img)return msg("Bitte schreib einen Text oder füge ein Foto hinzu.");
+    setName(name);msg("Wird gesendet …",true);const j=await api("hw",{method:"POST",body:{name,lv:hlv,title,text,img}});
+    if(j._ok){hwAdd(j.id+"."+j.tok);try{localStorage.removeItem(key)}catch(e){}addPts(20);msg("Abgegeben! Saleh korrigiert deine Aufgabe bald.",true);ta.value="";cnt();img=null;app.querySelector("#hprev").hidden=true;app.querySelector("#ht").value="";app.querySelector("#himg").value="";loadList()}
+    else msg(j._status===401?"Bitte öffne den Lernraum neu und gib das Passwort ein.":j.error==="big"?"Das Foto ist zu groß.":j._status===0?"Keine Verbindung. Dein Text ist gespeichert – versuch es später noch einmal.":"Senden fehlgeschlagen. Bitte noch einmal versuchen.")};
+  async function loadList(){const box=app.querySelector("#hlist");const mine=hwMine();if(!mine.length){box.innerHTML=`<p class="muted">Noch keine Abgaben auf diesem Handy.</p>`;return}
+    const j=await api("hw?mine="+encodeURIComponent(mine.join(",")));if(!box.isConnected)return;if(!j._ok){box.innerHTML=`<p class="muted">Konnte nicht geladen werden.</p>`;return}
+    const toks={};mine.forEach(x=>{const [id,t]=x.split(".");toks[id]=t});
+    box.innerHTML=j.items.length?j.items.map(it=>`<div class="card hwi" style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(it.title)}</b><span class="st ${it.status==="korrigiert"?"ok":""}">${it.status==="korrigiert"?"✓ Korrigiert":"Eingereicht"}</span></div><small class="muted">${fmtDate(it.ts)} · ${esc(it.name)}</small>
       ${it.text?`<details style="margin-top:6px"><summary>Mein Text</summary><div class="ctext">${esc(it.text)}</div></details>`:""}${it.hasImg?`<button class="btn ghost" style="margin-top:8px;padding:8px" data-hwimg="${it.id}">Foto ansehen</button><div class="imgbox"></div>`:""}${fbHtml(it.fb)}</div>`).join(""):`<p class="muted">Noch keine Abgaben.</p>`;
-    box.querySelectorAll("[data-hwimg]").forEach(b=>b.onclick=async()=>{b.disabled=true;const r=await api("hwimg?id="+encodeURIComponent(b.dataset.hwimg));if(r.img)b.nextElementSibling.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:8px;border-radius:10px">`;b.remove()})}
+    box.querySelectorAll("[data-hwimg]").forEach(b=>b.onclick=async()=>{b.disabled=true;const id=b.dataset.hwimg;const r=await api("hwimg?id="+encodeURIComponent(id)+"&tok="+encodeURIComponent(toks[id]||""));if(r.img)b.nextElementSibling.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:8px;border-radius:10px">`;b.remove()})}
   loadList()}
 
 // ---------- protected Drive folders (Buch / Dialoge / Texte) ----------
@@ -5620,7 +5598,7 @@ async function driveView(r){
   app.innerHTML=`${back}<span class="kind" style="display:block">Materialien${r.lv?" · "+r.lv:""}</span><h1>${esc(r.t||"Ordner")}</h1><div id="dlist" style="margin-top:12px"><p class="muted">Lädt …</p></div>`;
   const db=app.querySelector("#dback");if(db)db.onclick=()=>history.back();
   const j=await api("drive/list?f="+encodeURIComponent(r.f));const box=app.querySelector("#dlist");if(!box||!box.isConnected)return;
-  if(j._status===401){ME=null;return render()}
+  if(j._status===401){box.innerHTML=`<form id="dpw" class="card"><p>Bitte gib das Kurs-Passwort noch einmal ein.</p><input class="gap" id="dpwi" type="password" autocomplete="current-password"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button><p class="feedback bad" id="dpwe" hidden>Falsches Passwort.</p></form>`;box.querySelector("#dpw").onsubmit=async e=>{e.preventDefault();const k=await api("session",{method:"POST",body:{pw:box.querySelector("#dpwi").value}});if(k._ok)driveView(r);else box.querySelector("#dpwe").hidden=false};return}
   if(!j._ok){box.innerHTML=`<div class="card"><p>Der Ordner kann gerade nicht geladen werden. Bitte später noch einmal versuchen.</p></div>`;return}
   const items=j.items.slice().sort((a,b)=>(b.folder-a.folder)||a.name.localeCompare(b.name,"de",{numeric:true}));
   if(!items.length){box.innerHTML=`<p class="muted">Hier gibt es noch keine Dateien.</p>`;return}
@@ -5657,7 +5635,7 @@ function telcExam(i){
     app.querySelectorAll("[data-chk]").forEach(b=>b.click());
     app.querySelectorAll(".tq details, .trs").forEach(d=>d.hidden=false);
     const sc=telcScore(i),pct=Math.round(sc.s/180*100);
-    if(isStudent())api("result",{method:"POST",body:{type:"telc",ref:"Modelltest "+(i+1),score:Math.round(sc.s*10)/10,total:180,pass:pct>=60}});
+    sendResult({type:"telc",ref:"Modelltest "+(i+1),score:Math.round(sc.s*10)/10,total:180,pass:pct>=60});
     bar.innerHTML=`<span><b>Prüfung beendet</b> · ${+sc.s.toFixed(1)}/180 · ${pct} % ${pct>=60?"✅ bestanden":"❌ unter 60 %"}</span><button class="btn ghost" id="eexit" style="flex:none;padding:8px 14px">Lösungen ansehen</button>`;
     bar.querySelector("#eexit").onclick=()=>{bar.remove();window.scrollTo(0,0)};window.scrollTo(0,0)};
   bar.querySelector("#esub").onclick=()=>{const b=bar.querySelector("#esub");if(b.dataset.sure){submit()}else{b.dataset.sure="1";b.textContent="Wirklich abgeben?";setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent="Abgeben"}},4000)}};
@@ -5667,61 +5645,44 @@ function telcExam(i){
 // ---------- teacher console ----------
 async function teacherConsole(box){
   const st=await api("t/settings");
-  if(st._status===401){box.innerHTML=`<div class="card" style="margin-top:10px"><h2 style="margin-top:0">Anmelden</h2><p class="muted">Mit deinem Lehrer-Passwort verwaltest du Schüler, Hausaufgaben und Ergebnisse.</p><form id="tlf"><input class="gap" id="tpw" type="password" autocomplete="current-password" placeholder="Lehrer-Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Anmelden</button></form><div class="feedback bad" id="tlfb" hidden></div></div>`;
-    box.querySelector("#tlf").onsubmit=async e=>{e.preventDefault();const j=await api("t/login",{method:"POST",body:{admin:box.querySelector("#tpw").value}});if(j._ok){try{sessionStorage.setItem("dp_vpw",box.querySelector("#tpw").value)}catch(err){}teacherConsole(box)}else{const f=box.querySelector("#tlfb");f.hidden=false;f.textContent=j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":"Das Lehrer-Passwort ist falsch."}};return}
-  let tab="s";let students=[];
-  box.innerHTML=`<div class="tabs" style="margin-top:10px"><button data-tt="s" aria-pressed="true">Schüler</button><button data-tt="h">Hausaufgaben</button><button data-tt="r">Ergebnisse</button><button data-tt="q">Quiz</button><button data-tt="e">Einstellungen</button></div><div id="tbody" style="margin-top:12px"></div><p class="note"><button class="linkbtn" id="tout">Lehrer abmelden</button></p>`;
+  if(st._status===401){box.innerHTML=`<div class="card" style="margin-top:10px"><h2 style="margin-top:0">Anmelden</h2><p class="muted">Mit deinem Lehrer-Passwort siehst du Hausaufgaben, Ergebnisse und das Quiz vor der Stunde.</p><form id="tlf"><input class="gap" id="tpw" type="password" autocomplete="current-password" placeholder="Lehrer-Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Anmelden</button></form><div class="feedback bad" id="tlfb" hidden></div></div>`;
+    box.querySelector("#tlf").onsubmit=async e=>{e.preventDefault();const pw=box.querySelector("#tpw").value;const j=await api("t/login",{method:"POST",body:{admin:pw}});if(j._ok){try{sessionStorage.setItem("dp_vpw",pw);const va=document.getElementById("va");if(va&&!va.value)va.value=pw}catch(err){}teacherConsole(box)}else{const f=box.querySelector("#tlfb");f.hidden=false;f.textContent=j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":"Das Lehrer-Passwort ist falsch."}};return}
+  let tab="h";
+  box.innerHTML=`<div class="tabs" style="margin-top:10px"><button data-tt="h" aria-pressed="true">Hausaufgaben</button><button data-tt="r">Ergebnisse</button><button data-tt="q">Quiz</button><button data-tt="e">Demo</button></div><div id="tbody" style="margin-top:12px"></div><p class="note"><button class="linkbtn" id="tout">Lehrer abmelden</button></p>`;
   const body=box.querySelector("#tbody");
   box.querySelector("#tout").onclick=async()=>{await api("t/logout",{method:"POST"});teacherConsole(box)};
   box.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{tab=b.dataset.tt;box.querySelectorAll("[data-tt]").forEach(x=>x.setAttribute("aria-pressed",x===b));show()});
-  const lvSel=(id,cur)=>`<select class="gap" ${id?`id="${id}"`:""} style="font-size:1rem;padding:8px">${levelIds().map(x=>`<option${x===cur?" selected":""}>${x}</option>`).join("")}</select>`;
-  async function loadStudents(){const j=await api("t/students");students=j.students||[];return students}
-  const credText=(s,pw)=>`Lernraum: https://deutschparadies.ro/app/\nBenutzername: ${s.user}\nPasswort: ${pw}`;
-  const credBox=(s,pw)=>`<div class="feedback ok" style="white-space:pre-line">${esc(credText(s,pw))}<div class="actions"><button class="btn ghost" data-copy="${esc(credText(s,pw))}" style="padding:8px">📋 Kopieren</button><a class="btn gold" style="text-align:center;text-decoration:none;padding:8px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(credText(s,pw))}">WhatsApp</a></div><small>Das Passwort wird nur jetzt angezeigt.</small></div>`;
+  const lvSel=(id,cur)=>`<select class="gap" id="${id}" style="font-size:1rem;padding:8px">${levelIds().map(x=>`<option${x===cur?" selected":""}>${x}</option>`).join("")}</select>`;
   async function show(){body.innerHTML=`<p class="muted">Lädt …</p>`;
-    if(tab==="s"){await loadStudents();
-      body.innerHTML=`<form id="tsf" class="card"><h3 style="margin-top:0">Neuer Schüler</h3><input class="gap" id="tsn" placeholder="Vor- und Nachname" maxlength="60"><div style="margin-top:8px">${lvSel("tsl","A1.1")}</div><button class="btn" type="submit" style="width:100%;margin-top:10px">Konto erstellen</button><div id="tsres"></div></form>
-      <div class="section-h"><h2>Alle Schüler (${students.length})</h2></div><div id="tsl2">${students.length?students.map(s=>`<div class="card stu" data-id="${s.id}" style="margin-top:8px;${s.active?"":"opacity:.6"}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>${esc(s.name)}</b><span class="muted" style="font-size:.85rem">${esc(s.user)}</span></div>
-        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">${lvSel("",s.lv).replace("<select","<select data-act=\"lv\"")}<button class="btn ghost" data-act="active" style="padding:8px;flex:none">${s.active?"Sperren":"Freigeben"}</button></div>
-        <div class="actions"><button class="btn ghost" data-act="reset" style="padding:8px">Neues Passwort</button><button class="btn ghost" data-act="del" style="padding:8px">Löschen</button></div><div class="sres"></div></div>`).join(""):`<p class="muted">Noch keine Schüler.</p>`}</div>`;
-      body.querySelector("#tsf").onsubmit=async e=>{e.preventDefault();const name=body.querySelector("#tsn").value.trim();if(!name)return;const j=await api("t/students",{method:"POST",body:{action:"create",name,lv:body.querySelector("#tsl").value}});
-        if(j._ok){await show();body.querySelector("#tsres")&&(body.querySelector("#tsres").innerHTML=credBox(j.student,j.pw))}else body.querySelector("#tsres").innerHTML=`<div class="feedback bad">Konnte nicht erstellt werden.</div>`};
-      body.querySelectorAll(".stu").forEach(c=>{const id=c.dataset.id,s=students.find(x=>x.id===id),res=c.querySelector(".sres");
-        c.querySelector("[data-act=lv]").onchange=async e=>{await api("t/students",{method:"POST",body:{action:"update",id,lv:e.target.value}});res.innerHTML=`<div class="feedback ok">Niveau gespeichert.</div>`};
-        c.querySelector("[data-act=active]").onclick=async()=>{await api("t/students",{method:"POST",body:{action:"update",id,active:!s.active}});show()};
-        c.querySelector("[data-act=reset]").onclick=async()=>{const j=await api("t/students",{method:"POST",body:{action:"reset",id}});if(j._ok)res.innerHTML=credBox(j.student,j.pw)};
-        const del=c.querySelector("[data-act=del]");del.onclick=async()=>{if(!del.dataset.sure){del.dataset.sure="1";del.textContent="Wirklich löschen?";return}await api("t/students",{method:"POST",body:{action:"delete",id}});show()}})}
-    if(tab==="h"){if(!students.length)await loadStudents();const j=await api("t/hw");const items=j.items||[];
+    if(tab==="h"){const j=await api("t/hw");const items=j.items||[];
       body.innerHTML=`<div class="chips"><button class="chip" style="width:auto" data-hf="neu" aria-pressed="true">Neu (${items.filter(x=>x.status!=="korrigiert").length})</button><button class="chip" style="width:auto" data-hf="all">Alle (${items.length})</button></div><div id="hwl" style="margin-top:10px"></div>`;
-      const list=f=>{const arr=items.filter(x=>f==="all"||x.status!=="korrigiert");body.querySelector("#hwl").innerHTML=arr.length?arr.map(it=>`<button class="row" data-hw="${it.id}" style="margin-top:8px"><span class="num">${it.status==="korrigiert"?"✓":"•"}</span><span class="t"><b>${esc(it.name)} · ${esc(it.title)}</b><small>${it.lv} · ${fmtDate(it.ts)}${it.hasImg?" · 📷":""}</small></span></button>`).join(""):`<p class="muted">Nichts zu korrigieren.</p>`;
+      const list=f=>{const arr=items.filter(x=>f==="all"||x.status!=="korrigiert");body.querySelector("#hwl").innerHTML=arr.length?arr.map(it=>`<button class="row" data-hw="${it.id}" style="margin-top:8px"><span class="num">${it.status==="korrigiert"?"✓":"•"}</span><span class="t"><b>${esc(it.name)} · ${esc(it.title)}</b><small>${it.lv?it.lv+" · ":""}${fmtDate(it.ts)}${it.hasImg?" · 📷":""}</small></span></button>`).join(""):`<p class="muted">Nichts zu korrigieren.</p>`;
         body.querySelectorAll("[data-hw]").forEach(b=>b.onclick=()=>openHw(items.find(x=>x.id===b.dataset.hw)))};
       body.querySelectorAll("[data-hf]").forEach(b=>b.onclick=()=>{body.querySelectorAll("[data-hf]").forEach(x=>x.setAttribute("aria-pressed",x===b));list(b.dataset.hf)});list("neu")}
-    if(tab==="r"){await loadStudents();const j=await api("t/results");const R=j.results||{};const TY={quiz:"Quiz",final:"Abschlusstest",telc:"telc",rp:"Rollenspiel"};
-      body.innerHTML=students.length?students.map(s=>{const rs=(R[s.id]||[]).slice().reverse();return `<details class="card" style="margin-top:8px"><summary><b>${esc(s.name)}</b> <span class="muted">· ${s.lv} · ${rs.length} Ergebnisse</span></summary>${rs.length?`<div class="ctab"><table><tbody>${rs.slice(0,30).map(x=>`<tr><td>${fmtDate(x.ts)}</td><td>${TY[x.type]||x.type}</td><td>${esc(x.ref)}</td><td><b>${x.score}/${x.total}</b>${x.type==="final"||x.type==="telc"?(x.pass?" ✅":" ❌"):""}</td></tr>${x.info?`<tr><td colspan="4" class="muted" style="font-size:.8rem">Fehler: ${esc(x.info)}</td></tr>`:""}`).join("")}</tbody></table></div>`:`<p class="muted">Noch keine Ergebnisse.</p>`}<div class="actions"><button class="btn ghost" data-prog="${s.id}" style="padding:8px">Fortschritt anzeigen</button></div><div class="pbox"></div></details>`}).join(""):`<p class="muted">Noch keine Schüler.</p>`;
-      body.querySelectorAll("[data-prog]").forEach(b=>b.onclick=async()=>{const p=await api("t/progress?sid="+b.dataset.prog);const S2=p.progress&&p.progress.S;const box2=b.closest(".actions").nextElementSibling;if(!S2){box2.innerHTML=`<p class="muted">Noch keine Daten.</p>`;return}
-        const done=Object.entries(S2.done||{}).map(([id,m])=>{const f=findLesson(id);return f?`${f.lv} L${f.l.n}: ${Object.keys(m).length} Teile`:""}).filter(Boolean);const srsN=Object.keys(S2.srs||{}).length;
-        box2.innerHTML=`<p>Punkte: <b>${S2.points||0}</b> · Tage in Folge: <b>${S2.streak||0}</b> · zuletzt aktiv: ${S2._ts?fmtDate(S2._ts):"–"} · Karteikarten: <b>${srsN}</b></p>${done.length?`<p class="muted" style="font-size:.85rem">${done.map(esc).join(" · ")}</p>`:""}`})}
-    if(tab==="q"){await loadStudents();
-      body.innerHTML=`<div class="card"><h3 style="margin-top:0">Quiz vor der Stunde zuweisen</h3><p class="muted">10 Fragen aus der Lektion. Du siehst die Ergebnisse unter „Ergebnisse“.</p>${lvSel("qlv","A1.1")}<select class="gap" id="qls" style="font-size:1rem;padding:8px;margin-top:8px"></select>
-        <div style="margin-top:10px" id="qst">${students.filter(s=>s.active).map(s=>`<label class="chk"><input type="checkbox" value="${s.id}" data-lv="${s.lv}"> ${esc(s.name)} <span class="muted">(${s.lv}${s.quiz?" · Quiz: "+esc(s.quiz.lesson):""})</span></label>`).join("")||`<p class="muted">Noch keine Schüler.</p>`}</div>
-        <div class="actions"><button class="btn" id="qgo">Zuweisen</button><button class="btn ghost" id="qdel">Quiz entfernen</button></div><div id="qres"></div></div>`;
-      const lvS=body.querySelector("#qlv"),lsS=body.querySelector("#qls");const fill=()=>{lsS.innerHTML=lessonsOf(lvS.value).map(l=>`<option value="${l.id}">Lektion ${l.n}: ${esc(l.title)}</option>`).join("");body.querySelectorAll("#qst input").forEach(c=>c.checked=c.dataset.lv===lvS.value)};lvS.onchange=fill;fill();
-      const ids=()=>[...body.querySelectorAll("#qst input:checked")].map(c=>c.value);
-      body.querySelector("#qgo").onclick=async()=>{const j=await api("t/quiz",{method:"POST",body:{ids:ids(),lesson:lsS.value}});body.querySelector("#qres").innerHTML=j._ok?`<div class="feedback ok">Zugewiesen an ${ids().length} Schüler.</div>`:`<div class="feedback bad">Fehler.</div>`};
-      body.querySelector("#qdel").onclick=async()=>{const j=await api("t/quiz",{method:"POST",body:{ids:ids(),lesson:null}});body.querySelector("#qres").innerHTML=j._ok?`<div class="feedback ok">Entfernt.</div>`:`<div class="feedback bad">Fehler.</div>`}}
-    if(tab==="e"){const j=await api("t/settings");const off=!!(j.settings&&j.settings.legacyOff);
-      body.innerHTML=`<div class="card"><h3 style="margin-top:0">Altes Kurs-Passwort</h3><p class="muted">${off?"Das gemeinsame Kurs-Passwort ist <b>gesperrt</b>. Nur Schüler mit eigenem Konto kommen in den Lernraum.":"Das gemeinsame Kurs-Passwort funktioniert noch. Sperre es, sobald alle Schüler ein eigenes Konto haben."}</p><div class="actions"><button class="btn ${off?"":"gold"}" id="lg">${off?"Wieder erlauben":"Kurs-Passwort sperren"}</button></div></div>
-      <div class="card" style="margin-top:10px"><h3 style="margin-top:0">Demo für Interessenten</h3><p class="muted">Diesen Link kannst du Interessenten schicken. Sie sehen nur Lektion 1 von A1.1:</p><p><b>https://deutschparadies.ro/app/?demo</b></p><div class="actions"><button class="btn ghost" data-copy="https://deutschparadies.ro/app/?demo" style="padding:8px">📋 Link kopieren</button></div></div>`;
-      body.querySelector("#lg").onclick=async()=>{await api("t/settings",{method:"POST",body:{legacyOff:!off}});show()}}
+    if(tab==="r"){const j=await api("t/results");const R=(j.results||[]).slice().reverse();const TY={quiz:"Quiz",final:"Abschlusstest",telc:"telc",rp:"Rollenspiel"};
+      const by={};R.forEach(x=>{const k=x.name.trim().toLowerCase();(by[k]=by[k]||{name:x.name,list:[]}).list.push(x)});
+      const groups=Object.values(by).sort((a,b)=>a.name.localeCompare(b.name,"de"));
+      body.innerHTML=groups.length?`<p class="note">Ergebnisse von Schülern, die ihren Namen eingegeben haben.</p>`+groups.map(g=>`<details class="card" style="margin-top:8px"><summary><b>${esc(g.name)}</b> <span class="muted">· ${g.list.length} Ergebnisse · zuletzt ${fmtDate(g.list[0].ts)}</span></summary><div class="ctab"><table><tbody>${g.list.slice(0,40).map(x=>`<tr><td>${fmtDate(x.ts)}</td><td>${TY[x.type]||x.type}</td><td>${esc(x.ref)}</td><td><b>${x.score}/${x.total}</b>${x.type==="final"||x.type==="telc"?(x.pass?" ✅":" ❌"):""}</td></tr>${x.info?`<tr><td colspan="4" class="muted" style="font-size:.8rem">Fehler: ${esc(x.info)}</td></tr>`:""}`).join("")}</tbody></table></div></details>`).join(""):`<p class="muted">Noch keine Ergebnisse.</p>`}
+    if(tab==="q"){const cur=(st.settings&&st.settings.quiz)||{};const j=await api("t/settings");const Q=(j.settings&&j.settings.quiz)||cur;
+      body.innerHTML=`<div class="card"><h3 style="margin-top:0">Quiz vor der Stunde</h3><p class="muted">Wähle Niveau und Lektion. Alle Schüler sehen das Quiz auf der Startseite (10 Fragen). Die Ergebnisse siehst du unter „Ergebnisse“.</p>${lvSel("qlv","A1.1")}<select class="gap" id="qls" style="font-size:1rem;padding:8px;margin-top:8px"></select>
+        <div class="actions"><button class="btn" id="qgo">Quiz aktivieren</button><button class="btn ghost" id="qdel">Quiz entfernen</button></div><div id="qres"></div></div>
+        <div class="section-h"><h2>Aktive Quiz</h2></div><div id="qact"></div>`;
+      const act=Q2=>{const e=Object.entries(Q2);body.querySelector("#qact").innerHTML=e.length?e.map(([lv,q])=>{const f=findLesson(q.lesson);return `<div class="row" style="margin-top:6px"><span class="num">${lv.replace(".","")}</span><span class="t"><b>${lv} · Lektion ${f?f.l.n+": "+esc(f.l.title):esc(q.lesson)}</b><small>seit ${fmtDate(q.at)}</small></span></div>`}).join(""):`<p class="muted">Kein Quiz aktiv.</p>`};act(Q);
+      const lvS=body.querySelector("#qlv"),lsS=body.querySelector("#qls");const fill=()=>{lsS.innerHTML=lessonsOf(lvS.value).map(l=>`<option value="${l.id}">Lektion ${l.n}: ${esc(l.title)}</option>`).join("")};lvS.onchange=fill;fill();
+      body.querySelector("#qgo").onclick=async()=>{const k=await api("t/quiz",{method:"POST",body:{lv:lvS.value,lesson:lsS.value}});body.querySelector("#qres").innerHTML=k._ok?`<div class="feedback ok">Aktiviert für ${lvS.value}.</div>`:`<div class="feedback bad">Fehler.</div>`;if(k._ok)act(k.quiz)};
+      body.querySelector("#qdel").onclick=async()=>{const k=await api("t/quiz",{method:"POST",body:{lv:lvS.value,lesson:null}});body.querySelector("#qres").innerHTML=k._ok?`<div class="feedback ok">Quiz für ${lvS.value} entfernt.</div>`:`<div class="feedback bad">Fehler.</div>`;if(k._ok)act(k.quiz)}}
+    if(tab==="e"){body.innerHTML=`<div class="card"><h3 style="margin-top:0">Demo für Interessenten</h3><p class="muted">Diesen Link kannst du Interessenten schicken. Sie sehen nur Lektion 1 von A1.1 – ohne Passwort:</p><p><b>https://deutschparadies.ro/app/?demo</b></p><div class="actions"><button class="btn ghost" data-copy="https://deutschparadies.ro/app/?demo" style="padding:8px">📋 Link kopieren</button><a class="btn gold" style="text-align:center;text-decoration:none;padding:8px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("Probiere den Deutschparadies Lernraum aus: https://deutschparadies.ro/app/?demo")}">WhatsApp</a></div></div>`}
     body.querySelectorAll("[data-copy]").forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="✓ Kopiert"}catch(e){b.textContent="Kopieren nicht möglich"}})}
   function openHw(it){
-    body.innerHTML=`<button class="back" id="hwback">‹ Zurück zur Liste</button><div class="card"><span class="kind">${esc(it.name)} · ${it.lv} · ${fmtDate(it.ts)}</span><h2 style="margin:4px 0">${esc(it.title)}</h2>${it.text?`<div class="ctext">${esc(it.text)}</div>`:""}<div id="hwimg"></div></div>
+    body.innerHTML=`<button class="back" id="hwback">‹ Zurück zur Liste</button><div class="card"><span class="kind">${esc(it.name)}${it.lv?" · "+it.lv:""} · ${fmtDate(it.ts)}</span><h2 style="margin:4px 0">${esc(it.title)}</h2>${it.text?`<div class="ctext">${esc(it.text)}</div>`:""}<div id="hwimg"></div></div>
     <form id="hcf" class="card" style="margin-top:10px"><h3 style="margin-top:0">Korrektur</h3><label class="kind">Korrigierter Text</label><textarea class="wta" id="hct" rows="9">${esc((it.fb&&it.fb.text)||it.text||"")}</textarea>
      <div class="crit">${Object.keys(CRIT).map(k=>`<label class="kind" style="display:block;margin-top:10px">${k} · ${CRIT[k]}</label><div class="chips">${["A","B","C","D"].map(g=>`<label class="chip" style="width:auto"><input type="radio" name="c${k}" value="${g}" ${it.fb&&it.fb.crit&&it.fb.crit[k]===g?"checked":""}> ${g}</label>`).join("")}</div>`).join("")}</div>
      <label class="kind" style="display:block;margin-top:12px">Kommentar für den Schüler</label><textarea class="wta" id="hcn" rows="3">${esc((it.fb&&it.fb.note)||"")}</textarea>
-     <button class="btn" type="submit" style="width:100%;margin-top:12px">Korrektur speichern</button><div id="hcr"></div></form>`;
+     <button class="btn" type="submit" style="width:100%;margin-top:12px">Korrektur speichern</button><div id="hcr"></div>
+     <div class="actions"><button class="btn ghost" type="button" id="hdel" style="padding:8px">Abgabe löschen</button></div></form>`;
     body.querySelector("#hwback").onclick=()=>show();
     if(it.hasImg)api("t/hwimg?id="+encodeURIComponent(it.id)).then(r=>{const b=body.querySelector("#hwimg");if(b&&r.img)b.innerHTML=`<img src="${r.img}" alt="" style="width:100%;margin-top:10px;border-radius:10px">`});
+    const del=body.querySelector("#hdel");del.onclick=async()=>{if(!del.dataset.sure){del.dataset.sure="1";del.textContent="Wirklich löschen?";return}await api("t/hw?id="+encodeURIComponent(it.id),{method:"DELETE"});show()};
     body.querySelector("#hcf").onsubmit=async e=>{e.preventDefault();const crit={};Object.keys(CRIT).forEach(k=>{const r=body.querySelector(`input[name=c${k}]:checked`);if(r)crit[k]=r.value});
       const j=await api("t/hw",{method:"POST",body:{id:it.id,fb:{text:body.querySelector("#hct").value,note:body.querySelector("#hcn").value,crit}}});
       body.querySelector("#hcr").innerHTML=j._ok?`<div class="feedback ok">Gespeichert! ${esc(it.name)} sieht die Korrektur jetzt.</div>`:`<div class="feedback bad">Speichern fehlgeschlagen.</div>`;if(j._ok){it.status="korrigiert"}}}
@@ -5730,7 +5691,6 @@ async function teacherConsole(box){
 const PLUS_VIEWS={srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-p]");if(!b)return;e.preventDefault();e.stopPropagation();
   const r={v:b.dataset.p};["lv","id","tab","q","go"].forEach(k=>{if(b.dataset[k]!==undefined)r[k]=b.dataset[k]});if(b.dataset.f){r.f=b.dataset.f;r.t=b.dataset.t;r.lv=b.dataset.lv}go(r)},true);
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-logout]");if(b){e.preventDefault();logout()}});
 // ===================== /Lernraum Plus =====================
 
 /* PLUS:END */

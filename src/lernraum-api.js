@@ -1,27 +1,19 @@
-// Lernraum API: student accounts, sessions, progress sync, homework, results, teacher console,
+// Lernraum API: shared-password sessions, homework, results, teacher console,
 // and a protected Google Drive proxy (Buch / Dialoge / Texte are shown inside the app only).
 // Storage: Cloudflare KV (env.APPKV).
-//   students            -> { [id]: {id,name,user,lv,salt,it,hash,active,created,quiz} }
-//   settings            -> { legacyOff: bool }
-//   sess:<tok>          -> {k:"s",sid} | {k:"l"} | "1" (old shared-password session)
+//   settings            -> { quiz: { [level]: {lesson, at} } }
+//   sess:<tok>          -> {k:"l"} | "1" (shared course password)
 //   tsess:<tok>         -> "1" (teacher session)
-//   prog:<sid>          -> {ts, S}
-//   hw:<sid>:<id>       -> homework item
-//   res:<sid>           -> [results]
+//   hw:<id>             -> homework item (name typed by the student)
+//   res:all             -> [results with name]
 //   fail:<ip>           -> failed login counter (15 min)
 //   drv:<folderId>      -> cached folder listing (10 min)
 
 const SESSION_TTL = 60 * 60 * 24 * 30; // students stay logged in for 30 days
 const TEACHER_TTL = 60 * 60 * 12;
-const IT = 20000;
-const ALNUM = "abcdefghjkmnpqrstuvwxyz23456789";
 
 function hex(bytes) { return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join(""); }
 function rand(n) { return hex(crypto.getRandomValues(new Uint8Array(n))); }
-function randPw(len = 8) {
-  const b = crypto.getRandomValues(new Uint8Array(len));
-  return [...b].map((x) => ALNUM[x % ALNUM.length]).join("");
-}
 function readCookie(request, name) {
   const c = request.headers.get("cookie") || "";
   const m = c.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]+)"));
@@ -36,17 +28,11 @@ function cookie(name, val, maxAge) {
   return `${name}=${val}; Max-Age=${maxAge}; Path=/app; HttpOnly; Secure; SameSite=Strict`;
 }
 async function body(request) { try { return await request.json(); } catch (e) { return null; } }
-function slug(name) {
-  return String(name).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
-    .replace(/ß/g, "ss").replace(/[^a-z0-9]+/g, ".").replace(/^\.+|\.+$/g, "").slice(0, 24) || "schueler";
-}
 const LEVELS = ["A1.1", "A1.2", "A2.1", "A2.2", "B1.1", "B1.2", "B2.1", "B2.2"];
+const HWID = /^[a-z0-9]{6,12}-[a-f0-9]{8}$/;
 const str = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
-async function getStudents(env) { return (await env.APPKV.get("students", "json")) || {}; }
-async function putStudents(env, s) { await env.APPKV.put("students", JSON.stringify(s)); }
 async function getSettings(env) { return (await env.APPKV.get("settings", "json")) || {}; }
-function pub(st) { return { id: st.id, name: st.name, user: st.user, lv: st.lv, active: st.active !== false, created: st.created, quiz: st.quiz || null }; }
 
 // ---- sessions ----
 export async function sessionOf(request, env) {
@@ -59,19 +45,7 @@ export async function sessionOf(request, env) {
 }
 export async function validSession(request, env) {
   const s = await sessionOf(request, env);
-  if (!s) return null;
-  if (s.k === "l") {
-    const set = await getSettings(env);
-    if (set.legacyOff) return null;
-    return s;
-  }
-  if (s.k === "s") {
-    const st = (await getStudents(env))[s.sid];
-    if (!st || st.active === false) return null;
-    s.st = st;
-    return s;
-  }
-  return null;
+  return s && (s.k === "l" || s.k === "s") ? s : null;
 }
 async function newSession(env, val) {
   const tok = rand(32);
@@ -135,30 +109,17 @@ export async function lernApi(request, env, path, deps) {
   const M = request.method;
   if (!env.APPKV) return json({ error: "missing" }, 500);
 
-  // ---------- login (student account, or old shared password) ----------
+  // ---------- login with the shared course password (unchanged) ----------
   if (p === "login" || p === "session") {
     if (M !== "POST") return json({ error: "method" }, 405);
     if (await tooManyFails(request, env)) return json({ error: "wait" }, 429);
     const b = await body(request);
     const pw = b && typeof b.pw === "string" ? b.pw : "";
-    const user = b && typeof b.user === "string" ? b.user.trim().toLowerCase() : "";
-    if (!pw || pw.length > 200 || user.length > 60) return json({ error: "bad" }, 400);
-    let val = null, me = null;
-    if (user) {
-      const all = await getStudents(env);
-      const st = Object.values(all).find((s) => s.user === user);
-      if (st && st.active !== false && (await deps.pbkdf2Hex(pw, st.salt, st.it || IT)) === st.hash) {
-        val = { k: "s", sid: st.id }; me = { kind: "student", ...pub(st) };
-      }
-    } else {
-      const set = await getSettings(env);
-      if (set.legacyOff) return json({ error: "legacy_off" }, 403);
-      const acc = await deps.currentAccess(request, env);
-      if (acc && (await deps.sha256Hex(acc.salt + pw)) === acc.hash) { val = { k: "l" }; me = { kind: "legacy" }; }
-    }
-    if (!val) { await addFail(request, env); return json({ error: "wrong" }, 403); }
-    const tok = await newSession(env, val);
-    return json({ ok: true, me }, 200, { "set-cookie": cookie("dp_s", tok, SESSION_TTL) });
+    if (!pw || pw.length > 200) return json({ error: "bad" }, 400);
+    const acc = await deps.currentAccess(request, env);
+    if (!acc || (await deps.sha256Hex(acc.salt + pw)) !== acc.hash) { await addFail(request, env); return json({ error: "wrong" }, 403); }
+    const tok = await newSession(env, { k: "l" });
+    return json({ ok: true }, 200, { "set-cookie": cookie("dp_s", tok, SESSION_TTL) });
   }
   if (p === "logout") {
     const s = await sessionOf(request, env);
@@ -166,10 +127,7 @@ export async function lernApi(request, env, path, deps) {
     return json({ ok: true }, 200, { "set-cookie": cookie("dp_s", "x", 0) });
   }
   if (p === "me") {
-    const s = await validSession(request, env);
-    if (!s) return json({ error: "login" }, 401);
-    if (s.k === "l") return json({ kind: "legacy" });
-    return json({ kind: "student", ...pub(s.st) });
+    return (await validSession(request, env)) ? json({ ok: true }) : json({ error: "login" }, 401);
   }
 
   // ---------- teacher login ----------
@@ -193,110 +151,51 @@ export async function lernApi(request, env, path, deps) {
   // ---------- teacher area ----------
   if (p.startsWith("t/")) {
     if (!(await teacherOk(request, env))) return json({ error: "teacher" }, 401);
-    const all = await getStudents(env);
-    if (p === "t/students" && M === "GET") {
-      return json({ students: Object.values(all).map(pub).sort((a, b) => a.name.localeCompare(b.name)) });
-    }
-    if (p === "t/students" && M === "POST") {
-      const b = (await body(request)) || {};
-      const a = b.action;
-      if (a === "create") {
-        const name = str(b.name, 60);
-        const lv = LEVELS.includes(b.lv) ? b.lv : "A1.1";
-        if (!name) return json({ error: "name" }, 400);
-        if (Object.keys(all).length >= 500) return json({ error: "full" }, 400);
-        let base = slug(name), user = base, i = 2;
-        const used = new Set(Object.values(all).map((s) => s.user));
-        while (used.has(user)) user = base + i++;
-        const pw = randPw(8), salt = rand(16), id = rand(8);
-        all[id] = { id, name, user, lv, salt, it: IT, hash: await deps.pbkdf2Hex(pw, salt, IT), active: true, created: Date.now(), quiz: null };
-        await putStudents(env, all);
-        return json({ ok: true, student: pub(all[id]), pw });
-      }
-      const st = all[b.id];
-      if (!st) return json({ error: "notfound" }, 404);
-      if (a === "reset") {
-        const pw = randPw(8); st.salt = rand(16); st.it = IT; st.hash = await deps.pbkdf2Hex(pw, st.salt, IT);
-        await putStudents(env, all);
-        return json({ ok: true, student: pub(st), pw });
-      }
-      if (a === "update") {
-        if (typeof b.name === "string" && b.name.trim()) st.name = str(b.name, 60);
-        if (LEVELS.includes(b.lv)) st.lv = b.lv;
-        if (typeof b.active === "boolean") st.active = b.active;
-        if (b.quiz === null) st.quiz = null;
-        else if (b.quiz && typeof b.quiz.lesson === "string" && b.quiz.lesson.length < 20) st.quiz = { lesson: b.quiz.lesson, at: Date.now() };
-        await putStudents(env, all);
-        return json({ ok: true, student: pub(st) });
-      }
-      if (a === "delete") {
-        delete all[b.id];
-        await putStudents(env, all);
-        return json({ ok: true });
-      }
-      return json({ error: "action" }, 400);
-    }
     if (p === "t/quiz" && M === "POST") {
-      // assign the same pre-lesson quiz to several students at once
       const b = (await body(request)) || {};
-      const ids = Array.isArray(b.ids) ? b.ids : [];
-      const lesson = b.lesson === null ? null : str(b.lesson, 20);
-      ids.forEach((id) => { if (all[id]) all[id].quiz = lesson ? { lesson, at: Date.now() } : null; });
-      await putStudents(env, all);
-      return json({ ok: true });
+      if (!LEVELS.includes(b.lv)) return json({ error: "bad" }, 400);
+      const set = await getSettings(env);
+      set.quiz = set.quiz || {};
+      if (b.lesson === null) delete set.quiz[b.lv];
+      else if (typeof b.lesson === "string" && b.lesson.length < 20) set.quiz[b.lv] = { lesson: b.lesson, at: Date.now() };
+      await env.APPKV.put("settings", JSON.stringify(set));
+      return json({ ok: true, quiz: set.quiz });
     }
     if (p === "t/hw" && M === "GET") {
-      const u = new URL(request.url);
-      const sid = u.searchParams.get("sid") || "";
-      const prefix = "hw:" + (sid && /^[a-f0-9]{16}$/.test(sid) ? sid + ":" : "");
-      const keys = await listAll(env, prefix, 300);
+      const keys = await listAll(env, "hw:", 300);
       const items = [];
-      for (const k of keys) {
-        const it = await env.APPKV.get(k, "json");
-        if (it) { const { img, ...rest } = it; rest.hasImg = !!img; items.push(rest); }
-      }
+      for (const k of keys) { const it = await env.APPKV.get(k, "json"); if (it) { const { img, tok, ...rest } = it; rest.hasImg = !!img; items.push(rest); } }
       items.sort((a, b) => b.ts - a.ts);
       return json({ items });
     }
     if (p === "t/hw" && M === "POST") {
       const b = (await body(request)) || {};
-      if (typeof b.id !== "string" || !/^[a-f0-9]{16}:[a-z0-9]+$/.test(b.id)) return json({ error: "bad" }, 400);
-      const key = "hw:" + b.id;
-      const it = await env.APPKV.get(key, "json");
+      if (typeof b.id !== "string" || !HWID.test(b.id)) return json({ error: "bad" }, 400);
+      const it = await env.APPKV.get("hw:" + b.id, "json");
       if (!it) return json({ error: "notfound" }, 404);
       const crit = {};
-      ["I", "II", "III"].forEach((c) => { if (b.fb && ["A", "B", "C", "D"].includes(b.fb.crit && b.fb.crit[c])) crit[c] = b.fb.crit[c]; });
+      ["I", "II", "III"].forEach((c) => { if (b.fb && b.fb.crit && ["A", "B", "C", "D"].includes(b.fb.crit[c])) crit[c] = b.fb.crit[c]; });
       it.fb = { text: str(b.fb && b.fb.text, 8000), note: str(b.fb && b.fb.note, 3000), crit, ts: Date.now() };
       it.status = "korrigiert";
-      await env.APPKV.put(key, JSON.stringify(it));
+      await env.APPKV.put("hw:" + b.id, JSON.stringify(it));
+      return json({ ok: true });
+    }
+    if (p === "t/hw" && M === "DELETE") {
+      const id = new URL(request.url).searchParams.get("id") || "";
+      if (!HWID.test(id)) return json({ error: "bad" }, 400);
+      await env.APPKV.delete("hw:" + id);
       return json({ ok: true });
     }
     if (p === "t/hwimg" && M === "GET") {
       const id = new URL(request.url).searchParams.get("id") || "";
-      if (!/^[a-f0-9]{16}:[a-z0-9]+$/.test(id)) return json({ error: "bad" }, 400);
+      if (!HWID.test(id)) return json({ error: "bad" }, 400);
       const it = await env.APPKV.get("hw:" + id, "json");
       return json({ img: (it && it.img) || null });
     }
     if (p === "t/results" && M === "GET") {
-      const out = {};
-      for (const id of Object.keys(all)) out[id] = ((await env.APPKV.get("res:" + id, "json")) || []).slice(-60);
-      return json({ results: out });
+      return json({ results: (await env.APPKV.get("res:all", "json")) || [] });
     }
-    if (p === "t/progress" && M === "GET") {
-      const sid = new URL(request.url).searchParams.get("sid") || "";
-      const pr = all[sid] ? await env.APPKV.get("prog:" + sid, "json") : null;
-      return json({ progress: pr });
-    }
-    if (p === "t/settings") {
-      if (M === "POST") {
-        const b = (await body(request)) || {};
-        const set = await getSettings(env);
-        if (typeof b.legacyOff === "boolean") set.legacyOff = b.legacyOff;
-        await env.APPKV.put("settings", JSON.stringify(set));
-        return json({ ok: true, settings: set });
-      }
-      return json({ settings: await getSettings(env) });
-    }
+    if (p === "t/settings") return json({ settings: await getSettings(env) });
     return json({ error: "notfound" }, 404);
   }
 
@@ -327,25 +226,19 @@ export async function lernApi(request, env, path, deps) {
     });
   }
 
-  // student-only features
-  if (s.k !== "s") return json({ error: "account" }, 403);
-  const sid = s.st.id;
-
-  if (p === "progress") {
-    if (M === "GET") return json({ progress: await env.APPKV.get("prog:" + sid, "json") });
-    if (M === "PUT" || M === "POST") {
-      const raw = await request.text();
-      if (raw.length > 400000) return json({ error: "big" }, 413);
-      let b; try { b = JSON.parse(raw); } catch (e) { return json({ error: "bad" }, 400); }
-      if (!b || typeof b.S !== "object") return json({ error: "bad" }, 400);
-      await env.APPKV.put("prog:" + sid, JSON.stringify({ ts: Date.now(), S: b.S }));
-      return json({ ok: true });
-    }
+  if (p === "quiz" && M === "GET") {
+    return json({ quiz: (await getSettings(env)).quiz || {} });
   }
   if (p === "hw" && M === "GET") {
-    const keys = await listAll(env, "hw:" + sid + ":", 60);
+    // the device keeps "id.tok" pairs of its own submissions
+    const mine = (new URL(request.url).searchParams.get("mine") || "").split(",").slice(0, 60);
     const items = [];
-    for (const k of keys) { const it = await env.APPKV.get(k, "json"); if (it) { const { img, ...rest } = it; rest.hasImg = !!img; items.push(rest); } }
+    for (const pair of mine) {
+      const [id, tok] = pair.split(".");
+      if (!HWID.test(id || "") || !/^[a-f0-9]{16}$/.test(tok || "")) continue;
+      const it = await env.APPKV.get("hw:" + id, "json");
+      if (it && it.tok === tok) { const { img, tok: t, ...rest } = it; rest.hasImg = !!img; items.push(rest); }
+    }
     items.sort((a, b) => b.ts - a.ts);
     return json({ items });
   }
@@ -353,29 +246,30 @@ export async function lernApi(request, env, path, deps) {
     const raw = await request.text();
     if (raw.length > 1500000) return json({ error: "big" }, 413);
     let b; try { b = JSON.parse(raw); } catch (e) { return json({ error: "bad" }, 400); }
-    const title = str(b.title, 120), text = str(b.text, 8000);
+    const name = str(b.name, 60), title = str(b.title, 120), text = str(b.text, 8000);
+    const lv = LEVELS.includes(b.lv) ? b.lv : "";
     const img = typeof b.img === "string" && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(b.img) && b.img.length < 1400000 ? b.img : null;
-    if (!title || (!text && !img)) return json({ error: "empty" }, 400);
-    const existing = await listAll(env, "hw:" + sid + ":", 500);
-    if (existing.length >= 200) return json({ error: "full" }, 400);
-    const id = sid + ":" + Date.now().toString(36);
-    await env.APPKV.put("hw:" + id, JSON.stringify({ id, sid, name: s.st.name, lv: s.st.lv, title, text, img, ts: Date.now(), status: "neu", fb: null }));
-    return json({ ok: true, id });
+    if (!name || !title || (!text && !img)) return json({ error: "empty" }, 400);
+    const id = Date.now().toString(36) + "-" + rand(4), tok = rand(8);
+    await env.APPKV.put("hw:" + id, JSON.stringify({ id, tok, name, lv, title, text, img, ts: Date.now(), status: "neu", fb: null }));
+    return json({ ok: true, id, tok });
   }
   if (p === "hwimg" && M === "GET") {
-    const id = new URL(request.url).searchParams.get("id") || "";
-    if (!id.startsWith(sid + ":")) return json({ error: "bad" }, 403);
+    const u = new URL(request.url);
+    const id = u.searchParams.get("id") || "", tok = u.searchParams.get("tok") || "";
+    if (!HWID.test(id)) return json({ error: "bad" }, 400);
     const it = await env.APPKV.get("hw:" + id, "json");
-    return json({ img: (it && it.img) || null });
+    return json({ img: it && it.tok === tok ? it.img || null : null });
   }
   if (p === "result" && M === "POST") {
     const b = (await body(request)) || {};
     const type = ["quiz", "telc", "final", "rp"].includes(b.type) ? b.type : null;
-    if (!type) return json({ error: "bad" }, 400);
-    const item = { type, ts: Date.now(), ref: str(b.ref, 40), score: +b.score || 0, total: +b.total || 0, pass: !!b.pass, info: str(b.info, 400) };
-    const list = (await env.APPKV.get("res:" + sid, "json")) || [];
+    const name = str(b.name, 60);
+    if (!type || !name) return json({ error: "bad" }, 400);
+    const item = { type, name, ts: Date.now(), ref: str(b.ref, 40), score: +b.score || 0, total: +b.total || 0, pass: !!b.pass, info: str(b.info, 400) };
+    const list = (await env.APPKV.get("res:all", "json")) || [];
     list.push(item);
-    await env.APPKV.put("res:" + sid, JSON.stringify(list.slice(-300)));
+    await env.APPKV.put("res:all", JSON.stringify(list.slice(-1500)));
     return json({ ok: true });
   }
   return json({ error: "notfound" }, 404);
