@@ -4842,7 +4842,7 @@ function speaking(f){
       r.onresult=e=>{const heard=[...e.results[0]].map(a=>a.transcript);const target=norm(s).split(" ").filter(w=>w);let best=0,bestTxt=heard[0];
         heard.forEach(h=>{const hw=norm(h).split(" ");const hit=target.filter(w=>hw.includes(w)).length/target.length;if(hit>best){best=hit;bestTxt=h}});
         const ok=best>=0.75;fb.className="feedback "+(ok?"ok":"bad");fb.innerHTML=(ok?"Super ausgesprochen! +10":"Fast! Versuch es noch einmal.")+`<small>Gehört: „${esc(bestTxt)}“</small>`;if(ok)addPts(10)};
-      r.onerror=()=>{fb.className="feedback bad";fb.textContent="Mikrofon nicht erlaubt oder nichts gehört. Versuch es noch einmal."};
+      r.onerror=ev=>{fb.className="feedback bad";fb.textContent=recErrMsg(ev&&ev.error)};
       try{r.start()}catch(e){}
     };
     app.querySelector("#nx").onclick=()=>{if(i<items.length-1||(disc&&i===items.length-1)){i++;draw()}else{markMod(f.l.id,"speak");go({v:"lesson",id:f.l.id})}};
@@ -5475,8 +5475,18 @@ function srsView(r){
 function compareWords(target,heardList){const tw=norm(target).split(" ").filter(Boolean);let best={hits:[],pct:-1,txt:heardList[0]||""};
   heardList.forEach(h=>{const hw=norm(h).split(" ");const hits=tw.map(w=>hw.includes(w));const pct=Math.round(hits.filter(Boolean).length/tw.length*100);if(pct>best.pct)best={hits,pct,txt:h}});
   const words=target.split(/\s+/);let k=0;const html=words.map(w=>{const n=norm(w);if(!n)return esc(w);const ok=best.hits[k++];return `<span class="${ok?"w-ok":"w-no"}">${esc(w)}</span>`}).join(" ");return {pct:best.pct,html,txt:best.txt}}
-function listenOnce(onRes,onErr){if(!Rec){onErr("norec");return}let r;try{r=new Rec()}catch(e){onErr("mic");return}r.lang="de-DE";r.interimResults=false;r.maxAlternatives=3;
-  r.onresult=e=>onRes([...e.results[0]].map(a=>a.transcript));r.onerror=()=>onErr("mic");try{r.start()}catch(e){onErr("mic")}return r}
+function recErrMsg(code){return code==="not-allowed"||code==="service-not-allowed"||code==="mic"?"Das Mikrofon ist für den Lernraum blockiert. So erlaubst du es: Chrome → ⋮ (oben rechts) → Einstellungen → Website-Einstellungen → Mikrofon → deutschparadies.ro → Zulassen. Danach die Seite neu laden."
+  :code==="no-speech"?"Ich habe nichts gehört. Tippe auf „Jetzt sprechen“ und sprich sofort danach laut und deutlich."
+  :code==="network"?"Die Spracherkennung braucht eine Internetverbindung. Bitte prüfe dein Internet und versuch es noch einmal."
+  :code==="audio-capture"?"Es wurde kein Mikrofon gefunden. Prüfe, ob ein anderes Programm das Mikrofon benutzt."
+  :code==="language-not-supported"?"Deutsch wird von der Spracherkennung auf diesem Handy nicht unterstützt. Installiere/aktualisiere die Google-App."
+  :code==="norec"?REC_HELP:"Das hat nicht geklappt. Versuch es noch einmal."}
+async function listenOnce(onRes,onErr){if(!Rec){onErr("norec");return}
+  // ask for the microphone first, so the browser shows its permission question
+  try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(t=>t.stop())}}catch(e){onErr(e&&e.name==="NotFoundError"?"audio-capture":"not-allowed");return}
+  let r,got=false,failed=false;try{r=new Rec()}catch(e){onErr("norec");return}r.lang="de-DE";r.interimResults=false;r.maxAlternatives=3;
+  r.onresult=e=>{got=true;onRes([...e.results[0]].map(a=>a.transcript))};r.onerror=ev=>{failed=true;onErr(ev&&ev.error||"mic")};r.onend=()=>{if(!got&&!failed)onErr("no-speech")};
+  try{r.start()}catch(e){onErr("mic")}return r}
 const REC_HELP="Die Spracherkennung funktioniert am besten in Chrome (Android) oder Safari (iPhone, mit aktivierter Diktierfunktion). Du kannst trotzdem anhören und laut nachsprechen.";
 function pronView(r){
   if(DEMO)return demoLocked();
@@ -5496,7 +5506,7 @@ function pronView(r){
   app.querySelector("#prec").onclick=()=>{fb.hidden=false;fb.className="feedback";fb.textContent="Ich höre zu …";
     listenOnce(h=>{const c=compareWords(s,h);fb.className="feedback "+(c.pct>=80?"ok":"bad");app.querySelector("#ptxt").innerHTML=c.html;
       fb.innerHTML=(c.pct>=80?`Super! ${c.pct} % richtig. +10`:`${c.pct} % – die roten Wörter noch einmal üben.`)+`<small>Gehört: „${esc(c.txt)}“</small>`;if(c.pct>=80)addPts(10)},
-      e=>{fb.className="feedback bad";fb.textContent=e==="norec"?REC_HELP:"Mikrofon nicht erlaubt oder nichts gehört. Versuch es noch einmal."})}}
+      e=>{fb.className="feedback bad";fb.textContent=recErrMsg(e)})}}
 
 // ---------- role plays ----------
 function rpList(){
@@ -5532,7 +5542,7 @@ function rpPlay(r){
       app.querySelector("#rnext").hidden=false;app.querySelector("#rn").onclick=()=>{i++;draw()}};
     app.querySelector("#send").onclick=()=>{const v=app.querySelector("#ans").value.trim();if(v)judge(v)};
     app.querySelector("#ans").onkeydown=e=>{if(e.key==="Enter")app.querySelector("#send").click()};
-    app.querySelector("#mic").onclick=()=>{fb.hidden=false;fb.className="feedback";fb.textContent="Ich höre zu …";listenOnce(h=>{app.querySelector("#ans").value=h[0];const best=h.find(x=>check(x,t))||h[0];judge(best)},e=>{fb.className="feedback bad";fb.textContent=e==="norec"?"Spracherkennung nicht verfügbar – schreib deine Antwort ins Feld.":"Mikrofon nicht erlaubt oder nichts gehört."})};
+    app.querySelector("#mic").onclick=()=>{fb.hidden=false;fb.className="feedback";fb.textContent="Ich höre zu …";listenOnce(h=>{app.querySelector("#ans").value=h[0];const best=h.find(x=>check(x,t))||h[0];judge(best)},e=>{fb.className="feedback bad";fb.textContent=e==="norec"?"Spracherkennung nicht verfügbar – schreib deine Antwort ins Feld.":recErrMsg(e)})};
   }
   draw()}
 
