@@ -12,7 +12,10 @@
 //   drv:<folderId>      -> cached folder listing (10 min)
 
 const SESSION_TTL = 60 * 60 * 24 * 30;
-const TRIAL_MS = 24 * 60 * 60 * 1000; // trial link: valid one day after it was created // students stay logged in for 30 days
+const TRIAL_MS = 24 * 60 * 60 * 1000;
+const PARTNER_CODE = "PARTNER1"; // link for companies: deutschparadies.ro/app/?code=PARTNER1
+const PARTNER_MS = 48 * 60 * 60 * 1000; // 48 hours per device from the first visit
+const PARTNER_UNTIL = Date.UTC(2026, 11, 1); // the partner link stops working on 1 Dec 2026 // trial link: valid one day after it was created // students stay logged in for 30 days
 const TEACHER_TTL = 60 * 60 * 12;
 
 function hex(bytes) { return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join(""); }
@@ -123,6 +126,19 @@ export async function lernApi(request, env, path, deps) {
     if (b && typeof b.code === "string") {
       const code = b.code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
       if (!/^[A-Z0-9]{8}$/.test(code)) { await addFail(request, env); return json({ error: "wrong" }, 403); }
+      // partner link for companies (e-mail of 1 Nov 2026): 48 hours for each device, counted from its first visit
+      if (code === PARTNER_CODE) {
+        if (Date.now() > PARTNER_UNTIL) return json({ error: "expired" }, 403);
+        const dev = (await deps.sha256Hex((request.headers.get("cf-connecting-ip") || "x") + "|" + (request.headers.get("user-agent") || ""))).slice(0, 24);
+        const ukey = "partneruse:" + dev;
+        let first = +(await env.APPKV.get(ukey)) || 0;
+        if (!first) { first = Date.now(); await env.APPKV.put(ukey, String(first), { expirationTtl: 86400 * 40 }); }
+        const exp = Math.min(first + PARTNER_MS, PARTNER_UNTIL);
+        if (exp <= Date.now()) return json({ error: "expired" }, 403);
+        const ttl = Math.max(60, Math.ceil((exp - Date.now()) / 1000));
+        const tok = await newSession(env, { k: "d", exp }, ttl);
+        return json({ ok: true, trial: { exp } }, 200, { "set-cookie": cookie("dp_s", tok, ttl) });
+      }
       const c = await env.APPKV.get("code:" + code, "json");
       if (!c) { await addFail(request, env); return json({ error: "wrong" }, 403); }
       // one code can be shared with many people; the link itself works for 24 hours after it was created
