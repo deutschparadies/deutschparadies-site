@@ -187,7 +187,7 @@ footer{margin-top:28px;text-align:center;font-size:.8rem;color:var(--muted)}
 
 /* ---- tabs + new sections (Nov 2026) ---- */
 body.wm::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='180'><text x='10' y='110' transform='rotate(-28 130 90)' font-family='Arial' font-size='15' fill='%23173226' fill-opacity='0.13'>Deutschparadies · nur zur Ansicht</text></svg>");background-repeat:repeat}
-@media print{body.wm{display:none!important}}
+@media print{html:not(.dp-free) body{display:none!important}}
 .certbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-top:22px;background:var(--surface);border:2px solid var(--gold);border-radius:var(--r);padding:12px 14px;font:inherit;color:var(--ink)}
 .certbtn .ti{font-size:1.6rem}.certbtn .t{flex:1}.certbtn b{display:block;font-family:var(--display)}.certbtn small{display:block;color:var(--muted);font-size:.82rem}.certbtn .chev{color:var(--muted);font-size:1.3rem}
 .rol{display:block;margin:4px 0 0;font-size:.82rem;font-style:italic;color:var(--muted)}
@@ -8667,6 +8667,7 @@ loadAccess().then(render);loadVideos();
   if(/[?&]lehrer\b/.test(location.search)){document.documentElement.classList.add("dp-free");return}
   function inField(t){return !!(t&&t.closest&&t.closest("input,textarea,[contenteditable=true]"))}
   document.addEventListener("contextmenu",function(e){if(!inField(e.target))e.preventDefault()});
+  document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="p"||e.key==="P"||e.key==="s"||e.key==="S")){e.preventDefault()}});
   document.addEventListener("copy",function(e){if(!inField(e.target))e.preventDefault()});
   document.addEventListener("cut",function(e){if(!inField(e.target))e.preventDefault()});
   document.addEventListener("dragstart",function(e){e.preventDefault()});
