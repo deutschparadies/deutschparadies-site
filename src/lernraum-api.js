@@ -283,6 +283,27 @@ export async function lernApi(request, env, path, deps) {
     await env.APPKV.put("creq:" + rid, JSON.stringify({ rid, tok, name, lv, pct, ts: Date.now(), status: "neu", id: "" }), { expirationTtl: 86400 * 365 });
     return json({ ok: true, rid, tok });
   }
+  if (p === "lt" && M === "POST") {
+    // free grammar & spelling check (LanguageTool public API, no key) for homework texts
+    const b = (await body(request)) || {};
+    const text = typeof b.text === "string" ? b.text.slice(0, 6000) : "";
+    if (text.trim().length < 3) return json({ error: "empty" }, 400);
+    let r;
+    try {
+      r = await fetch("https://api.languagetool.org/v2/check", {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded", accept: "application/json" },
+        body: new URLSearchParams({ text, language: "de-DE", level: "default" }),
+      });
+    } catch (e) { return json({ error: "net" }, 502); }
+    if (r.status === 429) return json({ error: "busy" }, 429);
+    if (!r.ok) return json({ error: "lt" }, 502);
+    const j = await r.json();
+    const matches = (j.matches || []).slice(0, 60).map((m) => ({
+      o: m.offset, l: m.length, msg: m.message || "", r: (m.replacements || []).slice(0, 4).map((x) => x.value),
+    }));
+    return json({ matches });
+  }
   if (p === "certst" && M === "GET") {
     const mine = (new URL(request.url).searchParams.get("mine") || "").split(",").slice(0, 20);
     const items = [];
