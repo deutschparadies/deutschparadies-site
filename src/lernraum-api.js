@@ -252,7 +252,7 @@ export async function lernApi(request, env, path, deps) {
     const b = (await body(request)) || {};
     const name = str(b.name, 60), lv = LEVELS.includes(b.lv) ? b.lv : "";
     const pct = Math.round(+b.pct || 0);
-    if (name.length < 2 || !lv || pct < 70 || pct > 100) return json({ error: "bad" }, 400);
+    if (name.length < 2 || !lv || pct < 60 || pct > 100) return json({ error: "bad" }, 400);
     const id = rand(5);
     await env.APPKV.put("cert:" + id, JSON.stringify({ id, name, lv, pct, ts: Date.now() }));
     const list = (await env.APPKV.get("cert:all", "json")) || [];

@@ -7727,13 +7727,13 @@ function finalView(r){
   if(DEMO)return demoLocked();
   const lv=r.lv;
   if(!lv){const best=S.final||{};
-    app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Abschlusstest</span><h1>Niveau abschließen</h1><p class="muted">25 Fragen aus allen Lektionen des Niveaus. Ab 70 % hast du bestanden und bekommst dein Lernraum-Zertifikat.</p>
+    app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Abschlusstest</span><h1>Niveau abschließen</h1><p class="muted">25 Fragen aus allen Lektionen des Niveaus. Ab 60 % hast du bestanden und bekommst dein Lernraum-Zertifikat.</p>
     <div class="list" style="margin-top:12px">${levelIds().filter(id=>lessonsOf(id).length).map(id=>`<button class="row" data-p="final" data-lv="${id}"><span class="num ${best[id]&&best[id].pass?"done":""}">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${best[id]?"Bestes Ergebnis: "+best[id].pct+" %":"Noch nicht gemacht"}</small></span>${best[id]&&best[id].pass?`<span class="pct">🏅</span>`:""}</button>`).join("")}</div>`;return}
   const ls=lessonsOf(lv);const pool=vocabPool(ls);const ex=exQs(ls,15);const voc=shuffle(pool).slice(0,25-ex.length).map(v=>vocQ(v,pool));
   runQuiz({kind:"Abschlusstest",title:"Niveau "+lv,qs:shuffle(ex.concat(voc)),done:(s,t)=>{
-    const pct=Math.round(s/t*100),pass=pct>=70;S.final=S.final||{};const prev=S.final[lv];if(!prev||pct>prev.pct)S.final[lv]={pct,pass,ts:Date.now()};save();
+    const pct=Math.round(s/t*100),pass=pct>=60;S.final=S.final||{};const prev=S.final[lv];if(!prev||pct>prev.pct)S.final[lv]={pct,pass,ts:Date.now()};save();
     sendResult({type:"final",ref:lv,score:s,total:t,pass});
-    app.innerHTML=`<button class="back" data-p="final">‹ Zurück</button><h1>Abschlusstest ${lv}</h1>${resultCard(s,t,70)}
+    app.innerHTML=`<button class="back" data-p="final">‹ Zurück</button><h1>Abschlusstest ${lv}</h1>${resultCard(s,t,60)}
     ${pass?`<div class="card" style="margin-top:12px"><label class="kind">Name auf dem Zertifikat</label><input class="gap" id="cname" maxlength="60" value="${esc(myName())}"><div class="actions"><button class="btn gold" id="cert">🏅 Zertifikat erstellen</button></div></div><div id="certbox"></div>`:`<div class="actions"><button class="btn" data-p="final" data-lv="${lv}">Noch einmal versuchen</button></div>`}`;
     const cb=app.querySelector("#cert");if(cb)cb.onclick=()=>{const n=app.querySelector("#cname").value.trim();if(n.length<2){app.querySelector("#cname").focus();return}setName(n);makeCert(lv,pct,n,app.querySelector("#certbox"))}}})}
 async function makeCert(lv,pct,name,box,saved){
@@ -8453,7 +8453,7 @@ function meView(){
   <div class="stats"><div class="stat"><b>${S.points}</b><span>Punkte</span></div><div class="stat"><b>${misN}</b><span>Missionen</span></div><div class="stat"><b>${Object.keys(certs).length}</b><span>Zertifikate</span></div></div>
   <div class="card" style="margin-top:12px"><label class="kind" for="myn">Mein Name (für Zertifikate)</label><input class="gap" id="myn" maxlength="60" autocomplete="name" value="${esc(myName())}"><div class="actions"><button class="btn ghost" id="mynok">Speichern</button></div></div>
   <div class="section-h"><h2>Meine Zertifikate</h2></div>
-  <div class="list">${levelIds().filter(id=>lessonsOf(id).length).map(id=>{const c=certs[id],b=best[id];return c?`<button class="row" data-showcert="${id}"><span class="num done">🏅</span><span class="t"><b>Zertifikat ${id} · ${c.pct} %</b><small>${fmtDate(c.ts)}${c.id?" · mit QR-Code":""}</small></span><span class="pct">Ansehen</span></button>`:`<button class="row" data-p="final" data-lv="${id}"><span class="num">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${b?"Bestes Ergebnis: "+b.pct+" %":"Ab 70 % bekommst du dein Zertifikat"}</small></span><span class="pct">›</span></button>`}).join("")}</div>
+  <div class="list">${levelIds().filter(id=>lessonsOf(id).length).map(id=>{const c=certs[id],b=best[id];return c?`<button class="row" data-showcert="${id}"><span class="num done">🏅</span><span class="t"><b>Zertifikat ${id} · ${c.pct} %</b><small>${fmtDate(c.ts)}${c.id?" · mit QR-Code":""}</small></span><span class="pct">Ansehen</span></button>`:`<button class="row" data-p="final" data-lv="${id}"><span class="num">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${b?"Bestes Ergebnis: "+b.pct+" %":"Ab 60 % bekommst du dein Zertifikat"}</small></span><span class="pct">›</span></button>`}).join("")}</div>
   <div id="certbox"></div>
   <div class="section-h"><h2>Mehr</h2></div>
   <div class="tools">
