@@ -188,6 +188,8 @@ footer{margin-top:28px;text-align:center;font-size:.8rem;color:var(--muted)}
 /* ---- tabs + new sections (Nov 2026) ---- */
 .certbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-top:22px;background:var(--surface);border:2px solid var(--gold);border-radius:var(--r);padding:12px 14px;font:inherit;color:var(--ink)}
 .certbtn .ti{font-size:1.6rem}.certbtn .t{flex:1}.certbtn b{display:block;font-family:var(--display)}.certbtn small{display:block;color:var(--muted);font-size:.82rem}.certbtn .chev{color:var(--muted);font-size:1.3rem}
+.rol{display:block;margin:4px 0 0;font-size:.82rem;font-style:italic;color:var(--muted)}
+.certbtn .ro-sub{display:block;font-family:var(--body);font-weight:400}
 .certcard{margin-top:4px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
 .minicert{background:#fbf8f0;border:6px solid #173226;border-radius:6px;padding:4px;margin-top:4px}
 .mc-in{position:relative;overflow:hidden;border:1.5px solid #e3a72e;padding:12px 10px 10px;text-align:center;color:#173226;font-family:Georgia,"Times New Roman",serif}
@@ -6992,7 +6994,7 @@ function home(){
   <div id="lvlList"></div>
   ${plusHome()}
   ${allgDialoge()}`}
-  ${lessonsOf(cur).length?`<button class="certbtn" data-p="cert" data-lv="${cur}"><span class="ti">🏅</span><span class="t"><b>${(S.certs||{})[cur]&&S.certs[cur].id?"Dein Zertifikat "+cur:"Beantrage dein Zertifikat"}</b><small>${(S.certs||{})[cur]&&S.certs[cur].id?"Freigegeben · ansehen":(S.certreq||{})[cur]&&S.certreq[cur].status==="neu"?"⏳ Wartet auf Freigabe":"Abschlusstest "+cur+" · ab 60 %"}</small></span><span class="chev">›</span></button>`:""}
+  ${lessonsOf(cur).length?`<button class="certbtn" data-p="cert" data-lv="${cur}"><span class="ti">🏅</span><span class="t"><b>${(S.certs||{})[cur]&&S.certs[cur].id?"Dein Zertifikat "+cur:"Beantrage dein Zertifikat"}<small class="ro-sub" lang="ro">${(S.certs||{})[cur]&&S.certs[cur].id?"Certificatul tău "+cur:"Solicită certificatul tău"}</small></b><small>${(S.certs||{})[cur]&&S.certs[cur].id?"Freigegeben · ansehen":(S.certreq||{})[cur]&&S.certreq[cur].status==="neu"?"⏳ Wartet auf Freigabe":"Abschlusstest "+cur+" · ab 60 %"}</small><small lang="ro" class="rol">${(S.certs||{})[cur]&&S.certs[cur].id?"Aprobat · vezi certificatul":(S.certreq||{})[cur]&&S.certreq[cur].status==="neu"?"Așteaptă aprobarea profesorului":"Test final "+cur+" · de la 60 %"}</small></span><span class="chev">›</span></button>`:""}
   <footer>Deutschparadies · deutschparadies.ro<br>${DEMO?`<a class="linkbtn" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a>`:`<button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button>`}</footer>`;
   const ll=app.querySelector("#lvlList");if(ll)levelList(cur,ll);setTimeout(loadQuizCalls,0);
 }
@@ -8448,9 +8450,9 @@ function certCard(lv){
   const name=ok?c.name:(myName()||"Dein Name");
   return `<div class="certcard"><div class="section-h" style="margin-top:0"><h2>${ok?"🏅 Dein Zertifikat":"🏅 Beantrage dein Zertifikat"}</h2></div>
    <div class="minicert${ok?"":" demo"}"><div class="mc-in">${logo?`<img src="${logo}" alt="" class="mc-logo">`:""}<div class="mc-k">Deutschparadies · Lernraum</div><div class="mc-t">Zertifikat</div><div class="mc-n">${esc(name)}</div><div class="mc-l">${lv}${ok?" · "+c.pct+" %":""}</div><div class="mc-qr">${qr}</div>${ok?"":`<div class="mc-ribbon">Muster</div>`}</div></div>
-   ${ok?`<p class="muted" style="margin:10px 0 0">🎉 Dein Zertifikat ${lv} ist freigegeben – mit QR-Code zum Prüfen.</p><div class="actions"><button class="btn gold" data-p="me">🏅 Mein Zertifikat ansehen</button></div>`
-    :wait?`<p class="muted" style="margin:10px 0 0">⏳ Dein Antrag für ${lv} ist bei Saleh. Sobald er ihn freigibt, findest du dein Zertifikat hier.</p>`
-    :`<p class="muted" style="margin:10px 0 0">Schaffe den Abschlusstest ${lv} (ab 60 %). Danach prüft Saleh dein Ergebnis und gibt dein Zertifikat mit QR-Code frei.</p><div class="actions"><button class="btn gold" data-p="final" data-lv="${lv}">🏅 Zum Abschlusstest ${lv}</button></div>`}
+   ${ok?`<p class="muted" style="margin:10px 0 0">🎉 Dein Zertifikat ${lv} ist freigegeben – mit QR-Code zum Prüfen.</p><p class="rol" lang="ro">Certificatul tău ${lv} a fost aprobat – cu cod QR pentru verificare.</p><div class="actions"><button class="btn gold" data-p="me">🏅 Mein Zertifikat ansehen</button></div><p class="rol" lang="ro" style="text-align:center">Vezi certificatul meu</p>`
+    :wait?`<p class="muted" style="margin:10px 0 0">⏳ Dein Antrag für ${lv} ist bei Saleh. Sobald er ihn freigibt, findest du dein Zertifikat hier.</p><p class="rol" lang="ro">Cererea ta pentru ${lv} a ajuns la profesorul Saleh. După aprobare, certificatul tău apare aici.</p>`
+    :`<p class="muted" style="margin:10px 0 0">Schaffe den Abschlusstest ${lv} (ab 60 %). Danach prüft Saleh dein Ergebnis und gibt dein Zertifikat mit QR-Code frei.</p><p class="rol" lang="ro">Promovează testul final ${lv} (de la 60 %). Apoi profesorul Saleh verifică rezultatul și îți aprobă certificatul cu cod QR.</p><div class="actions"><button class="btn gold" data-p="final" data-lv="${lv}">🏅 Zum Abschlusstest ${lv}</button></div><p class="rol" lang="ro" style="text-align:center">Mergi la testul final ${lv}</p>`}
   </div>`}
 
 // ---------- certificates: the student asks, the teacher approves ----------
