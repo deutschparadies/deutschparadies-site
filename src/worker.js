@@ -2,6 +2,7 @@ import { lernApi, validSession } from "./lernraum-api.js";
 import { onRequest as favicon } from "../functions/favicon.png.js";
 import { onRequest as appleTouchIcon } from "../functions/apple-touch-icon.png.js";
 import { leadBox, contactCardInner } from "./lead-html.js";
+import { kapsoProxy, KAPSO_PATH } from "./kapso-proxy.js";
 
 const IMAGES = {
   "/favicon.png": favicon,
@@ -171,6 +172,8 @@ export default {
     if (url.hostname === "www.deutschparadies.ro") {
       return Response.redirect("https://deutschparadies.ro" + path + url.search, 301);
     }
+    // Private WhatsApp (Kapso) bridge for Claude
+    if (path === KAPSO_PATH || path.startsWith(KAPSO_PATH + "/")) return kapsoProxy(request);
     // Old URLs still indexed by Google -> current pages
     const OLD = {
       "/curs-germana-a1": "/cursuri/a1-1",
