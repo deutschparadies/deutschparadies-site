@@ -7,6 +7,7 @@
 //   hw:<id>             -> homework item (name typed by the student)
 //   res:all             -> [results with name]
 //   fail:<ip>           -> failed login counter (15 min)
+//   cert:<id>           -> issued certificate {name, lv, pct, ts} (public check via QR code)
 //   drv:<folderId>      -> cached folder listing (10 min)
 
 const SESSION_TTL = 60 * 60 * 24 * 30;
@@ -234,9 +235,31 @@ export async function lernApi(request, env, path, deps) {
     return json({ error: "notfound" }, 404);
   }
 
+  // ---------- public: check a certificate (QR code on the certificate) ----------
+  if (p === "certv" && M === "GET") {
+    const id = (new URL(request.url).searchParams.get("id") || "").toLowerCase();
+    if (!/^[a-f0-9]{10}$/.test(id)) return json({ error: "bad" }, 400);
+    const c = await env.APPKV.get("cert:" + id, "json");
+    return c ? json({ ok: true, name: c.name, lv: c.lv, pct: c.pct, ts: c.ts }) : json({ error: "notfound" }, 404);
+  }
+
   // ---------- everything below needs a logged-in student (or old shared password) ----------
   const s = await validSession(request, env);
   if (!s) return json({ error: "login" }, 401);
+
+  if (p === "cert" && M === "POST") {
+    if (s.k === "d") return json({ error: "demo" }, 403); // no certificates from the 24h demo link
+    const b = (await body(request)) || {};
+    const name = str(b.name, 60), lv = LEVELS.includes(b.lv) ? b.lv : "";
+    const pct = Math.round(+b.pct || 0);
+    if (name.length < 2 || !lv || pct < 70 || pct > 100) return json({ error: "bad" }, 400);
+    const id = rand(5);
+    await env.APPKV.put("cert:" + id, JSON.stringify({ id, name, lv, pct, ts: Date.now() }));
+    const list = (await env.APPKV.get("cert:all", "json")) || [];
+    list.push({ id, name, lv, pct, ts: Date.now() });
+    await env.APPKV.put("cert:all", JSON.stringify(list.slice(-2000)));
+    return json({ ok: true, id });
+  }
 
   if (p === "drive/list") {
     const f = new URL(request.url).searchParams.get("f") || "";

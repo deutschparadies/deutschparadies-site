@@ -184,6 +184,35 @@ textarea.wta,.wta{width:100%;font:inherit;font-size:1rem;line-height:1.55;paddin
 .lock{max-width:380px;margin:30px auto;text-align:center}.lock-logo{width:96px;height:96px;border-radius:50%;object-fit:cover;box-shadow:0 4px 14px rgba(0,0,0,.15)}.lock h1{margin:14px 0 6px}.lock form{margin-top:16px}
 footer{margin-top:28px;text-align:center;font-size:.8rem;color:var(--muted)}
 @media (max-width:380px){.levels{grid-template-columns:repeat(2,1fr)}.modules{grid-template-columns:1fr}}
+
+/* ---- tabs + new sections (Nov 2026) ---- */
+body.has-tabs{padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+body.has-tabs #toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+#tabbar{position:fixed;left:0;right:0;bottom:0;z-index:15;display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+#tabbar button{display:flex;flex-direction:column;align-items:center;gap:0;background:none;border:0;border-radius:12px;padding:6px 2px;color:var(--muted);font:inherit;min-height:52px}
+#tabbar .ti{font-size:1.3rem;line-height:1.1;filter:grayscale(.6);opacity:.8}
+#tabbar b{font-size:.78rem;font-family:var(--display)}#tabbar small{font-size:.62rem;opacity:.8}
+#tabbar button[aria-current="page"]{color:var(--brand-2);background:var(--bg)}
+#tabbar button[aria-current="page"] .ti{filter:none;opacity:1}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #tabbar button[aria-current="page"]{color:var(--gold)}}
+:root[data-theme="dark"] #tabbar button[aria-current="page"]{color:var(--gold)}
+.heute{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 14px 6px}
+.hrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:12px 2px;font:inherit;color:var(--ink)}
+.hrow:first-of-type{border-top:0}
+.hrow .ti{font-size:1.5rem;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:var(--bg);flex:none}
+.hrow .t{flex:1;min-width:0}.hrow .t b{display:block;font-family:var(--display)}.hrow .t small{display:block;color:var(--muted);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow .chev,.person .pct{color:var(--muted);font-size:1.3rem}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:16px;background:var(--line);padding:4px;border-radius:999px}
+.seg button{border:0;border-radius:999px;padding:9px 6px;background:none;font-weight:700;color:var(--muted)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.people{display:flex;flex-direction:column;gap:8px}
+.person{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;font:inherit;color:var(--ink)}
+.person .av{font-size:1.7rem;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--bg);flex:none}
+.person .t{flex:1;min-width:0}.person .t b{display:block;font-family:var(--display)}.person .t small{display:block;color:var(--muted);font-size:.82rem}
+.mis .mh{display:flex;align-items:center;gap:10px}.mis .mh .ti{font-size:1.5rem}.mis .mh b{font-family:var(--display);font-size:1.05rem}
+.mis.ok{border-color:var(--ok);background:var(--ok-bg)}
+.mis p[dir="rtl"]{font-family:var(--arabic);text-align:right;line-height:1.8}
+.row .say{flex:none}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 
 /* Anti-copy / anti-screenshot deterrents (browsers cannot fully block screenshots) */
@@ -4555,6 +4584,2297 @@ D.telc.tests.forEach(function(t,ti){
 });
 })(window.DP_DATA);
 </script>
+<script>/* qrcode-generator (MIT) © Kazuhiko Arase */
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+
+</script>
 <script>
 (function(){
 const D=window.DP_DATA, app=document.getElementById('app');
@@ -4612,9 +6932,10 @@ try{const r=JSON.parse(sessionStorage.getItem("dp_route"));if(r)route=r}catch(e)
 
 function render(){
   if(!ACCESS)return;
-  if(IS_LEHRER&&window.__DP_WEB&&!window.__lehrerShown){window.__lehrerShown=1;return pwChangeWeb()}
+  if(IS_LEHRER&&window.__DP_WEB&&!window.__lehrerShown){window.__lehrerShown=1;setNav(false);return pwChangeWeb()}
+  if(!DEMO&&!unlocked()){setNav(false);return lockScreen()}
+  setNav(true);
   if(DEMO){if(route.v!=="home"&&route.v!=="level"&&!DEMO_OK(route))return demoLocked()}
-  else if(!unlocked())return lockScreen();
   document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.lang));
   touchDay();
   if(route.v==="home")return home();
@@ -4640,14 +6961,16 @@ function home(){
     <div class="stat"><b>${S.streak||0}</b><span>Tage in Folge</span></div>
     <div class="stat"><b>${S.todayPts}/${GOAL}</b><span>Tagesziel</span><div class="goal"><i style="width:${goal}%"></i></div></div>
   </div>
-  ${lastL?`<div class="actions"><button class="btn gold" data-go-lesson="${lastL.l.id}">Weitermachen · Lektion ${lastL.l.n}: ${esc(lastL.l.title)}</button></div>`:""}
-  ${plusHome()}
-  <div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
+  ${heuteCard(cur)}
+  <div id="quizcalls"></div>
+  ${homeSwitch()}
+  ${S.homeTab==="beruf"?berufCards():`<div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
   <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
   <div id="lvlList"></div>
-  ${allgDialoge()}
+  ${plusHome()}
+  ${allgDialoge()}`}
   <footer>Deutschparadies · deutschparadies.ro<br>${DEMO?`<a class="linkbtn" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a>`:`<button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button>`}</footer>`;
-  levelList(cur, app.querySelector("#lvlList"));
+  const ll=app.querySelector("#lvlList");if(ll)levelList(cur,ll);setTimeout(loadQuizCalls,0);
 }
 
 function levelList(lv,el){
@@ -5349,22 +7672,15 @@ function artHtml(de){const m=String(de).match(/^(der|die|das) (.*)$/);return m?`
 function plusHome(){
   const t=(p,ico,b,s)=>`<button class="tool" data-p="${p}"><span class="ti">${ico}</span><b>${b}</b><small>${s}</small></button>`;
   const due=srsDue(S.srsLv||null);
-  setTimeout(loadQuizCalls,0);
-  return `<div id="quizcalls"></div>
-  <div class="section-h"><h2>Trainieren</h2></div>
+  return `<div class="section-h"><h2>Werkzeuge</h2></div>
   <div class="tools">
    ${t("srs","🗂️","Wortschatz-Trainer",due?due+" Wörter heute fällig":"Karteikarten mit System")}
-   ${t("pron","🎙️","Aussprache","Hören · Nachsprechen · Feedback")}
-   ${t("rp","🎭","Rollenspiele","Dialoge sprechen wie im Alltag")}
    ${t("gram","🔎","Grammatik & Verben","Suchen · Konjugieren · Artikel")}
    ${t("hw","📮","Hausaufgaben","Abgeben · Korrektur lesen")}
-   ${t("final","🏅","Abschlusstest","Test + Zertifikat pro Niveau")}
-   ${t("bes","✉️","Beschwerde-Trainer","telc-Schreiben Schritt für Schritt")}
    ${t("fehler","📕","Fehlerheft",((S.wrong||[]).filter(x=>FH_OK(x.q)).length||"Keine")+" Fehler zum Üben")}
-   ${t("week","🏆","Wochen-Challenge",S.wkOn&&S.wk&&S.wk.id===weekId()?S.wk.pts+" Punkte diese Woche":"Wer übt am meisten?")}
+   ${t("bes","✉️","Beschwerde-Trainer","telc-Schreiben Schritt für Schritt")}
    ${t("plan","📅","telc-Plan",S.plan&&S.plan.date?"Noch "+Math.max(0,Math.ceil((new Date(S.plan.date+"T09:00:00")-Date.now())/864e5))+" Tage":"Plan bis zur Prüfung")}
-  </div>
-  <div class="actions"><button class="btn ghost" data-p="install">📲 Lernraum als App installieren</button></div>`}
+  </div>`}
 async function loadQuizCalls(){if(!WEB||DEMO)return;const j=await api("quiz");const box=document.getElementById("quizcalls");if(!box||!j._ok)return;const done=S.quizDone||{};
   box.innerHTML=Object.entries(j.quiz||{}).map(([lv,q])=>{const f=findLesson(q.lesson);if(!f)return "";const key=q.lesson+":"+q.at;return `<button class="quizcall" data-p="quiz" data-id="${q.lesson}" data-q="${key}"><span class="ti">${done[key]?"✅":"📝"}</span><span><b>Quiz vor der Stunde · ${lv}${done[key]?" (erledigt)":""}</b><small>Lektion ${f.l.n}: ${esc(f.l.title)} · 10 Fragen</small></span></button>`}).join("")}
 
@@ -5420,22 +7736,32 @@ function finalView(r){
     app.innerHTML=`<button class="back" data-p="final">‹ Zurück</button><h1>Abschlusstest ${lv}</h1>${resultCard(s,t,70)}
     ${pass?`<div class="card" style="margin-top:12px"><label class="kind">Name auf dem Zertifikat</label><input class="gap" id="cname" maxlength="60" value="${esc(myName())}"><div class="actions"><button class="btn gold" id="cert">🏅 Zertifikat erstellen</button></div></div><div id="certbox"></div>`:`<div class="actions"><button class="btn" data-p="final" data-lv="${lv}">Noch einmal versuchen</button></div>`}`;
     const cb=app.querySelector("#cert");if(cb)cb.onclick=()=>{const n=app.querySelector("#cname").value.trim();if(n.length<2){app.querySelector("#cname").focus();return}setName(n);makeCert(lv,pct,n,app.querySelector("#certbox"))}}})}
-function makeCert(lv,pct,name,box){
+async function makeCert(lv,pct,name,box,saved){
+  box.innerHTML=`<p class="muted" style="margin-top:12px">Zertifikat wird erstellt …</p>`;
+  let rec=saved;
+  if(!rec){rec={id:"",name,pct,ts:Date.now()};
+    if(WEB&&!DEMO){const j=await api("cert",{method:"POST",body:{name,lv,pct}});if(j._ok&&j.id)rec.id=j.id}
+    S.certs=S.certs||{};const prev=S.certs[lv];if(!prev||pct>=prev.pct||!prev.id)S.certs[lv]=rec;save()}
   const W=1754,H=1240,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   x.fillStyle="#fbf8f0";x.fillRect(0,0,W,H);x.strokeStyle="#173226";x.lineWidth=18;x.strokeRect(40,40,W-80,H-80);x.strokeStyle="#e3a72e";x.lineWidth=4;x.strokeRect(78,78,W-156,H-156);
   const done=()=>{x.textAlign="center";x.fillStyle="#173226";
     x.font="700 30px Georgia, serif";x.fillText("DEUTSCHPARADIES · LERNRAUM",W/2,330);
     x.font="700 96px Georgia, serif";x.fillText("Zertifikat",W/2,450);
     x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("Hiermit wird bestätigt, dass",W/2,540);
-    x.fillStyle="#15231c";x.font="italic 700 80px Georgia, serif";x.fillText(name,W/2,650);
+    x.fillStyle="#15231c";x.font="italic 700 80px Georgia, serif";x.fillText(rec.name,W/2,650);
     x.strokeStyle="#e3a72e";x.lineWidth=3;x.beginPath();x.moveTo(W/2-420,680);x.lineTo(W/2+420,680);x.stroke();
     x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("den Abschlusstest für das Niveau",W/2,760);
-    x.fillStyle="#173226";x.font="700 64px Georgia, serif";x.fillText(lv+" · "+pct+" %",W/2,850);
+    x.fillStyle="#173226";x.font="700 64px Georgia, serif";x.fillText(lv+" · "+rec.pct+" %",W/2,850);
     x.fillStyle="#5d6b63";x.font="34px Georgia, serif";x.fillText("im Deutschparadies Lernraum erfolgreich bestanden hat.",W/2,920);
-    x.textAlign="left";x.fillStyle="#15231c";x.font="30px Georgia, serif";x.fillText(fmtDate(Date.now()),190,1060);x.fillText("Datum",190,1100);
+    x.textAlign="left";x.fillStyle="#15231c";x.font="30px Georgia, serif";x.fillText(fmtDate(rec.ts),190,1060);x.fillText("Datum",190,1100);
     x.textAlign="right";x.fillText("Saleh",W-190,1060);x.fillText("Lehrer · Deutschparadies",W-190,1100);
-    x.textAlign="center";x.fillStyle="#9aa59e";x.font="22px Georgia, serif";x.fillText("Interne Lernbestätigung des Deutschparadies Lernraums – kein offizielles Sprachzertifikat.",W/2,1150);
-    c.toBlob(b=>{const u=URL.createObjectURL(b);box.innerHTML=`<div class="card" style="margin-top:12px"><img src="${u}" alt="Zertifikat" style="width:100%;border-radius:8px"><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${u}" download="Zertifikat_${lv}_${name.replace(/\s+/g,"_")}.png">Bild speichern</a></div></div>`},"image/png")};
+    if(rec.id&&typeof qrcode==="function"){try{const q=qrcode(0,"M");q.addData("https://deutschparadies.ro/verificare/?id="+rec.id);q.make();
+      const n=q.getModuleCount(),cs=Math.floor(150/n),sz=cs*n,ox=Math.round(W/2-sz/2),oy=958;
+      x.fillStyle="#fff";x.fillRect(ox-10,oy-10,sz+20,sz+20);x.fillStyle="#15231c";
+      for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect(ox+k*cs,oy+r*cs,cs,cs);
+      x.textAlign="center";x.fillStyle="#5d6b63";x.font="20px Georgia, serif";x.fillText("Echtheit prüfen: deutschparadies.ro/verificare · Code "+rec.id.toUpperCase(),W/2,oy+sz+30)}catch(e){}}
+    x.textAlign="center";x.fillStyle="#9aa59e";x.font="20px Georgia, serif";x.fillText("Interne Lernbestätigung des Deutschparadies Lernraums – kein offizielles Sprachzertifikat.",W/2,1150);
+    c.toBlob(b=>{const u=URL.createObjectURL(b);box.innerHTML=`<div class="card" style="margin-top:12px"><img src="${u}" alt="Zertifikat" style="width:100%;border-radius:8px">${rec.id?`<p class="note">🔒 Mit QR-Code: Jeder kann auf deutschparadies.ro prüfen, dass dein Zertifikat echt ist.</p>`:""}<div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${u}" download="Zertifikat_${lv}_${rec.name.replace(/\s+/g,"_")}.png">Bild speichern</a></div></div>`},"image/png")};
   const logo=new Image();logo.onload=()=>{x.save();x.beginPath();x.arc(W/2,210,70,0,Math.PI*2);x.closePath();x.fillStyle="#fff";x.fill();x.clip();x.drawImage(logo,W/2-70,140,140,140);x.restore();done()};logo.onerror=done;logo.src=document.querySelector("header .logo").src}
 
 // ---------- vocabulary trainer (spaced repetition, Leitner boxes) ----------
@@ -5518,16 +7844,18 @@ function rpPlay(r){
   if(DEMO)return demoLocked();
   const sc=RP.find(x=>x.id===r.id);if(!sc)return go({v:"rp"});
   let i=0,score=0,hide=false;const log=[];
+  const backA=sc.lv==="LEBEN"?'data-p="speak"':sc.lv==="BERUF"?`data-p="beruf" data-id="${sc.job}" data-tab="rp"`:'data-p="rp"';
+  const who=sc.ch?esc(sc.av+" "+sc.ch):"Partner";const kindLv=sc.lv==="LEBEN"?"Leben in Deutschland":sc.lv==="BERUF"?"Beruf":sc.lv;
   const check=(txt,turn)=>{const n=" "+norm(txt)+" ";return turn.k.every(g=>g.some(w=>n.includes(norm(w))))};
   function draw(){
     if(i>=sc.turns.length){S.rp=S.rp||{};S.rp[sc.id]=Math.max(S.rp[sc.id]||0,score);save();
       sendResult({type:"rp",ref:sc.id,score,total:sc.turns.length});
-      app.innerHTML=`<button class="back" data-p="rp">‹ Zurück</button><h1>${esc(sc.t)}</h1>${resultCard(score,sc.turns.length,0)}<div class="card" style="margin-top:12px">${log.join("")}</div><div class="actions"><button class="btn" data-p="rpp" data-id="${sc.id}">Noch einmal</button></div>`;return}
+      app.innerHTML=`<button class="back" ${backA}>‹ Zurück</button><h1>${esc(sc.t)}</h1>${resultCard(score,sc.turns.length,0)}<div class="card" style="margin-top:12px">${log.join("")}</div><div class="actions"><button class="btn" data-p="rpp" data-id="${sc.id}">Noch einmal</button></div>`;return}
     const t=sc.turns[i];
-    app.innerHTML=`<button class="back" data-p="rp">‹ Zurück</button><span class="kind" style="display:block">Rollenspiel · ${sc.lv}</span><h1>${esc(sc.t)}</h1>
+    app.innerHTML=`<button class="back" ${backA}>‹ Zurück</button><span class="kind" style="display:block">Rollenspiel · ${kindLv}</span><h1>${esc(sc.t)}</h1>
     <div class="expl"${rtl()}><div class="lab">Situation</div>${esc(sc.sit[L()])}</div>
     <div class="progress" style="margin-top:8px"><div class="goal"><i style="width:${i/sc.turns.length*100}%"></i></div><span>${i+1}/${sc.turns.length}</span></div>
-    <div class="bub p"><b>Partner</b><span id="ptext">${hide?"🔊 (nur hören)":esc(t.p)}</span><div class="actions" style="margin-top:6px"><button class="btn ghost" id="again" style="padding:8px">🔊 Nochmal</button><button class="btn ghost" id="hide" style="padding:8px">${hide?"Text zeigen":"Nur hören"}</button></div></div>
+    <div class="bub p"><b>${who}</b><span id="ptext">${hide?"🔊 (nur hören)":esc(t.p)}</span><div class="actions" style="margin-top:6px"><button class="btn ghost" id="again" style="padding:8px">🔊 Nochmal</button><button class="btn ghost" id="hide" style="padding:8px">${hide?"Text zeigen":"Nur hören"}</button></div></div>
     <div class="card"><span class="kind">Deine Antwort</span>
      <div class="actions"><button class="btn gold" id="mic">🎙 Antworten</button></div>
      <input class="gap" id="ans" placeholder="… oder hier schreiben" autocomplete="off" style="margin-top:10px"><div class="actions"><button class="btn ghost" id="send">Prüfen</button></div>
@@ -5537,7 +7865,7 @@ function rpPlay(r){
     app.querySelector("#hide").onclick=()=>{hide=!hide;draw()};
     let done=false;const fb=app.querySelector("#rfb");
     const judge=txt=>{if(done)return;done=true;const ok=check(txt,t);if(ok){score++;addPts(10)}
-      log.push(`<p><b>Partner:</b> ${esc(t.p)}<br><b>Du:</b> ${esc(txt)} ${ok?"✅":"❌"}<br><small class="muted">Beispiel: ${esc(t.you)}</small></p>`);
+      log.push(`<p><b>${sc.ch?esc(sc.ch.split(" · ")[0]):"Partner"}:</b> ${esc(t.p)}<br><b>Du:</b> ${esc(txt)} ${ok?"✅":"❌"}<br><small class="muted">Beispiel: ${esc(t.you)}</small></p>`);
       fb.hidden=false;fb.className="feedback "+(ok?"ok":"bad");fb.innerHTML=(ok?"Gut gemacht!":"Fast – so könntest du antworten:")+`<small>${sayBtn(t.you)} ${esc(t.you)}</small>`;
       app.querySelector("#rnext").hidden=false;app.querySelector("#rn").onclick=()=>{i++;draw()}};
     app.querySelector("#send").onclick=()=>{const v=app.querySelector("#ans").value.trim();if(v)judge(v)};
@@ -5659,7 +7987,7 @@ function demoHome(){
   <div class="card" style="margin-top:14px;text-align:center"><h2 style="margin-top:0">Lust auf mehr?</h2><p class="muted">Live-Kurse online in kleinen Gruppen (max. 4 Personen) mit Lehrer Saleh.</p><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a></div><div class="actions"><a class="btn ghost" style="text-align:center;text-decoration:none" href="/">deutschparadies.ro</a></div></div>
   <footer>Deutschparadies · deutschparadies.ro<br><a class="linkbtn" href="./">Ich bin schon Schüler – anmelden</a></footer>`}
 function demoLocked(){app.innerHTML=`<div class="demobar">Demo</div><button class="back" data-home="">‹ Zurück</button><div class="card" style="text-align:center;margin-top:10px"><p style="font-size:2.4rem;margin:0">🔒</p><h2>Nur für Kursteilnehmer</h2><p class="muted">Diesen Teil gibt es in der Vollversion für Schüler von Deutschparadies.</p><div class="actions"><a class="btn gold" style="text-align:center;text-decoration:none" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a></div></div>`}
-const DEMO_OK=r=>r.v==="srs"||((r.v==="lesson"||r.v==="mod")&&r.id==="a11-1");
+const DEMO_OK=r=>["srs","speak","mis","me","beruf"].includes(r.v)||((r.v==="lesson"||r.v==="mod")&&r.id==="a11-1");
 
 // ---------- telc exam mode (timer, audio once, one submit) ----------
 function telcExam(i){
@@ -5894,11 +8222,250 @@ function installView(){
 const RO_SUB={"Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
  "Materialien":"Materiale","Buch":"Carte","Dialoge":"Dialoguri","Texte":"Texte","Videos":"Videoclipuri","Allgemeine Dialoge Grammatik":"Dialoguri generale de gramatică","telc B2 · Prüfungstraining":"Pregătire pentru examenul telc B2",
  "Wortschatz":"Vocabular","Grammatik":"Gramatică","Übungen":"Exerciții","Lesen":"Citire","Hören":"Ascultare","Sprechen":"Vorbire","Schreiben":"Scriere","Video":"Video",
- "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul"};
-function roSubs(root){if(!root)return;root.querySelectorAll(".section-h h2,.tool b,.mat b,.mod b,.vbox .vt b,.row .t b,.stat span,.quizcall b,.tabs button").forEach(el=>{if(el.dataset.ro)return;const t=el.textContent.trim();let ro=RO_SUB[t];if(!ro&&/^Quiz vor der Stunde/.test(t))ro="Quiz înainte de oră";el.dataset.ro="1";if(!ro)return;const s=document.createElement("small");s.className="ro-sub";s.lang="ro";s.textContent=ro;el.appendChild(s)})}
+ "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul","Heute":"Azi","Weitermachen":"Continuă","5 Minuten sprechen":"Vorbește 5 minute","Mission der Woche":"Misiunea săptămânii","Starte mit Lektion 1":"Începe cu lecția 1","Werkzeuge":"Instrumente","Leben in Deutschland":"Viața în Germania","Mehr üben":"Exersează mai mult","Meine Zertifikate":"Certificatele mele","Mehr":"Mai mult","Mein Beruf":"Meseria mea","Beruf":"Meserie","Missionen":"Misiuni","Zertifikate":"Certificate","Als App installieren":"Instalează ca aplicație"};
+function roSubs(root){if(!root)return;root.querySelectorAll(".section-h h2,.tool b,.mat b,.mod b,.vbox .vt b,.row .t b,.stat span,.quizcall b,.tabs button,.hrow .t b").forEach(el=>{if(el.dataset.ro)return;const t=el.textContent.trim();let ro=RO_SUB[t];if(!ro&&/^Quiz vor der Stunde/.test(t))ro="Quiz înainte de oră";el.dataset.ro="1";if(!ro)return;const s=document.createElement("small");s.className="ro-sub";s.lang="ro";s.textContent=ro;el.appendChild(s)})}
 new MutationObserver(()=>{roSubs(app);wrapWords(app)}).observe(app,{childList:true,subtree:true});
 
-const PLUS_VIEWS={bes:besView,fehler:fehlerView,week:weekView,plan:planView,install:installView,srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
+// ===================== Lernraum Nov 2026: Leben in Deutschland, Beruf, Missionen =====================
+const LIFE_RP=[
+{id:"lb-anm",lv:"LEBEN",av:"👩‍💼",ch:"Frau Krüger · Bürgeramt",t:"Anmeldung im Bürgeramt",sit:{ro:"Te-ai mutat în Germania și trebuie să-ți înregistrezi adresa la Bürgeramt (Anmeldung).",ar:"انت لسه نازل ألمانيا ولازم تسجّل عنوانك في مكتب البلدية (Anmeldung).",en:"You have just moved to Germany and must register your address at the Bürgeramt (Anmeldung)."},turns:[
+ {p:"Guten Morgen. Haben Sie einen Termin?",you:"Guten Morgen! Ja, ich habe um neun Uhr einen Termin.",k:[["termin","ja","neun"]]},
+ {p:"Worum geht es?",you:"Ich möchte mich anmelden. Ich bin neu in der Stadt.",k:[["anmelden","anmeldung","wohnung","umgezogen","neu"]]},
+ {p:"Haben Sie Ihren Ausweis und die Wohnungsgeberbestätigung dabei?",you:"Ja, hier sind mein Ausweis und die Bestätigung vom Vermieter.",k:[["ja","hier","ausweis","pass","bestätigung"]]},
+ {p:"Seit wann wohnen Sie unter der neuen Adresse?",you:"Ich wohne seit dem ersten November dort.",k:[["seit","wohne"]]},
+ {p:"Gut. Hier ist Ihre Meldebescheinigung. Brauchen Sie noch etwas?",you:"Nein, danke. Vielen Dank für Ihre Hilfe!",k:[["danke","nein","alles"]]}]},
+{id:"lb-woh",lv:"LEBEN",av:"🏠",ch:"Herr Becker · Vermieter",t:"Wohnungsbesichtigung",sit:{ro:"Vizitezi un apartament de închiriat. Proprietarul îți arată locuința și îți pune întrebări.",ar:"انت بتتفرج على شقة إيجار، وصاحب الشقة بيوريك الشقة وبيسألك أسئلة.",en:"You are viewing a flat to rent. The landlord shows you around and asks you questions."},turns:[
+ {p:"Hallo! Kommen Sie herein. Das ist das Wohnzimmer. Wie gefällt Ihnen die Wohnung?",you:"Sie gefällt mir sehr gut. Sie ist hell und groß.",k:[["gefällt","schön","gut","toll"]]},
+ {p:"Die Kaltmiete ist 650 Euro. Haben Sie Fragen?",you:"Wie hoch sind die Nebenkosten?",k:[["nebenkosten","warmmiete","kosten","wie viel","wie hoch"]]},
+ {p:"Etwa 180 Euro im Monat. Was machen Sie beruflich?",you:"Ich arbeite als Krankenpflegerin im Krankenhaus.",k:[["arbeite","bin","beruf"]]},
+ {p:"Haben Sie Haustiere? Und rauchen Sie?",you:"Nein, ich habe keine Haustiere und ich rauche nicht.",k:[["nein","keine","nicht","ja"]]},
+ {p:"Schön. Können Sie mir eine Schufa-Auskunft schicken?",you:"Ja, natürlich. Ich schicke sie Ihnen morgen per E-Mail.",k:[["ja","schicke","natürlich","gern","kann"]]}]},
+{id:"lb-bank",lv:"LEBEN",av:"🏦",ch:"Frau Yilmaz · Bank",t:"Ein Bankkonto eröffnen",sit:{ro:"Ai nevoie de un cont bancar în Germania pentru salariu. Mergi la o bancă.",ar:"محتاج حساب بنك في ألمانيا علشان المرتب، فرحت البنك.",en:"You need a German bank account for your salary. You go to a bank."},turns:[
+ {p:"Guten Tag! Wie kann ich Ihnen helfen?",you:"Guten Tag! Ich möchte ein Girokonto eröffnen.",k:[["konto","girokonto","eröffnen"]]},
+ {p:"Gern. Haben Sie schon eine Meldebescheinigung?",you:"Ja, ich bin seit letzter Woche angemeldet.",k:[["ja","angemeldet","meldebescheinigung","habe"]]},
+ {p:"Möchten Sie auch eine Bankkarte?",you:"Ja, bitte. Ich brauche eine Karte zum Bezahlen.",k:[["ja","brauche","bitte","karte"]]},
+ {p:"Das Konto kostet fünf Euro im Monat. Ist das in Ordnung?",you:"Ja, das ist in Ordnung. Gibt es auch Online-Banking?",k:[["ja","ordnung","okay","gut"]]},
+ {p:"Natürlich. Bitte unterschreiben Sie hier.",you:"Gern. Wann bekomme ich die Karte?",k:[["wann","karte","danke","gern","unterschreibe"]]}]},
+{id:"lb-arzt",lv:"LEBEN",av:"🩺",ch:"Dr. Schmidt · Hausarzt",t:"Beim Hausarzt",sit:{ro:"Nu te simți bine și ești la medicul de familie. Medicul te întreabă ce simptome ai.",ar:"انت تعبان ورحت لدكتور العيلة، والدكتور بيسألك عن الأعراض.",en:"You don't feel well and you are at the family doctor's. The doctor asks about your symptoms."},turns:[
+ {p:"Guten Tag! Was fehlt Ihnen denn?",you:"Ich habe seit drei Tagen Halsschmerzen und Fieber.",k:[["habe","schmerzen","fieber","husten","weh"]]},
+ {p:"Haben Sie auch Husten?",you:"Ja, ich huste viel, besonders in der Nacht.",k:[["ja","nein","huste","husten"]]},
+ {p:"Nehmen Sie schon Medikamente?",you:"Nein, ich nehme keine Medikamente.",k:[["nein","ja","nehme"]]},
+ {p:"Ich schreibe Ihnen ein Rezept. Brauchen Sie eine Krankmeldung für die Arbeit?",you:"Ja, bitte. Ich brauche eine Krankmeldung für den Arbeitgeber.",k:[["ja","brauche","bitte","nein"]]},
+ {p:"Bleiben Sie drei Tage zu Hause und trinken Sie viel.",you:"Danke, Herr Doktor. Auf Wiedersehen!",k:[["danke","wiedersehen","tschüs"]]}]},
+{id:"lb-job",lv:"LEBEN",av:"💼",ch:"Herr Wagner · Personalchef",t:"Das Vorstellungsgespräch",sit:{ro:"Ai un interviu de angajare la o firmă din Germania. Șeful de personal îți pune întrebări.",ar:"عندك مقابلة شغل في شركة في ألمانيا، ومدير الموظفين بيسألك.",en:"You have a job interview at a company in Germany. The HR manager asks you questions."},turns:[
+ {p:"Herzlich willkommen! Erzählen Sie bitte etwas über sich.",you:"Gern. Ich heiße Andrei, ich bin dreißig Jahre alt und komme aus Rumänien.",k:[["heiße","bin","komme","name"]]},
+ {p:"Welche Berufserfahrung haben Sie?",you:"Ich habe fünf Jahre als Elektriker gearbeitet.",k:[["habe","jahre","gearbeitet","erfahrung","arbeite"]]},
+ {p:"Warum möchten Sie bei uns arbeiten?",you:"Ihre Firma ist bekannt und ich möchte mich weiterentwickeln.",k:[["weil","möchte","firma","interessant","lernen"]]},
+ {p:"Was sind Ihre Stärken?",you:"Ich bin zuverlässig, pünktlich und arbeite gern im Team.",k:[["bin","zuverlässig","pünktlich","team","fleißig","stärke"]]},
+ {p:"Haben Sie noch Fragen an uns?",you:"Ja, wie sind die Arbeitszeiten und wann kann ich anfangen?",k:[["wie","wann","arbeitszeit","gehalt","frage","ja"]]}]},
+{id:"lb-kk",lv:"LEBEN",av:"☎️",ch:"Herr Lange · Krankenkasse",t:"Bei der Krankenkasse anrufen",sit:{ro:"Suni la casa de asigurări de sănătate pentru că nu ai primit încă cardul de asigurat.",ar:"بتتصل بشركة التأمين الصحي علشان كارت التأمين لسه موصلكش.",en:"You call the health insurance because you have not received your insurance card yet."},turns:[
+ {p:"Techniker Krankenkasse, Lange am Apparat. Was kann ich für Sie tun?",you:"Guten Tag, hier ist Maria Popescu. Ich habe eine Frage zu meiner Versichertenkarte.",k:[["frage","karte","versichertenkarte","hier ist","ich bin"]]},
+ {p:"Wie ist Ihre Versichertennummer?",you:"Meine Versichertennummer ist A 1 2 3 4 5.",k:[["nummer","ist","meine"]]},
+ {p:"Danke. Was ist das Problem mit der Karte?",you:"Ich habe die Karte noch nicht bekommen.",k:[["nicht","bekommen","keine","noch"]]},
+ {p:"Haben Sie uns schon ein Foto geschickt?",you:"Nein, das wusste ich nicht. Wie kann ich das Foto schicken?",k:[["nein","ja","wie","foto","geschickt"]]},
+ {p:"Sie können es einfach in unserer App hochladen.",you:"Super, das mache ich heute noch. Vielen Dank!",k:[["danke","mache","gut","super","okay"]]}]}
+];
+
+const BERUF=[
+{id:"arzt",ico:"🩺",t:"Ärztin / Arzt",ro:"Medic",ar:"دكتور / دكتورة",en:"Doctor",
+ intro:{ro:"Germana pentru medici: anamneză, examinare, explicații pentru pacienți și discuții cu colegii (pregătire pentru Fachsprachprüfung).",ar:"ألماني للدكاترة: أخذ التاريخ المرضي، والكشف، وشرح التشخيص للمريض، والكلام مع الزملاء (تحضير لامتحان Fachsprachprüfung).",en:"German for doctors: taking a history, examination, explaining to patients and talking to colleagues (preparation for the Fachsprachprüfung)."},
+ vocab:[["die Anamnese","anamneza","التاريخ المرضي","medical history"],["die Beschwerden (Pl.)","simptomele, acuzele","الشكوى / الأعراض","complaints, symptoms"],["die Diagnose","diagnosticul","التشخيص","diagnosis"],["die Untersuchung","examinarea","الكشف / الفحص","examination"],["untersuchen","a examina","يكشف على","to examine"],["der Blutdruck","tensiunea arterială","ضغط الدم","blood pressure"],["der Puls","pulsul","النبض","pulse"],["die Blutabnahme","recoltarea de sânge","سحب الدم","blood sample"],["das Rezept","rețeta","الروشتة","prescription"],["verschreiben","a prescrie","يكتب دوا","to prescribe"],["die Nebenwirkung","efectul secundar","العرض الجانبي","side effect"],["die Allergie","alergia","الحساسية","allergy"],["die Vorerkrankung","boala preexistentă","مرض سابق","pre-existing condition"],["die Station","secția","القسم في المستشفى","ward"],["die Notaufnahme","urgența (UPU)","الطوارئ","emergency department"],["die Visite","vizita medicală","المرور على المرضى","ward round"],["der Befund","rezultatul (investigației)","نتيجة الفحص","finding, result"],["das Röntgenbild","radiografia","صورة الأشعة","X-ray image"],["die Überweisung","trimiterea (la specialist)","التحويل لدكتور تاني","referral"],["der Oberarzt","medicul primar","الطبيب الأول (أوبر آرتست)","senior physician"],["die Schmerzskala","scala durerii","مقياس الألم","pain scale"],["nüchtern","pe nemâncate","صايم (من غير أكل)","fasting, on an empty stomach"],["aufnehmen (einen Patienten)","a interna (un pacient)","يدخّل مريض المستشفى","to admit (a patient)"],["entlassen","a externa","يخرّج المريض","to discharge"],["der Arztbrief","scrisoarea medicală","تقرير الدكتور","doctor's letter, discharge summary"]],
+ sat:[["Was führt Sie zu mir?","Ce vă aduce la mine?","إيه اللي جابك عندي؟","What brings you to me?"],["Seit wann haben Sie die Beschwerden?","De când aveți aceste simptome?","من إمتى عندك الأعراض دي؟","Since when have you had these symptoms?"],["Wo genau tut es weh?","Unde anume vă doare?","بيوجعك فين بالظبط؟","Where exactly does it hurt?"],["Auf einer Skala von 1 bis 10 – wie stark sind die Schmerzen?","Pe o scală de la 1 la 10, cât de puternică este durerea?","من 1 لـ 10، الوجع قد إيه؟","On a scale of 1 to 10, how bad is the pain?"],["Nehmen Sie regelmäßig Medikamente ein?","Luați medicamente în mod regulat?","بتاخد أدوية بانتظام؟","Do you take medication regularly?"],["Haben Sie Allergien?","Aveți alergii?","عندك حساسية من حاجة؟","Do you have any allergies?"],["Ich möchte Sie kurz untersuchen. Bitte machen Sie den Oberkörper frei.","Aș vrea să vă examinez puțin. Vă rog să vă dezbrăcați până la brâu.","عايز أكشف عليك بسرعة. اقلع من فوق لو سمحت.","I'd like to examine you briefly. Please undress to the waist."],["Wir müssen noch Blut abnehmen.","Mai trebuie să vă recoltăm sânge.","لازم ناخد عينة دم.","We still need to take a blood sample."],["Die Werte sind im Normbereich.","Valorile sunt în limite normale.","النتايج طبيعية.","The values are within the normal range."],["Ich stelle Ihnen den Patienten aus Zimmer 4 vor.","Vă prezint pacientul din salonul 4.","هعرّفك على المريض اللي في أوضة 4.","Let me present the patient from room 4."]],
+ rp:[{id:"bf-arzt-1",lv:"BERUF",av:"🧑",ch:"Herr Neumann · Patient",t:"Anamnese in der Notaufnahme",sit:{ro:"Ești medic la urgență. Un pacient vine cu dureri în piept. Pune-i întrebările pentru anamneză.",ar:"انت دكتور في الطوارئ، وجالك مريض عنده وجع في صدره. اسأله أسئلة التاريخ المرضي.",en:"You are a doctor in the emergency department. A patient comes in with chest pain. Ask the history questions."},turns:[
+  {p:"Guten Tag, Frau Doktor. Ich habe starke Schmerzen in der Brust.",you:"Guten Tag, Herr Neumann. Seit wann haben Sie die Schmerzen?",k:[["seit wann","wann"]]},
+  {p:"Seit ungefähr zwei Stunden. Es hat beim Treppensteigen angefangen.",you:"Strahlen die Schmerzen in den Arm oder in den Rücken aus?",k:[["strahlen","arm","rücken","wohin","wo"]]},
+  {p:"Ja, in den linken Arm. Und mir ist ein bisschen übel.",you:"Haben Sie Vorerkrankungen, zum Beispiel Bluthochdruck oder Diabetes?",k:[["vorerkrankung","bluthochdruck","diabetes","krankheit","erkrank"]]},
+  {p:"Ich habe hohen Blutdruck. Ich nehme Ramipril.",you:"Danke. Haben Sie Allergien gegen Medikamente?",k:[["allergie","allergisch"]]},
+  {p:"Nein, keine Allergien.",you:"Gut. Wir machen jetzt sofort ein EKG und nehmen Blut ab.",k:[["ekg","blut","untersuch","machen"]]}]},
+ {id:"bf-arzt-2",lv:"BERUF",av:"👨‍⚕️",ch:"Dr. Hoffmann · Oberarzt",t:"Patientenvorstellung bei der Visite",sit:{ro:"Îi prezinți medicului primar un pacient nou de pe secție.",ar:"بتعرض حالة مريض جديد على الطبيب الأول (Oberarzt) في المرور.",en:"You present a new patient on the ward to the senior physician."},turns:[
+  {p:"Guten Morgen. Wen haben wir heute Neues?",you:"Guten Morgen. Ich stelle Ihnen Frau Weber vor, 72 Jahre alt.",k:[["stelle","vor","frau","herr","patient"]]},
+  {p:"Weshalb wurde sie aufgenommen?",you:"Sie wurde gestern wegen Atemnot und Fieber aufgenommen.",k:[["wegen","aufgenommen","atemnot","fieber"]]},
+  {p:"Was haben die Untersuchungen ergeben?",you:"Im Röntgenbild sieht man eine Pneumonie rechts.",k:[["röntgen","pneumonie","lungenentzündung","befund","ergeben"]]},
+  {p:"Welche Therapie haben Sie begonnen?",you:"Wir haben mit einem Antibiotikum begonnen.",k:[["antibiotikum","therapie","begonnen","gegeben"]]},
+  {p:"Gut. Wie geht es weiter?",you:"Wir kontrollieren morgen die Entzündungswerte und machen ein neues Röntgenbild.",k:[["kontrollieren","morgen","werte","röntgen","weiter"]]}]}]},
+{id:"it",ico:"💻",t:"IT / Informatik",ro:"Inginer IT",ar:"مهندس كمبيوتر",en:"IT engineer",
+ intro:{ro:"Germana pentru IT: daily stand-up, tichete, explicarea unei probleme tehnice, interviu tehnic și comunicarea cu clienții.",ar:"ألماني للـ IT: الـ daily stand-up، والتيكتس، وشرح مشكلة تقنية، والإنترفيو التقني، والكلام مع العملاء.",en:"German for IT: daily stand-up, tickets, explaining a technical problem, technical interview and talking to clients."},
+ vocab:[["die Anforderung","cerința","المتطلب","requirement"],["die Schnittstelle","interfața (API)","الواجهة البرمجية","interface (API)"],["der Fehler","eroarea, bug-ul","الغلطة / الـ bug","bug, error"],["beheben","a remedia","يصلّح","to fix"],["die Datenbank","baza de date","قاعدة البيانات","database"],["der Server","serverul","السيرفر","server"],["die Bereitstellung","deploy-ul, livrarea","النشر (deploy)","deployment"],["die Besprechung","ședința","الاجتماع","meeting"],["die Aufgabe","sarcina","المهمة","task"],["die Frist","termenul limită","الديدلاين","deadline"],["das Pflichtenheft","caietul de sarcini","مواصفات المشروع","specification"],["der Kunde","clientul","العميل","client, customer"],["die Lösung","soluția","الحل","solution"],["testen","a testa","يختبر","to test"],["die Sicherheitslücke","breșa de securitate","ثغرة أمنية","security vulnerability"],["das Update","actualizarea","التحديث","update"],["herunterladen","a descărca","ينزّل (download)","to download"],["die Benutzeroberfläche","interfața cu utilizatorul","واجهة المستخدم","user interface"],["die Rückmeldung","feedback-ul","الرد / الفيدباك","feedback"],["der Zeitplan","planificarea, calendarul","الجدول الزمني","schedule"],["der Kollege / die Kollegin","colegul / colega","الزميل / الزميلة","colleague"],["im Homeoffice arbeiten","a lucra de acasă","يشتغل من البيت","to work from home"],["die Störung","defecțiunea, întreruperea","العطل","outage, malfunction"],["einrichten","a configura","يظبط / يجهّز","to set up"],["die Weiterbildung","formarea continuă","تدريب / كورس تطوير","further training"]],
+ sat:[["Gestern habe ich an dem Login-Problem gearbeitet.","Ieri am lucrat la problema de login.","إمبارح اشتغلت على مشكلة تسجيل الدخول.","Yesterday I worked on the login problem."],["Heute mache ich mit dem Ticket weiter.","Azi continui cu tichetul.","النهارده هكمّل في التيكت.","Today I'll continue with the ticket."],["Ich komme gerade nicht weiter. Kann mir jemand helfen?","Nu reușesc să avansez. Mă poate ajuta cineva?","أنا واقف ومش عارف أكمّل. حد يقدر يساعدني؟","I'm stuck right now. Can someone help me?"],["Der Fehler tritt nur im Browser Safari auf.","Eroarea apare doar în browserul Safari.","الغلطة بتظهر في Safari بس.","The bug only occurs in the Safari browser."],["Ich habe den Fehler gefunden und behoben.","Am găsit eroarea și am remediat-o.","لقيت الغلطة وصلّحتها.","I found the bug and fixed it."],["Können wir das in der nächsten Besprechung klären?","Putem clarifica asta la următoarea ședință?","ممكن نوضّح النقطة دي في الاجتماع الجاي؟","Can we clarify that in the next meeting?"],["Bis wann soll die Aufgabe fertig sein?","Până când trebuie terminată sarcina?","المهمة لازم تخلص إمتى؟","By when should the task be finished?"],["Das dauert ungefähr zwei Tage.","Durează cam două zile.","ده هياخد حوالي يومين.","That will take about two days."],["Ich schicke Ihnen eine kurze Zusammenfassung per E-Mail.","Vă trimit un scurt rezumat pe e-mail.","هبعتلك ملخص قصير على الإيميل.","I'll send you a short summary by email."],["Das System ist wieder erreichbar.","Sistemul funcționează din nou.","السيستم رجع يشتغل تاني.","The system is available again."]],
+ rp:[{id:"bf-it-1",lv:"BERUF",av:"👩‍💻",ch:"Lisa · Teamleiterin",t:"Daily Stand-up",sit:{ro:"Ești în daily stand-up-ul echipei. Șefa de echipă te întreabă ce ai făcut și ce urmează.",ar:"انت في الـ daily stand-up مع الفريق، ورئيسة الفريق بتسألك عملت إيه وهتعمل إيه.",en:"You are in the team's daily stand-up. The team lead asks what you did and what's next."},turns:[
+  {p:"Guten Morgen zusammen! Was hast du gestern gemacht?",you:"Guten Morgen! Gestern habe ich am Login-Fehler gearbeitet.",k:[["gestern","habe"]]},
+  {p:"Und, hast du ihn gefunden?",you:"Ja, ich habe den Fehler gefunden. Er liegt in der Datenbank-Abfrage.",k:[["ja","nein","gefunden","fehler"]]},
+  {p:"Super. Was machst du heute?",you:"Heute behebe ich den Fehler und schreibe Tests.",k:[["heute","behebe","mache","schreibe","teste"]]},
+  {p:"Gibt es ein Problem oder brauchst du Hilfe?",you:"Ich brauche Zugriff auf den Testserver. Kannst du mir helfen?",k:[["brauche","hilfe","zugriff","kein","nein","problem"]]},
+  {p:"Klar, ich richte dir den Zugang nach dem Meeting ein.",you:"Danke, das ist super!",k:[["danke","super","gut","prima"]]}]},
+ {id:"bf-it-2",lv:"BERUF",av:"🧑‍💼",ch:"Herr Fischer · Kunde",t:"Ein Kunde meldet eine Störung",sit:{ro:"Un client sună pentru că aplicația lui nu funcționează. Clarifică problema și liniștește-l.",ar:"عميل بيتصل لأن الأبليكيشن بتاعه مش شغال. افهم المشكلة وطمّنه.",en:"A client calls because his application doesn't work. Clarify the problem and reassure him."},turns:[
+  {p:"Hallo, hier Fischer. Unsere App funktioniert seit heute Morgen nicht!",you:"Guten Tag, Herr Fischer. Das tut mir leid. Was genau passiert?",k:[["was","genau","passiert","leid","problem"]]},
+  {p:"Die Kunden können sich nicht einloggen. Es kommt eine Fehlermeldung.",you:"Welche Fehlermeldung sehen Sie genau?",k:[["welche","fehlermeldung","meldung","was"]]},
+  {p:"Da steht: Server nicht erreichbar.",you:"Danke. Ich prüfe sofort den Server.",k:[["prüfe","kontrolliere","schaue","sofort"]]},
+  {p:"Wie lange dauert das?",you:"Ich melde mich in spätestens dreißig Minuten bei Ihnen.",k:[["minuten","stunde","melde","spätestens","bald"]]},
+  {p:"Gut, ich warte auf Ihren Anruf.",you:"Vielen Dank für Ihre Geduld. Bis gleich!",k:[["danke","geduld","bis"]]}]}]},
+{id:"pflege",ico:"🏥",t:"Krankenpflege",ro:"Asistent medical",ar:"تمريض",en:"Nursing",
+ intro:{ro:"Germana pentru asistenți medicali în spital: îngrijirea pacienților, predarea turei, documentare și discuții cu medicii.",ar:"ألماني للتمريض في المستشفى: رعاية المريض، وتسليم الشيفت، والتوثيق، والكلام مع الدكاترة.",en:"German for hospital nurses: patient care, shift handover, documentation and talking to doctors."},
+ vocab:[["die Pflegekraft","personalul de îngrijire","الممرض / الممرضة","nurse, carer"],["der Dienst","tura","الشيفت","shift, duty"],["der Frühdienst / Spätdienst / Nachtdienst","tura de dimineață / după-amiază / noapte","شيفت الصبح / بعد الضهر / الليل","early / late / night shift"],["die Übergabe","predarea turei","تسليم الشيفت","handover"],["die Vitalzeichen (Pl.)","semnele vitale","العلامات الحيوية","vital signs"],["Blutdruck messen","a măsura tensiunea","يقيس الضغط","to measure blood pressure"],["die Spritze","injecția, seringa","الحقنة","injection, syringe"],["die Infusion","perfuzia","المحلول (الكانيولا)","infusion, drip"],["der Verband","pansamentul","الضماد","bandage, dressing"],["die Wunde","rana","الجرح","wound"],["die Lagerung","poziționarea pacientului","تغيير وضع المريض","positioning"],["der Dekubitus","escara","قرحة الفراش","pressure ulcer"],["die Pflegedokumentation","documentația de îngrijire","التوثيق التمريضي","care documentation"],["das Medikament","medicamentul","الدوا","medication"],["verabreichen","a administra","يدّي (الدوا)","to administer"],["die Klingel","soneria (pacientului)","جرس المريض","call bell"],["das Bettgitter","grilajul patului","سور السرير","bed rail"],["der Rollstuhl","scaunul cu rotile","الكرسي المتحرك","wheelchair"],["die Körperpflege","igiena corporală","النظافة الشخصية","personal hygiene"],["nüchtern bleiben","a rămâne pe nemâncate","يفضل صايم","to stay fasting"],["die Station","secția","القسم","ward"],["die Stationsleitung","asistenta-șefă","رئيسة التمريض في القسم","ward manager"],["Fieber messen","a măsura temperatura","يقيس الحرارة","to take the temperature"],["die Schmerzen lindern","a calma durerea","يخفّف الوجع","to relieve pain"],["desinfizieren","a dezinfecta","يطهّر","to disinfect"]],
+ sat:[["Guten Morgen, ich bin Ihre Pflegekraft heute.","Bună dimineața, eu sunt asistenta dumneavoastră azi.","صباح الخير، أنا الممرضة بتاعتك النهارده.","Good morning, I'm your nurse today."],["Wie haben Sie geschlafen?","Cum ați dormit?","نمت كويس؟","How did you sleep?"],["Ich messe jetzt Ihren Blutdruck.","Acum vă măsor tensiunea.","هقيس لك الضغط دلوقتي.","I'm going to measure your blood pressure now."],["Haben Sie Schmerzen? Wo genau?","Aveți dureri? Unde anume?","عندك وجع؟ فين بالظبط؟","Are you in pain? Where exactly?"],["Bitte bleiben Sie nüchtern, Sie haben morgen eine Operation.","Vă rog să rămâneți pe nemâncate, mâine aveți operație.","لو سمحت خليك صايم، عندك عملية بكرة.","Please don't eat, you have an operation tomorrow."],["Wenn Sie etwas brauchen, drücken Sie bitte die Klingel.","Dacă aveți nevoie de ceva, vă rog să apăsați soneria.","لو احتجت أي حاجة، دوس على الجرس.","If you need anything, please press the bell."],["Der Patient in Zimmer 5 hatte in der Nacht Fieber.","Pacientul din salonul 5 a avut febră noaptea.","المريض اللي في أوضة 5 جاله سخونية بالليل.","The patient in room 5 had a fever during the night."],["Ich habe ihm um sechs Uhr Paracetamol gegeben.","I-am dat paracetamol la ora șase.","اديته باراسيتامول الساعة ستة.","I gave him paracetamol at six o'clock."],["Der Verband muss heute gewechselt werden.","Pansamentul trebuie schimbat azi.","الضماد لازم يتغيّر النهارده.","The dressing has to be changed today."],["Soll ich den Arzt informieren?","Să-l anunț pe medic?","أبلّغ الدكتور؟","Should I inform the doctor?"]],
+ rp:[{id:"bf-pfl-1",lv:"BERUF",av:"👩‍⚕️",ch:"Schwester Anna · Kollegin",t:"Übergabe beim Schichtwechsel",sit:{ro:"Termini tura de noapte și îi predai colegei informațiile despre pacienți.",ar:"خلصت شيفت الليل، وبتسلّم زميلتك معلومات المرضى.",en:"You finish your night shift and hand over the patient information to your colleague."},turns:[
+  {p:"Guten Morgen! Wie war die Nacht?",you:"Guten Morgen! Die Nacht war ruhig, nur Zimmer 5 hatte Fieber.",k:[["nacht","ruhig","fieber","war"]]},
+  {p:"Wie hoch war das Fieber?",you:"38,9 Grad. Ich habe um sechs Uhr Paracetamol gegeben.",k:[["grad","fieber","gegeben","paracetamol"]]},
+  {p:"Hast du den Arzt informiert?",you:"Ja, der Arzt war um halb sieben da und hat Blut abgenommen.",k:[["ja","nein","arzt","informiert"]]},
+  {p:"Gibt es sonst noch etwas?",you:"Frau Klein in Zimmer 2 muss nüchtern bleiben. Sie hat heute eine Operation.",k:[["nüchtern","operation","zimmer","noch"]]},
+  {p:"Alles klar, danke. Schlaf gut!",you:"Danke, einen schönen Dienst!",k:[["danke","schön","tschüs","dienst"]]}]},
+ {id:"bf-pfl-2",lv:"BERUF",av:"👵",ch:"Frau Klein · Patientin",t:"Eine Patientin hat Angst vor der OP",sit:{ro:"O pacientă are operație mâine și îi este frică. Calmeaz-o și explică-i ce urmează.",ar:"مريضة عندها عملية بكرة وخايفة. طمّنها واشرحلها اللي هيحصل.",en:"A patient has surgery tomorrow and is afraid. Calm her down and explain what will happen."},turns:[
+  {p:"Schwester, ich habe so Angst vor morgen.",you:"Das verstehe ich gut, Frau Klein. Wovor haben Sie genau Angst?",k:[["verstehe","keine angst","wovor","angst"]]},
+  {p:"Vor der Narkose. Was ist, wenn ich nicht aufwache?",you:"Der Narkosearzt passt die ganze Zeit auf Sie auf. Sie sind in guten Händen.",k:[["narkosearzt","arzt","aufpassen","passt","sicher","guten händen"]]},
+  {p:"Darf ich heute Abend noch etwas essen?",you:"Bis 22 Uhr dürfen Sie noch essen, danach bleiben Sie bitte nüchtern.",k:[["nüchtern","uhr","dürfen","bis","danach"]]},
+  {p:"Und wann kommt meine Tochter?",you:"Ihre Tochter darf Sie nach der Operation besuchen.",k:[["tochter","besuchen","nach","darf"]]},
+  {p:"Danke, jetzt fühle ich mich besser.",you:"Das freut mich. Wenn Sie etwas brauchen, klingeln Sie bitte.",k:[["freut","klingeln","brauchen","gern"]]}]}]},
+{id:"alten",ico:"🧓",t:"Pflegekraft (Altenpflege)",ro:"Îngrijitor bătrâni",ar:"رعاية كبار السن",en:"Elderly care worker",
+ intro:{ro:"Germana pentru îngrijirea vârstnicilor (în cămin sau acasă): rutina zilnică, mobilizare, comunicarea cu persoanele cu demență și cu familia.",ar:"ألماني لرعاية كبار السن (في دار رعاية أو في البيت): الروتين اليومي، والمساعدة في الحركة، والتعامل مع مرضى الزهايمر ومع العيلة.",en:"German for elderly care (in a care home or at home): daily routine, mobility, communicating with people with dementia and with families."},
+ vocab:[["das Pflegeheim","căminul de bătrâni","دار رعاية المسنين","care home"],["der Bewohner / die Bewohnerin","rezidentul / rezidenta","المقيم / المقيمة في الدار","resident"],["die Grundpflege","îngrijirea de bază","الرعاية الأساسية","basic care"],["waschen","a spăla","يحمّي / يغسّل","to wash"],["anziehen","a îmbrăca","يلبّس","to dress"],["das Inkontinenzmaterial","materialele pentru incontinență","مستلزمات السلس البولي (البامبرز)","incontinence products"],["die Mobilisation","mobilizarea","مساعدة المريض على الحركة","mobilisation"],["der Rollator","cadrul de mers cu roți","المشاية","rollator, walker"],["der Sturz","căderea","الوقعة","fall"],["die Demenz","demența","الزهايمر / الخرف","dementia"],["verwirrt","confuz","متلخبط","confused"],["die Mahlzeit","masa","الوجبة","meal"],["das Essen anreichen","a ajuta la hrănire","يأكّل المريض","to help someone eat"],["genug trinken","a bea suficient","يشرب كفاية","to drink enough"],["die Tabletten richten","a pregăti pastilele","يجهّز البرشام","to prepare the pills"],["der Angehörige","rudenia, aparținătorul","قريب المريض","relative"],["die Pflegestufe / der Pflegegrad","gradul de dependență","درجة الرعاية","care level"],["der Toilettengang","mersul la toaletă","الدخول للحمام","going to the toilet"],["die Beschäftigung","activitățile, ocupația","الأنشطة","activities"],["der Spaziergang","plimbarea","التمشية","walk"],["geduldig","răbdător","صبور","patient (adj.)"],["die Pflegeplanung","planul de îngrijire","خطة الرعاية","care plan"],["der Hausbesuch","vizita la domiciliu","الزيارة في البيت","home visit"],["ambulante Pflege","îngrijire la domiciliu","رعاية منزلية","home care"],["sich hinsetzen","a se așeza","يقعد","to sit down"]],
+ sat:[["Guten Morgen, Frau Berger! Haben Sie gut geschlafen?","Bună dimineața, doamna Berger! Ați dormit bine?","صباح الخير يا مدام برجر! نمتي كويس؟","Good morning, Mrs Berger! Did you sleep well?"],["Ich helfe Ihnen jetzt beim Waschen.","Acum vă ajut să vă spălați.","هساعدك دلوقتي تتحمّي.","I'll help you wash now."],["Was möchten Sie heute anziehen?","Ce doriți să purtați azi?","عايزة تلبسي إيه النهارده؟","What would you like to wear today?"],["Langsam, wir haben Zeit.","Încet, avem timp.","براحة، إحنا مش مستعجلين.","Slowly, we have time."],["Halten Sie sich bitte am Rollator fest.","Vă rog să vă țineți de cadru.","امسكي في المشاية لو سمحتي.","Please hold on to the walker."],["Sie müssen noch etwas trinken.","Mai trebuie să beți ceva.","لازم تشربي حاجة كمان.","You still need to drink something."],["Heute gibt es Kartoffelsuppe zum Mittagessen.","Azi la prânz avem supă de cartofi.","الغدا النهارده شوربة بطاطس.","Today there's potato soup for lunch."],["Ihre Tochter kommt heute Nachmittag zu Besuch.","Fiica dumneavoastră vine în vizită azi după-amiază.","بنتك جاية تزورك النهارده بعد الضهر.","Your daughter is coming to visit this afternoon."],["Herr Braun ist heute sehr verwirrt.","Domnul Braun este foarte confuz azi.","الأستاذ براون متلخبط جدًا النهارده.","Mr Braun is very confused today."],["Ich habe alles in der Pflegedokumentation eingetragen.","Am trecut totul în documentația de îngrijire.","كتبت كل حاجة في ملف الرعاية.","I've entered everything in the care documentation."]],
+ rp:[{id:"bf-alt-1",lv:"BERUF",av:"👵",ch:"Frau Berger · Bewohnerin",t:"Der Morgen im Pflegeheim",sit:{ro:"Ești îngrijitor într-un cămin. O ajuți pe doamna Berger dimineața.",ar:"انت شغال في دار رعاية، وبتساعد مدام برجر الصبح.",en:"You work in a care home. You help Mrs Berger in the morning."},turns:[
+  {p:"Guten Morgen … wer sind Sie denn?",you:"Guten Morgen, Frau Berger! Ich bin Mihai, Ihr Pfleger heute.",k:[["ich bin","heiße","pfleger","pflegerin"]]},
+  {p:"Ach so. Ich bin noch so müde.",you:"Das ist kein Problem. Möchten Sie noch ein bisschen liegen bleiben?",k:[["möchten","kein problem","liegen","zeit","ruhe"]]},
+  {p:"Nein, ich möchte aufstehen. Aber meine Beine sind schwach.",you:"Ich helfe Ihnen. Halten Sie sich bitte am Rollator fest.",k:[["helfe","halten","rollator","langsam"]]},
+  {p:"Was gibt es heute zum Frühstück?",you:"Es gibt Brötchen mit Marmelade und Kaffee.",k:[["gibt","brötchen","kaffee","frühstück","brot"]]},
+  {p:"Oh, wie schön! Sie sind ein Lieber.",you:"Danke, Frau Berger. Dann gehen wir jetzt langsam zum Frühstück.",k:[["danke","gehen","frühstück","gern"]]}]},
+ {id:"bf-alt-2",lv:"BERUF",av:"👩",ch:"Frau Berger (Tochter) · Angehörige",t:"Gespräch mit einer Angehörigen",sit:{ro:"Fiica unei rezidente te întreabă cum se simte mama ei. Informeaz-o politicos.",ar:"بنت واحدة من المقيمات بتسألك عن حالة مامتها. طمّنها بأدب.",en:"The daughter of a resident asks how her mother is doing. Inform her politely."},turns:[
+  {p:"Hallo! Wie geht es meiner Mutter diese Woche?",you:"Guten Tag! Es geht ihr ganz gut. Sie isst gut und macht jeden Tag einen Spaziergang.",k:[["geht","gut","isst","spaziergang"]]},
+  {p:"Trinkt sie genug? Das ist zu Hause immer ein Problem.",you:"Wir achten darauf. Sie trinkt etwa anderthalb Liter am Tag.",k:[["trinkt","liter","achten","genug"]]},
+  {p:"Sie hat mir am Telefon gesagt, dass sie gestürzt ist.",you:"Ja, sie ist am Dienstag leicht gestürzt, aber sie hat sich nicht verletzt.",k:[["gestürzt","sturz","nicht verletzt","ja","dienstag"]]},
+  {p:"Oh nein! Was machen Sie, damit das nicht wieder passiert?",you:"Sie benutzt jetzt immer den Rollator und wir begleiten sie zur Toilette.",k:[["rollator","begleiten","helfen","immer"]]},
+  {p:"Danke, dass Sie so gut auf sie aufpassen.",you:"Sehr gern. Sie können mich jederzeit anrufen.",k:[["gern","anrufen","jederzeit","bitte"]]}]}]}
+];
+
+const MISSIONS={
+"A1.1":[
+ {id:"m11a",ico:"🗺️",t:"Dein Profil auf Deutsch",d:{ro:"Schimbă limba telefonului sau a Instagram-ului în germană pentru o săptămână. Trimite o captură de ecran.",ar:"غيّر لغة التليفون أو الإنستجرام للألماني لمدة أسبوع، وابعت screenshot.",en:"Switch your phone or Instagram to German for one week. Send a screenshot."}},
+ {id:"m11b",ico:"🎙️",t:"Stell dich vor",d:{ro:"Înregistrează un mesaj vocal de 30 de secunde: nume, de unde ești, unde locuiești, ce limbi vorbești.",ar:"سجّل رسالة صوتية 30 ثانية: اسمك، ومنين، وساكن فين، وبتتكلم لغات إيه.",en:"Record a 30-second voice message: your name, where you're from, where you live, which languages you speak."}},
+ {id:"m11c",ico:"🛒",t:"Einkaufsliste",d:{ro:"Scrie lista de cumpărături a săptămânii doar în germană, cu articolul (der/die/das). Trimite o poză.",ar:"اكتب لستة مشتريات الأسبوع بالألماني بس، مع الأداة (der/die/das)، وابعت صورة.",en:"Write this week's shopping list only in German, with the article (der/die/das). Send a photo."}}],
+"A1.2":[
+ {id:"m12a",ico:"☕",t:"Bestellung in Wien",d:{ro:"Caută meniul online al unei cafenele reale din Viena sau Berlin și scrie ce ai comanda: „Ich möchte …”.",ar:"دوّر على منيو كافيه حقيقي في فيينا أو برلين أونلاين، واكتب هتطلب إيه: „Ich möchte …”.",en:"Find the online menu of a real café in Vienna or Berlin and write what you would order: „Ich möchte …”."}},
+ {id:"m12b",ico:"📅",t:"Mein Wochenplan",d:{ro:"Scrie planul tău pentru săptămâna aceasta în germană (zile, ore, activități).",ar:"اكتب جدولك للأسبوع ده بالألماني (الأيام، والمواعيد، والأنشطة).",en:"Write your plan for this week in German (days, times, activities)."}},
+ {id:"m12c",ico:"🎵",t:"Ein deutsches Lied",d:{ro:"Ascultă un cântec german, scrie 5 cuvinte noi din el și înregistrează-te cântând refrenul.",ar:"اسمع أغنية ألماني، واكتب منها 5 كلمات جديدة، وسجّل نفسك وانت بتغني الكورَس.",en:"Listen to a German song, write down 5 new words from it and record yourself singing the chorus."}}],
+"A2.1":[
+ {id:"m21a",ico:"🗺️",t:"Weg beschreiben",d:{ro:"Deschide Google Maps la Berlin. Alege o stradă și descrie drumul de la gară până acolo, în germană.",ar:"افتح Google Maps على برلين، واختار شارع، واكتب بالألماني إزاي تروح له من محطة القطر.",en:"Open Google Maps in Berlin. Pick a street and describe the way there from the station, in German."}},
+ {id:"m21b",ico:"⭐",t:"Deine erste Bewertung",d:{ro:"Scrie o recenzie reală pe Google, în germană (3–4 propoziții), pentru un loc pe care îl cunoști.",ar:"اكتب review حقيقي على Google بالألماني (3 أو 4 جمل) لمكان انت تعرفه.",en:"Write a real Google review in German (3–4 sentences) for a place you know."}},
+ {id:"m21c",ico:"📞",t:"Termin vereinbaren",d:{ro:"Înregistrează un apel simulat: suni la un frizer german și faci o programare (zi, oră, serviciu).",ar:"سجّل مكالمة تمثيلية: بتتصل بحلاق ألماني وبتاخد ميعاد (اليوم، والساعة، والخدمة).",en:"Record a simulated call: you phone a German hairdresser and make an appointment (day, time, service)."}}],
+"A2.2":[
+ {id:"m22a",ico:"📝",t:"Formular ausfüllen",d:{ro:"Descarcă un formular real de Anmeldung (Meldeschein) de pe site-ul unui oraș german și completează-l cu datele tale.",ar:"نزّل استمارة Anmeldung حقيقية (Meldeschein) من موقع مدينة ألمانية واملاها ببياناتك.",en:"Download a real registration form (Meldeschein) from a German city's website and fill it in with your details."}},
+ {id:"m22b",ico:"🏠",t:"Wohnung suchen",d:{ro:"Caută pe ImmoScout24 un apartament în orașul tău preferat. Scrie un mesaj către proprietar în care ceri o vizionare.",ar:"دوّر على شقة في ImmoScout24 في المدينة اللي بتحبها، واكتب رسالة لصاحب الشقة تطلب فيها تتفرج عليها.",en:"Find a flat on ImmoScout24 in your favourite city. Write a message to the landlord asking for a viewing."}},
+ {id:"m22c",ico:"💬",t:"Kommentar auf Deutsch",d:{ro:"Scrie un comentariu în germană sub o postare a unei pagini germane (știri, sport, rețete). Trimite captura.",ar:"اكتب كومنت بالألماني تحت بوست لصفحة ألماني (أخبار، رياضة، وصفات) وابعت screenshot.",en:"Write a comment in German under a post from a German page (news, sport, recipes). Send a screenshot."}}],
+"B1.1":[
+ {id:"mb11a",ico:"📄",t:"Lebenslauf auf Deutsch",d:{ro:"Scrie CV-ul tău în format german (tabelar, cu poză și date personale).",ar:"اكتب الـ CV بتاعك بالشكل الألماني (جدول، مع صورة وبياناتك).",en:"Write your CV in German format (tabular, with photo and personal details)."}},
+ {id:"mb11b",ico:"📺",t:"Nachrichten zusammenfassen",d:{ro:"Uită-te la „Tagesschau in 100 Sekunden” și înregistrează un rezumat de 1 minut cu știrea principală.",ar:"اتفرج على „Tagesschau in 100 Sekunden” وسجّل ملخص دقيقة للخبر الرئيسي.",en:"Watch „Tagesschau in 100 Sekunden” and record a 1-minute summary of the main news."}},
+ {id:"mb11c",ico:"💼",t:"Stellenanzeige verstehen",d:{ro:"Găsește un anunț de angajare real pentru meseria ta (StepStone, Indeed.de) și scrie ce cerințe are.",ar:"لاقي إعلان شغل حقيقي لمهنتك (StepStone أو Indeed.de) واكتب هو طالب إيه.",en:"Find a real job ad for your profession (StepStone, Indeed.de) and write down its requirements."}}],
+"B1.2":[
+ {id:"mb12a",ico:"✉️",t:"Echte Beschwerde",d:{ro:"Scrie o reclamație reală (sau foarte realistă) către o firmă germană: o comandă întârziată, un produs defect.",ar:"اكتب شكوى حقيقية (أو قريبة جدًا من الحقيقة) لشركة ألماني: طلب اتأخر أو منتج بايظ.",en:"Write a real (or very realistic) complaint to a German company: a late order, a faulty product."}},
+ {id:"mb12b",ico:"🎙️",t:"Meine Meinung",d:{ro:"Înregistrează 2 minute: „Homeoffice – pro und contra”. Folosește „einerseits … andererseits”.",ar:"سجّل دقيقتين: „Homeoffice – pro und contra”، واستخدم „einerseits … andererseits”.",en:"Record 2 minutes: „Homeoffice – pro und contra”. Use „einerseits … andererseits”."}},
+ {id:"mb12c",ico:"🎧",t:"Podcast-Woche",d:{ro:"Ascultă 3 episoade dintr-un podcast german (ex. „Easy German”) și notează 10 expresii noi.",ar:"اسمع 3 حلقات من بودكاست ألماني (مثلًا „Easy German”) واكتب 10 تعبيرات جديدة.",en:"Listen to 3 episodes of a German podcast (e.g. „Easy German”) and note 10 new expressions."}}],
+"B2.1":[
+ {id:"mb21a",ico:"📰",t:"Leserbrief",d:{ro:"Citește un articol din „Die Zeit” sau „Der Spiegel” și scrie o scrisoare de la cititor (150 de cuvinte) cu părerea ta.",ar:"اقرأ مقال من „Die Zeit” أو „Der Spiegel” واكتب رسالة قارئ (150 كلمة) برأيك.",en:"Read an article from „Die Zeit” or „Der Spiegel” and write a letter to the editor (150 words) with your opinion."}},
+ {id:"mb21b",ico:"🎤",t:"Kurzvortrag",d:{ro:"Pregătește o prezentare de 3 minute despre un subiect din meseria ta și înregistreaz-o.",ar:"جهّز عرض 3 دقايق عن موضوع في مجال شغلك وسجّله.",en:"Prepare a 3-minute talk about a topic from your profession and record it."}},
+ {id:"mb21c",ico:"🤝",t:"Tandem-Gespräch",d:{ro:"Găsește un partener de tandem nativ (ex. aplicația Tandem) și vorbește 20 de minute în germană.",ar:"لاقي شريك tandem ألماني (مثلًا أبليكيشن Tandem) واتكلم معاه ألماني 20 دقيقة.",en:"Find a native tandem partner (e.g. the Tandem app) and talk in German for 20 minutes."}}],
+"B2.2":[
+ {id:"mb22a",ico:"🏛️",t:"Diskussion leiten",d:{ro:"Alege o temă controversată și scrie argumente pro și contra, ca pentru partea orală telc B2.",ar:"اختار موضوع فيه خلاف واكتب الحجج اللي معاه واللي ضده، زي جزء الكلام في امتحان telc B2.",en:"Choose a controversial topic and write arguments for and against, as in the telc B2 oral exam."}},
+ {id:"mb22b",ico:"📧",t:"Formelle E-Mail an eine Behörde",d:{ro:"Scrie un e-mail formal real către o instituție germană (ex. recunoașterea diplomei) cu o întrebare concretă.",ar:"اكتب إيميل رسمي حقيقي لجهة ألمانية (مثلًا معادلة الشهادة) فيه سؤال محدد.",en:"Write a real formal email to a German authority (e.g. diploma recognition) with a specific question."}},
+ {id:"mb22c",ico:"🎬",t:"Film ohne Untertitel",d:{ro:"Uită-te la un film sau un episod german fără subtitrare și scrie o recenzie de 200 de cuvinte.",ar:"اتفرج على فيلم أو حلقة ألماني من غير ترجمة، واكتب عنه review في 200 كلمة.",en:"Watch a German film or episode without subtitles and write a 200-word review."}}]
+};
+
+// ---------- tabs: Lernen · Sprechen · Missionen · Ich ----------
+LIFE_RP.forEach(x=>RP.push(x));BERUF.forEach(b=>b.rp.forEach(x=>{x.job=b.id;RP.push(x)}));
+const TAB_OF={speak:"speak",pron:"speak",rp:"speak",rpp:"speak",mis:"mis",me:"me",final:"me",week:"me",install:"me"};
+function tabOf(r){if(r.v==="rpp"){const sc=RP.find(x=>x.id===r.id);if(sc&&sc.lv==="BERUF")return "home"}return TAB_OF[r.v]||"home"}
+function setNav(show){let n=document.getElementById("tabbar");
+  if(!show){if(n)n.hidden=true;document.body.classList.remove("has-tabs");return}
+  if(!n){n=document.createElement("nav");n.id="tabbar";n.setAttribute("aria-label","Bereiche");
+    n.innerHTML=[["home","🏠","Lernen","Învață"],["speak","🎙️","Sprechen","Vorbește"],["mis","🎯","Missionen","Misiuni"],["me","🏅","Ich","Eu"]].map(t=>`<button type="button" data-tab="${t[0]}"><span class="ti">${t[1]}</span><b>${t[2]}</b><small lang="ro">${t[3]}</small></button>`).join("");
+    n.addEventListener("click",e=>{const b=e.target.closest("button[data-tab]");if(!b)return;const v=b.dataset.tab;go(v==="home"?{v:"home"}:{v})});
+    document.body.appendChild(n)}
+  n.hidden=false;document.body.classList.add("has-tabs");const cur=tabOf(route);
+  n.querySelectorAll("button").forEach(b=>b.setAttribute("aria-current",b.dataset.tab===cur?"page":"false"))}
+
+// ---------- "Heute" card on the home page ----------
+function nextSpeak(){const done=S.rp||{};return LIFE_RP.find(x=>done[x.id]!==x.turns.length)||LIFE_RP[0]}
+function myMisLv(){return S.misLv||S.lastLv||"A1.1"}
+function nextMission(){const lv=myMisLv(),d=S.mis||{};const list=MISSIONS[lv]||MISSIONS["A1.1"];return list.find(m=>!d[m.id])||null}
+function heuteCard(cur){
+  const lastL=S.last&&findLesson(S.last);const first=lessonsOf(cur)[0];
+  const sp=nextSpeak(),mi=nextMission();
+  const row=(attrs,ico,b,s)=>`<button class="hrow" ${attrs}><span class="ti">${ico}</span><span class="t"><b>${b}</b><small>${s}</small></span><span class="chev">›</span></button>`;
+  return `<div class="heute"><div class="section-h" style="margin-top:0"><h2>Heute</h2></div>
+   ${lastL?row(`data-go-lesson="${lastL.l.id}"`,"📖","Weitermachen","Lektion "+lastL.l.n+": "+esc(lastL.l.title)):first?row(`data-go-lesson="${first.id}"`,"📖","Starte mit Lektion 1",esc(first.title)):""}
+   ${row(`data-p="rpp" data-id="${sp.id}"`,sp.av,"5 Minuten sprechen",esc(sp.ch)+" · "+esc(sp.t))}
+   ${mi?row(`data-p="mis"`,"🎯","Mission der Woche",esc(mi.t)):row(`data-p="mis"`,"🏆","Alle Missionen "+myMisLv()+" geschafft!","Wähle ein neues Niveau")}
+  </div>`}
+
+// ---------- Kurs | Mein Beruf switch ----------
+function homeSwitch(){const b=S.homeTab==="beruf";
+  return `<div class="seg" role="tablist"><button role="tab" data-hs="kurs" aria-selected="${!b}">📚 Kurs</button><button role="tab" data-hs="beruf" aria-selected="${b}">💼 Mein Beruf</button></div>`}
+function berufCards(){return `<p class="muted" style="margin:10px 2px 0">Deutsch für deinen Beruf – Wortschatz, wichtige Sätze und Rollenspiele aus dem Arbeitsalltag.</p><div class="tools" style="margin-top:10px">${BERUF.map(b=>`<button class="tool" data-p="beruf" data-id="${b.id}"><span class="ti">${b.ico}</span><b>${esc(b.t)}</b><small>${esc(b[L()]||b.ro)}${S.beruf===b.id?" · ⭐ Mein Beruf":""}</small></button>`).join("")}</div>`}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-hs]");if(!b)return;S.homeTab=b.dataset.hs;save();render()});
+
+// ---------- Beruf view ----------
+function berufView(r){
+  const b=BERUF.find(x=>x.id===r.id);if(!b){S.homeTab="beruf";save();return go({v:"home"})}
+  const tab=r.tab||"wort";
+  const tabs=[["wort","Wortschatz"],["saetze","Wichtige Sätze"],["rp","Rollenspiele"]];
+  let body="";
+  if(tab==="wort")body=`<div class="list">${b.vocab.map(v=>`<div class="row" style="cursor:default"><span class="t"><b>${artHtml(v[0])}</b><small${rtl()}>${esc(tr(v))}</small></span>${sayBtn(v[0])}</div>`).join("")}</div>`;
+  else if(tab==="saetze")body=`<div class="list">${b.sat.map(v=>`<div class="row" style="cursor:default"><span class="t"><b>${esc(v[0])}</b><small${rtl()}>${esc(tr(v))}</small></span>${sayBtn(v[0])}</div>`).join("")}</div>`;
+  else body=`<div class="list">${b.rp.map(x=>{const best=(S.rp||{})[x.id];return `<button class="row" data-p="rpp" data-id="${x.id}"><span class="num ${best===x.turns.length?"done":""}">${x.av}</span><span class="t"><b>${esc(x.t)}</b><small>${esc(x.ch)}</small></span><span class="pct">${best!==undefined?best+"/"+x.turns.length:""}</span></button>`}).join("")}</div>`;
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Deutsch für den Beruf</span><h1>${b.ico} ${esc(b.t)}</h1>
+  <div class="expl"${rtl()}>${esc(b.intro[L()])}</div>
+  <div class="actions"><button class="btn ${S.beruf===b.id?"ghost":"gold"}" id="mybf">${S.beruf===b.id?"⭐ Das ist mein Beruf":"⭐ Als meinen Beruf merken"}</button></div>
+  <div class="chips" style="margin:14px 0 10px">${tabs.map(t=>`<button class="chip" style="width:auto" data-p="beruf" data-id="${b.id}" data-tab="${t[0]}" aria-pressed="${t[0]===tab}">${t[1]}</button>`).join("")}</div>${body}`;
+  app.querySelector("#mybf").onclick=()=>{S.beruf=S.beruf===b.id?"":b.id;save();berufView(r)}}
+
+// ---------- Sprechen tab ----------
+function speakView(){
+  const done=S.rp||{};
+  app.innerHTML=`<span class="kind" style="display:block">Sprechen</span><h1>Sprich wie im echten Leben</h1>
+  <p class="muted">Dein Gesprächspartner spricht, du antwortest mit dem Mikrofon. Am Ende siehst du, was gut war und wie man es noch sagen kann.</p>
+  <div class="section-h"><h2>Leben in Deutschland</h2></div>
+  <div class="people">${LIFE_RP.map(x=>{const best=done[x.id];return `<button class="person" data-p="rpp" data-id="${x.id}"><span class="av">${x.av}</span><span class="t"><b>${esc(x.t)}</b><small>${esc(x.ch)}</small></span><span class="pct">${best!==undefined?(best===x.turns.length?"✅":best+"/"+x.turns.length):"›"}</span></button>`}).join("")}</div>
+  <div class="section-h"><h2>Mehr üben</h2></div>
+  <div class="tools">
+   <button class="tool" data-p="rp"><span class="ti">🎭</span><b>Rollenspiele</b><small>Nach Niveau · A1.1 bis B2.2</small></button>
+   <button class="tool" data-p="pron"><span class="ti">🗣️</span><b>Aussprache</b><small>Hören · Nachsprechen · Feedback</small></button>
+   <button class="tool" data-p="beruf" data-id="${S.beruf||"arzt"}"><span class="ti">💼</span><b>Beruf</b><small>Rollenspiele für deinen Job</small></button>
+  </div>
+  <p class="note" style="margin-top:14px">Tipp: Öffne den Lernraum in Chrome und erlaube das Mikrofon. Du kannst deine Antwort auch schreiben.</p>`}
+
+// ---------- Missionen tab ----------
+function misView(r){
+  const lv=r.lv||myMisLv();if(r.lv){S.misLv=r.lv;save()}
+  const list=MISSIONS[lv]||[];const d=S.mis||{};const n=list.filter(m=>d[m.id]).length;
+  app.innerHTML=`<span class="kind" style="display:block">Mission Deutschland</span><h1>Deutsch im echten Leben</h1>
+  <p class="muted">Jede Mission ist eine echte Aufgabe – nicht aus dem Buch, sondern aus dem Leben. Mach sie, schick deinem Lehrer den Beweis und sammle Punkte.</p>
+  <div class="chips" style="margin-top:12px">${Object.keys(MISSIONS).map(id=>`<button class="chip" style="width:auto" data-p="mis" data-lv="${id}" aria-pressed="${id===lv}">${id}</button>`).join("")}</div>
+  <div class="progress" style="margin-top:12px"><div class="goal"><i style="width:${list.length?n/list.length*100:0}%"></i></div><span>${n}/${list.length}</span></div>
+  ${list.map(m=>{const ok=!!d[m.id];return `<div class="card mis${ok?" ok":""}" style="margin-top:12px"><div class="mh"><span class="ti">${ok?"✅":m.ico}</span><b>${esc(m.t)}</b></div>
+   <p${rtl()} style="margin:8px 0 0">${esc(m.d[L()])}</p>
+   <div class="actions"><a class="btn gold" style="text-decoration:none;text-align:center" target="_blank" rel="noopener" href="https://wa.me/40771237705?text=${encodeURIComponent("Mission "+lv+": "+m.t+" – hier ist mein Beweis 👇")}">📲 Beweis an Saleh</a>
+   <button class="btn ${ok?"ghost":""}" data-misdone="${m.id}">${ok?"Erledigt ✓":"Als erledigt markieren"}</button></div></div>`}).join("")}`;
+  app.querySelectorAll("[data-misdone]").forEach(b=>b.onclick=()=>{if(DEMO)return demoLocked();S.mis=S.mis||{};const id=b.dataset.misdone;if(S.mis[id])delete S.mis[id];else{S.mis[id]=Date.now();addPts(30);toast("Super! +30 Punkte 🎉")}save();misView({lv})})}
+
+// ---------- Ich tab ----------
+function meView(){
+  const certs=S.certs||{};const best=S.final||{};const bf=BERUF.find(x=>x.id===S.beruf);
+  const misN=Object.keys(S.mis||{}).length;
+  app.innerHTML=`<span class="kind" style="display:block">Mein Bereich</span><h1>${myName()?esc(myName()):"Ich"}</h1>
+  <div class="stats"><div class="stat"><b>${S.points}</b><span>Punkte</span></div><div class="stat"><b>${misN}</b><span>Missionen</span></div><div class="stat"><b>${Object.keys(certs).length}</b><span>Zertifikate</span></div></div>
+  <div class="card" style="margin-top:12px"><label class="kind" for="myn">Mein Name (für Zertifikate)</label><input class="gap" id="myn" maxlength="60" autocomplete="name" value="${esc(myName())}"><div class="actions"><button class="btn ghost" id="mynok">Speichern</button></div></div>
+  <div class="section-h"><h2>Meine Zertifikate</h2></div>
+  <div class="list">${levelIds().filter(id=>lessonsOf(id).length).map(id=>{const c=certs[id],b=best[id];return c?`<button class="row" data-showcert="${id}"><span class="num done">🏅</span><span class="t"><b>Zertifikat ${id} · ${c.pct} %</b><small>${fmtDate(c.ts)}${c.id?" · mit QR-Code":""}</small></span><span class="pct">Ansehen</span></button>`:`<button class="row" data-p="final" data-lv="${id}"><span class="num">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${b?"Bestes Ergebnis: "+b.pct+" %":"Ab 70 % bekommst du dein Zertifikat"}</small></span><span class="pct">›</span></button>`}).join("")}</div>
+  <div id="certbox"></div>
+  <div class="section-h"><h2>Mehr</h2></div>
+  <div class="tools">
+   <button class="tool" data-p="beruf" data-id="${bf?bf.id:"arzt"}"><span class="ti">💼</span><b>Mein Beruf</b><small>${bf?esc(bf.t):"Noch nicht gewählt"}</small></button>
+   <button class="tool" data-p="week"><span class="ti">🏆</span><b>Wochen-Challenge</b><small>${S.wkOn&&S.wk&&S.wk.id===weekId()?S.wk.pts+" Punkte diese Woche":"Wer übt am meisten?"}</small></button>
+   <button class="tool" data-p="install"><span class="ti">📲</span><b>Als App installieren</b><small>Auf dem Startbildschirm</small></button>
+  </div>
+  <footer>Deutschparadies · deutschparadies.ro<br>${DEMO?`<a class="linkbtn" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a>`:`<button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button>`}</footer>`;
+  app.querySelector("#mynok").onclick=()=>{const v=app.querySelector("#myn").value.trim();if(v.length>1){setName(v);toast("Gespeichert ✓");meView()}};
+  app.querySelectorAll("[data-showcert]").forEach(b=>b.onclick=()=>{const id=b.dataset.showcert,c=certs[id];makeCert(id,c.pct,c.name,app.querySelector("#certbox"),c);setTimeout(()=>app.querySelector("#certbox").scrollIntoView({behavior:"smooth"}),300)})}
+
+const PLUS_VIEWS={speak:speakView,mis:misView,me:meView,beruf:berufView,bes:besView,fehler:fehlerView,week:weekView,plan:planView,install:installView,srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-p]");if(!b)return;e.preventDefault();e.stopPropagation();
   const r={v:b.dataset.p};["lv","id","tab","q","go"].forEach(k=>{if(b.dataset[k]!==undefined)r[k]=b.dataset[k]});if(b.dataset.f){r.f=b.dataset.f;r.t=b.dataset.t;r.lv=b.dataset.lv}go(r)},true);
 // ===================== /Lernraum Plus =====================
