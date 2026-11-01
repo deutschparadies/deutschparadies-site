@@ -186,6 +186,18 @@ footer{margin-top:28px;text-align:center;font-size:.8rem;color:var(--muted)}
 @media (max-width:380px){.levels{grid-template-columns:repeat(2,1fr)}.modules{grid-template-columns:1fr}}
 
 /* ---- tabs + new sections (Nov 2026) ---- */
+.certcard{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.minicert{background:#fbf8f0;border:6px solid #173226;border-radius:6px;padding:4px;margin-top:4px}
+.mc-in{position:relative;overflow:hidden;border:1.5px solid #e3a72e;padding:12px 10px 10px;text-align:center;color:#173226;font-family:Georgia,"Times New Roman",serif}
+.mc-logo{width:40px;height:40px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 4px}
+.mc-k{font-size:.62rem;letter-spacing:1px;font-weight:700;text-transform:uppercase}
+.mc-t{font-size:1.7rem;font-weight:700;line-height:1.1;margin:2px 0}
+.mc-n{font-style:italic;font-weight:700;font-size:1.15rem;color:#15231c;border-bottom:1.5px solid #e3a72e;display:inline-block;padding:0 18px 2px;margin-top:4px}
+.mc-l{font-weight:700;font-size:1rem;margin-top:6px}
+.mc-qr{width:46px;height:46px;margin:8px auto 0;background:#fff;padding:3px}.mc-qr svg{width:100%;height:100%;display:block}
+.minicert.demo .mc-qr{opacity:.35}
+.mc-ribbon{position:absolute;top:14px;right:-34px;transform:rotate(35deg);background:#e3a72e;color:#3a2a05;font:700 .7rem system-ui,sans-serif;letter-spacing:1px;text-transform:uppercase;padding:3px 40px}
+
 .ltbox{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
 .ltsum{margin:0 0 6px;font-size:.9rem}
 .ltm{border-top:1px solid var(--line);padding:10px 0}.ltm:first-of-type{border-top:0}
@@ -6971,6 +6983,7 @@ function home(){
     <div class="stat"><b>${S.todayPts}/${GOAL}</b><span>Tagesziel</span><div class="goal"><i style="width:${goal}%"></i></div></div>
   </div>
   ${heuteCard(cur)}
+  ${certCard(cur)}
   <div id="quizcalls"></div>
   ${homeSwitch()}
   ${S.homeTab==="beruf"?berufCards():`<div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
@@ -8238,7 +8251,7 @@ function installView(){
 const RO_SUB={"Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
  "Materialien":"Materiale","Buch":"Carte","Dialoge":"Dialoguri","Texte":"Texte","Videos":"Videoclipuri","Allgemeine Dialoge Grammatik":"Dialoguri generale de gramatică","telc B2 · Prüfungstraining":"Pregătire pentru examenul telc B2",
  "Wortschatz":"Vocabular","Grammatik":"Gramatică","Übungen":"Exerciții","Lesen":"Citire","Hören":"Ascultare","Sprechen":"Vorbire","Schreiben":"Scriere","Video":"Video",
- "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul","Heute":"Azi","Weitermachen":"Continuă","5 Minuten sprechen":"Vorbește 5 minute","Mission der Woche":"Misiunea săptămânii","Starte mit Lektion 1":"Începe cu lecția 1","Werkzeuge":"Instrumente","Lektionen":"Lecții","Leben in Deutschland":"Viața în Germania","Mehr üben":"Exersează mai mult","Meine Zertifikate":"Certificatele mele","Mehr":"Mai mult","Mein Beruf":"Meseria mea","Beruf":"Meserie","Missionen":"Misiuni","Zertifikate":"Certificate","Als App installieren":"Instalează ca aplicație"};
+ "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul","Heute":"Azi","Weitermachen":"Continuă","5 Minuten sprechen":"Vorbește 5 minute","Mission der Woche":"Misiunea săptămânii","Starte mit Lektion 1":"Începe cu lecția 1","Werkzeuge":"Instrumente","🏅 Beantrage dein Zertifikat":"Solicită certificatul tău","🏅 Dein Zertifikat":"Certificatul tău","Lektionen":"Lecții","Leben in Deutschland":"Viața în Germania","Mehr üben":"Exersează mai mult","Meine Zertifikate":"Certificatele mele","Mehr":"Mai mult","Mein Beruf":"Meseria mea","Beruf":"Meserie","Missionen":"Misiuni","Zertifikate":"Certificate","Als App installieren":"Instalează ca aplicație"};
 function roSubs(root){if(!root)return;root.querySelectorAll(".section-h h2,.tool b,.mat b,.mod b,.vbox .vt b,.row .t b,.stat span,.quizcall b,.tabs button,.hrow .t b").forEach(el=>{if(el.dataset.ro)return;const t=el.textContent.trim();let ro=RO_SUB[t];if(!ro&&/^Quiz vor der Stunde/.test(t))ro="Quiz înainte de oră";el.dataset.ro="1";if(!ro)return;const s=document.createElement("small");s.className="ro-sub";s.lang="ro";s.textContent=ro;el.appendChild(s)})}
 new MutationObserver(()=>{roSubs(app);wrapWords(app)}).observe(app,{childList:true,subtree:true});
 
@@ -8420,6 +8433,22 @@ function hwChecklist(box,title,text,lv){
    ${manual.length?`<p class="note" style="margin:10px 0 4px">Hast du an alles gedacht? Hak ab, was in deinem Text steht:</p>`+manual.map((p,k)=>`<label class="cli ${st[k]?"ok":""}"><input type="checkbox" data-clk="${k}" ${st[k]?"checked":""}><span>${esc(p)}</span></label>`).join(""):""}
   </div>`;
   box.querySelectorAll("[data-clk]").forEach(c=>c.onchange=()=>{const s2=S.hwcl[ck]=S.hwcl[ck]||{};s2[c.dataset.clk]=c.checked;save();c.closest(".cli").classList.toggle("ok",c.checked)})}
+
+// ---------- home: "Beantrage dein Zertifikat" card with a preview ----------
+function certCard(lv){
+  if(!lessonsOf(lv).length)return "";
+  const c=(S.certs||{})[lv],q=(S.certreq||{})[lv];
+  if(q&&q.status==="neu"&&!certCard._sync){certCard._sync=1;syncCerts().then(ch=>{certCard._sync=0;if(ch&&route.v==="home")render()})}
+  const ok=c&&c.id,wait=!ok&&q&&q.status==="neu";
+  let qr="";try{const qq=qrcode(0,"L");qq.addData("https://deutschparadies.ro/verificare/"+(ok?"?id="+c.id:""));qq.make();qr=qq.createSvgTag({cellSize:2,margin:0,scalable:true})}catch(e){}
+  const logo=(document.querySelector("header .logo")||{}).src||"";
+  const name=ok?c.name:(myName()||"Dein Name");
+  return `<div class="certcard"><div class="section-h" style="margin-top:0"><h2>${ok?"🏅 Dein Zertifikat":"🏅 Beantrage dein Zertifikat"}</h2></div>
+   <div class="minicert${ok?"":" demo"}"><div class="mc-in">${logo?`<img src="${logo}" alt="" class="mc-logo">`:""}<div class="mc-k">Deutschparadies · Lernraum</div><div class="mc-t">Zertifikat</div><div class="mc-n">${esc(name)}</div><div class="mc-l">${lv}${ok?" · "+c.pct+" %":""}</div><div class="mc-qr">${qr}</div>${ok?"":`<div class="mc-ribbon">Muster</div>`}</div></div>
+   ${ok?`<p class="muted" style="margin:10px 0 0">🎉 Dein Zertifikat ${lv} ist freigegeben – mit QR-Code zum Prüfen.</p><div class="actions"><button class="btn gold" data-p="me">🏅 Mein Zertifikat ansehen</button></div>`
+    :wait?`<p class="muted" style="margin:10px 0 0">⏳ Dein Antrag für ${lv} ist bei Saleh. Sobald er ihn freigibt, findest du dein Zertifikat hier.</p>`
+    :`<p class="muted" style="margin:10px 0 0">Schaffe den Abschlusstest ${lv} (ab 60 %). Danach prüft Saleh dein Ergebnis und gibt dein Zertifikat mit QR-Code frei.</p><div class="actions"><button class="btn gold" data-p="final" data-lv="${lv}">🏅 Zum Abschlusstest ${lv}</button></div>`}
+  </div>`}
 
 // ---------- certificates: the student asks, the teacher approves ----------
 async function requestCert(lv,pct,name,box){
