@@ -7734,14 +7734,11 @@ function finalView(r){
     const pct=Math.round(s/t*100),pass=pct>=60;S.final=S.final||{};const prev=S.final[lv];if(!prev||pct>prev.pct)S.final[lv]={pct,pass,ts:Date.now()};save();
     sendResult({type:"final",ref:lv,score:s,total:t,pass});
     app.innerHTML=`<button class="back" data-p="final">‹ Zurück</button><h1>Abschlusstest ${lv}</h1>${resultCard(s,t,60)}
-    ${pass?`<div class="card" style="margin-top:12px"><label class="kind">Name auf dem Zertifikat</label><input class="gap" id="cname" maxlength="60" value="${esc(myName())}"><div class="actions"><button class="btn gold" id="cert">🏅 Zertifikat erstellen</button></div></div><div id="certbox"></div>`:`<div class="actions"><button class="btn" data-p="final" data-lv="${lv}">Noch einmal versuchen</button></div>`}`;
-    const cb=app.querySelector("#cert");if(cb)cb.onclick=()=>{const n=app.querySelector("#cname").value.trim();if(n.length<2){app.querySelector("#cname").focus();return}setName(n);makeCert(lv,pct,n,app.querySelector("#certbox"))}}})}
+    ${pass?`<div class="card" style="margin-top:12px"><label class="kind">Name auf dem Zertifikat</label><input class="gap" id="cname" maxlength="60" value="${esc(myName())}"><div class="actions"><button class="btn gold" id="cert">🏅 Zertifikat beantragen</button></div></div><div id="certbox"></div>`:`<div class="actions"><button class="btn" data-p="final" data-lv="${lv}">Noch einmal versuchen</button></div>`}`;
+    const cb=app.querySelector("#cert");if(cb)cb.onclick=()=>{const n=app.querySelector("#cname").value.trim();if(n.length<2){app.querySelector("#cname").focus();return}setName(n);requestCert(lv,pct,n,app.querySelector("#certbox"))}}})}
 async function makeCert(lv,pct,name,box,saved){
   box.innerHTML=`<p class="muted" style="margin-top:12px">Zertifikat wird erstellt …</p>`;
-  let rec=saved;
-  if(!rec){rec={id:"",name,pct,ts:Date.now()};
-    if(WEB&&!DEMO){const j=await api("cert",{method:"POST",body:{name,lv,pct}});if(j._ok&&j.id)rec.id=j.id}
-    S.certs=S.certs||{};const prev=S.certs[lv];if(!prev||pct>=prev.pct||!prev.id)S.certs[lv]=rec;save()}
+  const rec=saved;if(!rec||!rec.id){box.innerHTML="";return}
   const W=1754,H=1240,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   x.fillStyle="#fbf8f0";x.fillRect(0,0,W,H);x.strokeStyle="#173226";x.lineWidth=18;x.strokeRect(40,40,W-80,H-80);x.strokeStyle="#e3a72e";x.lineWidth=4;x.strokeRect(78,78,W-156,H-156);
   const done=()=>{x.textAlign="center";x.fillStyle="#173226";
@@ -8016,12 +8013,13 @@ async function teacherConsole(box){
   if(st._status===401){box.innerHTML=`<div class="card" style="margin-top:10px"><h2 style="margin-top:0">Anmelden</h2><p class="muted">Mit deinem Lehrer-Passwort siehst du Hausaufgaben, Ergebnisse und das Quiz vor der Stunde.</p><form id="tlf"><input class="gap" id="tpw" type="password" autocomplete="current-password" placeholder="Lehrer-Passwort"><button class="btn" type="submit" style="width:100%;margin-top:10px">Anmelden</button></form><div class="feedback bad" id="tlfb" hidden></div></div>`;
     box.querySelector("#tlf").onsubmit=async e=>{e.preventDefault();const pw=box.querySelector("#tpw").value;const j=await api("t/login",{method:"POST",body:{admin:pw}});if(j._ok){try{sessionStorage.setItem("dp_vpw",pw);const va=document.getElementById("va");if(va&&!va.value)va.value=pw}catch(err){}teacherConsole(box)}else{const f=box.querySelector("#tlfb");f.hidden=false;f.textContent=j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":"Das Lehrer-Passwort ist falsch."}};return}
   let tab="h";
-  box.innerHTML=`<div class="tabs" style="margin-top:10px"><button data-tt="h" aria-pressed="true">Hausaufgaben</button><button data-tt="r">Ergebnisse</button><button data-tt="q">Quiz</button><button data-tt="e">Probe-Codes</button></div><div id="tbody" style="margin-top:12px"></div><p class="note"><button class="linkbtn" id="tout">Lehrer abmelden</button></p>`;
+  box.innerHTML=`<div class="tabs" style="margin-top:10px"><button data-tt="h" aria-pressed="true">Hausaufgaben</button><button data-tt="r">Ergebnisse</button><button data-tt="q">Quiz</button><button data-tt="e">Probe-Codes</button><button data-tt="z">Zertifikate</button></div><div id="tbody" style="margin-top:12px"></div><p class="note"><button class="linkbtn" id="tout">Lehrer abmelden</button></p>`;
   const body=box.querySelector("#tbody");
   box.querySelector("#tout").onclick=async()=>{await api("t/logout",{method:"POST"});teacherConsole(box)};
   box.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>{tab=b.dataset.tt;box.querySelectorAll("[data-tt]").forEach(x=>x.setAttribute("aria-pressed",x===b));show()});
   const lvSel=(id,cur)=>`<select class="gap" id="${id}" style="font-size:1rem;padding:8px">${levelIds().map(x=>`<option${x===cur?" selected":""}>${x}</option>`).join("")}</select>`;
   async function show(){body.innerHTML=`<p class="muted">Lädt …</p>`;
+    if(tab==="z")return certAdmin(body);
     if(tab==="h"){const j=await api("t/hw");const items=j.items||[];
       body.innerHTML=`<div class="chips"><button class="chip" style="width:auto" data-hf="neu" aria-pressed="true">Neu (${items.filter(x=>x.status!=="korrigiert").length})</button><button class="chip" style="width:auto" data-hf="all">Alle (${items.length})</button></div><div id="hwl" style="margin-top:10px"></div>`;
       const list=f=>{const arr=items.filter(x=>f==="all"||x.status!=="korrigiert");body.querySelector("#hwl").innerHTML=arr.length?arr.map(it=>`<button class="row" data-hw="${it.id}" style="margin-top:8px"><span class="num">${it.status==="korrigiert"?"✓":"•"}</span><span class="t"><b>${esc(it.name)} · ${esc(it.title)}</b><small>${it.lv?it.lv+" · ":""}${fmtDate(it.ts)}${it.hasImg?" · 📷":""}${it.hasAudio?" · 🎙":""}</small></span></button>`).join(""):`<p class="muted">Nichts zu korrigieren.</p>`;
@@ -8368,6 +8366,33 @@ const MISSIONS={
  {id:"mb22c",ico:"🎬",t:"Film ohne Untertitel",d:{ro:"Uită-te la un film sau un episod german fără subtitrare și scrie o recenzie de 200 de cuvinte.",ar:"اتفرج على فيلم أو حلقة ألماني من غير ترجمة، واكتب عنه review في 200 كلمة.",en:"Watch a German film or episode without subtitles and write a 200-word review."}}]
 };
 
+// ---------- certificates: the student asks, the teacher approves ----------
+async function requestCert(lv,pct,name,box){
+  if(DEMO||!WEB){box.innerHTML=`<div class="feedback bad" style="margin-top:12px">Zertifikate gibt es nur im Lernraum für Kursteilnehmer.</div>`;return}
+  box.innerHTML=`<p class="muted" style="margin-top:12px">Wird gesendet …</p>`;
+  const j=await api("cert",{method:"POST",body:{name,lv,pct}});
+  if(!j._ok||!j.rid){box.innerHTML=`<div class="feedback bad" style="margin-top:12px">Senden hat nicht geklappt. Bitte versuch es später noch einmal.</div>`;return}
+  S.certreq=S.certreq||{};S.certreq[lv]={rid:j.rid,tok:j.tok,name,pct,ts:Date.now(),status:"neu"};save();
+  box.innerHTML=`<div class="feedback ok" style="margin-top:12px">✅ Gesendet! Dein Lehrer Saleh prüft dein Ergebnis und gibt dein Zertifikat frei. Du findest es dann unter <b>🏅 Ich</b>.</div>`}
+async function syncCerts(){
+  const R=S.certreq||{};const pend=Object.keys(R).filter(lv=>R[lv].status==="neu");if(!WEB||DEMO||!pend.length)return false;
+  const j=await api("certst?mine="+encodeURIComponent(pend.map(lv=>R[lv].rid+"."+R[lv].tok).join(",")));if(!j._ok)return false;
+  let ch=false;(j.items||[]).forEach(it=>{const lv=pend.find(x=>R[x].rid===it.rid);if(!lv||it.status==="neu")return;R[lv].status=it.status;ch=true;
+    if(it.status==="ok"&&it.id){S.certs=S.certs||{};S.certs[lv]={id:it.id,name:it.name,pct:it.pct,ts:it.ts}}});
+  if(ch)save();return ch}
+async function certAdmin(body){
+  const j=await api("t/certs");const items=j.items||[];
+  const neu=items.filter(x=>x.status==="neu"),rest=items.filter(x=>x.status!=="neu");
+  const st={ok:"✅ freigegeben",nein:"❌ abgelehnt"};
+  body.innerHTML=`<p class="note">Schüler beantragen hier ihr Zertifikat nach dem Abschlusstest (ab 60 %). Nur was du freigibst, bekommt einen QR-Code und ist auf deutschparadies.ro/verificare prüfbar.</p>
+  ${neu.length?neu.map(x=>`<div class="card" style="margin-top:10px"><b>${esc(x.lv)} · ${x.pct} %</b> <span class="muted">· ${fmtDate(x.ts)}</span>
+   <label class="kind" style="display:block;margin-top:8px">Name auf dem Zertifikat</label><input class="gap" data-cn="${x.rid}" maxlength="60" value="${esc(x.name)}">
+   <div class="actions"><button class="btn gold" data-cok="${x.rid}">✅ Freigeben</button><button class="btn ghost" data-cno="${x.rid}">❌ Ablehnen</button></div></div>`).join(""):`<p class="muted">Keine neuen Anträge.</p>`}
+  ${rest.length?`<h3 style="margin-top:20px">Erledigt</h3><div class="ctab"><table><tbody>${rest.slice(0,60).map(x=>`<tr><td>${fmtDate(x.ts)}</td><td>${esc(x.name)}</td><td>${esc(x.lv)} · ${x.pct} %</td><td>${st[x.status]||""}${x.id?" · "+x.id.toUpperCase():""}</td></tr>`).join("")}</tbody></table></div>`:""}`;
+  const act=async(rid,action)=>{const inp=body.querySelector(`[data-cn="${rid}"]`);const r=await api("t/certs",{method:"POST",body:{rid,action,name:inp?inp.value.trim():""}});if(!r._ok)toast("Hat nicht geklappt. Bitte noch einmal versuchen.");else toast(action==="ok"?"Zertifikat freigegeben ✓":"Antrag abgelehnt");certAdmin(body)};
+  body.querySelectorAll("[data-cok]").forEach(b=>b.onclick=()=>act(b.dataset.cok,"ok"));
+  body.querySelectorAll("[data-cno]").forEach(b=>b.onclick=()=>{if(confirm("Antrag wirklich ablehnen?"))act(b.dataset.cno,"nein")})}
+
 // ---------- tabs: Lernen · Sprechen · Missionen · Ich ----------
 LIFE_RP.forEach(x=>RP.push(x));BERUF.forEach(b=>b.rp.forEach(x=>{x.job=b.id;RP.push(x)}));
 const TAB_OF={speak:"speak",pron:"speak",rp:"speak",rpp:"speak",mis:"mis",me:"me",final:"me",week:"me",install:"me"};
@@ -8447,13 +8472,14 @@ function misView(r){
 
 // ---------- Ich tab ----------
 function meView(){
-  const certs=S.certs||{};const best=S.final||{};const bf=BERUF.find(x=>x.id===S.beruf);
+  if(!meView._sync){meView._sync=1;syncCerts().then(ch=>{meView._sync=0;if(ch&&route.v==="me")meView()})}
+  const certs={};Object.entries(S.certs||{}).forEach(([k,c])=>{if(c&&c.id)certs[k]=c});const req=S.certreq||{};const best=S.final||{};const bf=BERUF.find(x=>x.id===S.beruf);
   const misN=Object.keys(S.mis||{}).length;
   app.innerHTML=`<span class="kind" style="display:block">Mein Bereich</span><h1>${myName()?esc(myName()):"Ich"}</h1>
   <div class="stats"><div class="stat"><b>${S.points}</b><span>Punkte</span></div><div class="stat"><b>${misN}</b><span>Missionen</span></div><div class="stat"><b>${Object.keys(certs).length}</b><span>Zertifikate</span></div></div>
   <div class="card" style="margin-top:12px"><label class="kind" for="myn">Mein Name (für Zertifikate)</label><input class="gap" id="myn" maxlength="60" autocomplete="name" value="${esc(myName())}"><div class="actions"><button class="btn ghost" id="mynok">Speichern</button></div></div>
   <div class="section-h"><h2>Meine Zertifikate</h2></div>
-  <div class="list">${levelIds().filter(id=>lessonsOf(id).length).map(id=>{const c=certs[id],b=best[id];return c?`<button class="row" data-showcert="${id}"><span class="num done">🏅</span><span class="t"><b>Zertifikat ${id} · ${c.pct} %</b><small>${fmtDate(c.ts)}${c.id?" · mit QR-Code":""}</small></span><span class="pct">Ansehen</span></button>`:`<button class="row" data-p="final" data-lv="${id}"><span class="num">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${b?"Bestes Ergebnis: "+b.pct+" %":"Ab 60 % bekommst du dein Zertifikat"}</small></span><span class="pct">›</span></button>`}).join("")}</div>
+  <div class="list">${levelIds().filter(id=>lessonsOf(id).length).map(id=>{const c=certs[id],b=best[id];const q=req[id];return c?`<button class="row" data-showcert="${id}"><span class="num done">🏅</span><span class="t"><b>Zertifikat ${id} · ${c.pct} %</b><small>${fmtDate(c.ts)} · mit QR-Code</small></span><span class="pct">Ansehen</span></button>`:q&&q.status==="neu"?`<div class="row" style="cursor:default"><span class="num">⏳</span><span class="t"><b>Zertifikat ${id} · ${q.pct} %</b><small>Wartet auf Freigabe durch deinen Lehrer</small></span></div>`:`<button class="row" data-p="final" data-lv="${id}"><span class="num">${id.replace(".","")}</span><span class="t"><b>Abschlusstest ${id}</b><small>${b?"Bestes Ergebnis: "+b.pct+" %":(q&&q.status==="nein"?"Nicht freigegeben – sprich mit deinem Lehrer":"Ab 60 % bekommst du dein Zertifikat")}</small></span><span class="pct">›</span></button>`}).join("")}</div>
   <div id="certbox"></div>
   <div class="section-h"><h2>Mehr</h2></div>
   <div class="tools">

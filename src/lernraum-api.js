@@ -7,7 +7,8 @@
 //   hw:<id>             -> homework item (name typed by the student)
 //   res:all             -> [results with name]
 //   fail:<ip>           -> failed login counter (15 min)
-//   cert:<id>           -> issued certificate {name, lv, pct, ts} (public check via QR code)
+//   creq:<rid>          -> certificate request from a student (teacher approves or rejects)
+//   cert:<id>           -> certificate approved by the teacher {name, lv, pct, ts} (public check via QR code)
 //   drv:<folderId>      -> cached folder listing (10 min)
 
 const SESSION_TTL = 60 * 60 * 24 * 30;
@@ -232,6 +233,30 @@ export async function lernApi(request, env, path, deps) {
       await env.APPKV.put("code:" + code, JSON.stringify(item), { expirationTtl: 86400 * 7 });
       return json({ ok: true, code, ...item });
     }
+    if (p === "t/certs" && M === "GET") {
+      const keys = await listAll(env, "creq:", 500);
+      const items = [];
+      for (const k of keys) { const it = await env.APPKV.get(k, "json"); if (it) { const { tok, ...rest } = it; items.push(rest); } }
+      items.sort((a, b) => b.ts - a.ts);
+      return json({ items });
+    }
+    if (p === "t/certs" && M === "POST") {
+      const b = (await body(request)) || {};
+      if (typeof b.rid !== "string" || !HWID.test(b.rid) || !["ok", "nein"].includes(b.action)) return json({ error: "bad" }, 400);
+      const it = await env.APPKV.get("creq:" + b.rid, "json");
+      if (!it) return json({ error: "notfound" }, 404);
+      if (it.status !== "neu") return json({ ok: true, id: it.id || "" });
+      const name = str(b.name, 60);
+      if (name.length >= 2) it.name = name;
+      it.status = b.action;
+      it.ats = Date.now();
+      if (b.action === "ok") {
+        it.id = rand(5);
+        await env.APPKV.put("cert:" + it.id, JSON.stringify({ id: it.id, name: it.name, lv: it.lv, pct: it.pct, ts: it.ats }));
+      }
+      await env.APPKV.put("creq:" + b.rid, JSON.stringify(it), { expirationTtl: 86400 * 365 * 3 });
+      return json({ ok: true, id: it.id || "" });
+    }
     return json({ error: "notfound" }, 404);
   }
 
@@ -248,17 +273,26 @@ export async function lernApi(request, env, path, deps) {
   if (!s) return json({ error: "login" }, 401);
 
   if (p === "cert" && M === "POST") {
-    if (s.k === "d") return json({ error: "demo" }, 403); // no certificates from the 24h demo link
+    // the student only REQUESTS a certificate; the teacher approves it in the Lehrerbereich
+    if (s.k === "d") return json({ error: "demo" }, 403);
     const b = (await body(request)) || {};
     const name = str(b.name, 60), lv = LEVELS.includes(b.lv) ? b.lv : "";
     const pct = Math.round(+b.pct || 0);
     if (name.length < 2 || !lv || pct < 60 || pct > 100) return json({ error: "bad" }, 400);
-    const id = rand(5);
-    await env.APPKV.put("cert:" + id, JSON.stringify({ id, name, lv, pct, ts: Date.now() }));
-    const list = (await env.APPKV.get("cert:all", "json")) || [];
-    list.push({ id, name, lv, pct, ts: Date.now() });
-    await env.APPKV.put("cert:all", JSON.stringify(list.slice(-2000)));
-    return json({ ok: true, id });
+    const rid = Date.now().toString(36) + "-" + rand(4), tok = rand(8);
+    await env.APPKV.put("creq:" + rid, JSON.stringify({ rid, tok, name, lv, pct, ts: Date.now(), status: "neu", id: "" }), { expirationTtl: 86400 * 365 });
+    return json({ ok: true, rid, tok });
+  }
+  if (p === "certst" && M === "GET") {
+    const mine = (new URL(request.url).searchParams.get("mine") || "").split(",").slice(0, 20);
+    const items = [];
+    for (const pair of mine) {
+      const [rid, tok] = pair.split(".");
+      if (!HWID.test(rid || "") || !/^[a-f0-9]{16}$/.test(tok || "")) continue;
+      const it = await env.APPKV.get("creq:" + rid, "json");
+      if (it && it.tok === tok) items.push({ rid, status: it.status, id: it.id || "", name: it.name, pct: it.pct, ts: it.ats || it.ts });
+    }
+    return json({ items });
   }
 
   if (p === "drive/list") {
