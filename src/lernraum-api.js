@@ -136,8 +136,8 @@ export async function lernApi(request, env, path, deps) {
         const exp = Math.min(first + PARTNER_MS, PARTNER_UNTIL);
         if (exp <= Date.now()) return json({ error: "expired" }, 403);
         const ttl = Math.max(60, Math.ceil((exp - Date.now()) / 1000));
-        const tok = await newSession(env, { k: "d", exp }, ttl);
-        return json({ ok: true, trial: { exp } }, 200, { "set-cookie": cookie("dp_s", tok, ttl) });
+        const tok = await newSession(env, { k: "d", exp, p: 1 }, ttl);
+        return json({ ok: true, trial: { exp, partner: true } }, 200, { "set-cookie": cookie("dp_s", tok, ttl) });
       }
       const c = await env.APPKV.get("code:" + code, "json");
       if (!c) { await addFail(request, env); return json({ error: "wrong" }, 403); }
@@ -332,6 +332,8 @@ export async function lernApi(request, env, path, deps) {
     return json({ items });
   }
 
+  // partner link: no book / dialogue / text files (no downloads, no copies of materials)
+  if (s.p && (p === "drive/list" || p === "drive/file")) return json({ error: "partner" }, 403);
   if (p === "drive/list") {
     const f = new URL(request.url).searchParams.get("f") || "";
     if (!/^[\w-]{10,80}$/.test(f) || !(await folderAllowed(env, f, deps.folders))) return json({ error: "folder" }, 403);

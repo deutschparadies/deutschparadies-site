@@ -103,6 +103,7 @@ async function appRoute(request, env, path) {
   if (path.startsWith("/app/dialoge/")) {
     if (request.method !== "GET" && request.method !== "HEAD") return new Response("method", { status: 405 });
     const ok = await validSession(request, env);
+    if (ok && ok.p) return new Response("partner", { status: 403 });
     if (!ok) return new Response("locked", { status: 401, headers: { "cache-control": "no-store" } });
     const file = await env.ASSETS.fetch(request);
     if (!file.ok) return new Response("not found", { status: 404, headers: { "cache-control": "no-store" } });

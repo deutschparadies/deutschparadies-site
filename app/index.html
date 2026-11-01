@@ -186,6 +186,8 @@ footer{margin-top:28px;text-align:center;font-size:.8rem;color:var(--muted)}
 @media (max-width:380px){.levels{grid-template-columns:repeat(2,1fr)}.modules{grid-template-columns:1fr}}
 
 /* ---- tabs + new sections (Nov 2026) ---- */
+body.wm::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='180'><text x='10' y='110' transform='rotate(-28 130 90)' font-family='Arial' font-size='15' fill='%23173226' fill-opacity='0.13'>Deutschparadies · nur zur Ansicht</text></svg>");background-repeat:repeat}
+@media print{body.wm{display:none!important}}
 .certbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-top:22px;background:var(--surface);border:2px solid var(--gold);border-radius:var(--r);padding:12px 14px;font:inherit;color:var(--ink)}
 .certbtn .ti{font-size:1.6rem}.certbtn .t{flex:1}.certbtn b{display:block;font-family:var(--display)}.certbtn small{display:block;color:var(--muted);font-size:.82rem}.certbtn .chev{color:var(--muted);font-size:1.3rem}
 .rol{display:block;margin:4px 0 0;font-size:.82rem;font-style:italic;color:var(--muted)}
@@ -6960,7 +6962,7 @@ function render(){
   if(!ACCESS)return;
   if(IS_LEHRER&&window.__DP_WEB&&!window.__lehrerShown){window.__lehrerShown=1;setNav(false);return pwChangeWeb()}
   if(!DEMO&&!unlocked()){setNav(false);return lockScreen()}
-  setNav(true);
+  setNav(true);document.body.classList.toggle("wm",isPartner());
   if(DEMO){if(route.v!=="home"&&route.v!=="level"&&!DEMO_OK(route))return demoLocked()}
   document.querySelectorAll(".langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===S.lang));
   touchDay();
@@ -7311,6 +7313,7 @@ function realUnlocked(){try{return localStorage.getItem("dp_unlock")===ACCESS.ha
 function trialExp(){try{return +localStorage.getItem("dp_trial_exp")||0}catch(e){return +(window.__dpTrial||0)}}
 function trialOk(){return !!window.__DP_WEB&&trialExp()>Date.now()}
 function unlocked(){return realUnlocked()||trialOk()}
+function isPartner(){if(realUnlocked()||!trialOk())return false;try{return localStorage.getItem("dp_partner")==="1"}catch(e){return window.__dpPartner==="1"}}
 function setUnlocked(h){window.__dpUnlock=h;try{localStorage.setItem("dp_unlock",h)}catch(e){}}
 
 /* ---- Dialog viewer: PDFs are only sent to a logged-in session and drawn on canvas (no download link, no print, no text layer) ---- */
@@ -7318,7 +7321,7 @@ let PDFJS_LIB=null;
 function loadPdfJs(){if(PDFJS_LIB)return Promise.resolve(PDFJS_LIB);return new Promise((ok,no)=>{if(window.pdfjsLib){PDFJS_LIB=window.pdfjsLib;return ok(PDFJS_LIB)}const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";PDFJS_LIB=window.pdfjsLib;ok(PDFJS_LIB)};s.onerror=no;document.head.appendChild(s)})}
 async function renderPdf(data,body){const lib=await loadPdfJs();const doc=await lib.getDocument({data}).promise;body.innerHTML="";const dpr=window.devicePixelRatio||1;const w=Math.min((body.clientWidth||800)-24,900);for(let i=1;i<=doc.numPages;i++){const page=await doc.getPage(i);const v0=page.getViewport({scale:1});const vp=page.getViewport({scale:(w/v0.width)*dpr});const cv=document.createElement("canvas");cv.width=Math.floor(vp.width);cv.height=Math.floor(vp.height);cv.style.width=(cv.width/dpr)+"px";cv.className="pdfpg";body.appendChild(cv);await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise}}
 function askPdfPassword(ov,body,u){body.innerHTML='<form id="pdfPw" class="pdfpw"><p>Bitte gib das Schüler-Passwort ein, um diesen Dialog zu öffnen.</p><input id="pdfPwIn" type="password" autocomplete="current-password" required><button type="submit">Öffnen</button><p id="pdfPwErr" hidden>Falsches Passwort.</p></form>';body.querySelector("#pdfPw").onsubmit=async e=>{e.preventDefault();const pw=body.querySelector("#pdfPwIn").value;const r=await fetch("/app/api/session",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({pw})}).catch(()=>null);if(r&&r.ok){ov.remove();openPdf(u)}else{body.querySelector("#pdfPwErr").hidden=false}}}
-async function openPdf(u){if(DEMO){demoLocked();return}document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401||(r.status===403&&!/\/api\/drive\//.test(u))){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
+async function openPdf(u){if(DEMO){demoLocked();return}if(isPartner()){toast("🔒 Dialoge sind nur für Kursteilnehmer freigegeben.");return}document.querySelectorAll("#pdfOv").forEach(n=>n.remove());const ov=document.createElement("div");ov.id="pdfOv";ov.className="pdfov";ov.innerHTML='<div class="pdfbar"><button type="button" id="pdfX">✕ Schließen</button></div><div class="pdfbody" id="pdfBody">Lädt…</div>';document.body.appendChild(ov);ov.querySelector("#pdfX").onclick=()=>ov.remove();ov.addEventListener("contextmenu",e=>e.preventDefault());const body=ov.querySelector("#pdfBody");try{const r=await fetch(u,{credentials:"same-origin",cache:"no-store"});if(r.status===401||(r.status===403&&!/\/api\/drive\//.test(u))){askPdfPassword(ov,body,u);return}if(r.status===403){body.textContent="Diese Datei ist nicht freigegeben.";return}if(!r.ok)throw new Error("http");const data=new Uint8Array(await r.arrayBuffer());await renderPdf(data,body)}catch(e){body.textContent="Dieser Dialog konnte nicht geladen werden."}}
 document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-pdf]");if(!a)return;e.preventDefault();openPdf(a.dataset.pdf)});
 function lockScreen(){
   const web=!!window.__DP_WEB,expired=web&&trialExp()&&!trialOk();
@@ -7332,7 +7335,7 @@ function lockScreen(){
   const cf=app.querySelector("#cf");
   if(cf){const cfb=app.querySelector("#cfb");
     const go2=async()=>{const code=app.querySelector("#ccode").value.trim();if(!code)return;cfb.hidden=true;const j=await api("login",{method:"POST",body:{code}});
-      if(j._ok&&j.trial){window.__dpTrial=j.trial.exp;try{localStorage.setItem("dp_trial_exp",String(j.trial.exp))}catch(err){}try{history.replaceState(route,"",location.pathname)}catch(err){}route={v:"home"};return render()}
+      if(j._ok&&j.trial){window.__dpTrial=j.trial.exp;window.__dpPartner=j.trial.partner?"1":"0";try{localStorage.setItem("dp_trial_exp",String(j.trial.exp));localStorage.setItem("dp_partner",j.trial.partner?"1":"0")}catch(err){}try{history.replaceState(route,"",location.pathname)}catch(err){}route={v:"home"};return render()}
       cfb.hidden=false;cfb.textContent=j.error==="expired"?"Dieser Link ist abgelaufen (24 Stunden sind vorbei). Lust auf den Kurs? Schreib uns auf WhatsApp.":j.error==="wait"?"Zu viele Versuche. Bitte warte 15 Minuten.":j._status===0?"Keine Verbindung. Bitte später noch einmal versuchen.":"Dieser Code ist nicht gültig."};
     cf.onsubmit=e=>{e.preventDefault();go2()};
     if(urlCode&&!expired)go2()}
@@ -8066,6 +8069,7 @@ async function driveView(r){
   const db=app.querySelector("#dback");if(db)db.onclick=()=>history.back();
   const j=await api("drive/list?f="+encodeURIComponent(r.f));const box=app.querySelector("#dlist");if(!box||!box.isConnected)return;
   if(j._status===401){box.innerHTML=`<form id="dpw" class="card"><p>Bitte gib das Kurs-Passwort noch einmal ein.</p><input class="gap" id="dpwi" type="password" autocomplete="current-password"><button class="btn" type="submit" style="width:100%;margin-top:10px">Öffnen</button><p class="feedback bad" id="dpwe" hidden>Falsches Passwort.</p></form>`;box.querySelector("#dpw").onsubmit=async e=>{e.preventDefault();const k=await api("session",{method:"POST",body:{pw:box.querySelector("#dpwi").value}});if(k._ok)driveView(r);else box.querySelector("#dpwe").hidden=false};return}
+  if(j.error==="partner"){box.innerHTML=`<div class="card"><p>🔒 Bücher, Dialoge und Texte sind nur für Kursteilnehmer freigegeben.</p><p class="rol" lang="ro">Cărțile, dialogurile și textele sunt disponibile doar pentru cursanți.</p></div>`;return}
   if(!j._ok){box.innerHTML=`<div class="card"><p>Der Ordner kann gerade nicht geladen werden. Bitte später noch einmal versuchen.</p></div>`;return}
   const items=j.items.slice().sort((a,b)=>(b.folder-a.folder)||a.name.localeCompare(b.name,"de",{numeric:true}));
   if(!items.length){box.innerHTML=`<p class="muted">Hier gibt es noch keine Dateien.</p>`;return}
