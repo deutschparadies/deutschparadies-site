@@ -6984,13 +6984,17 @@ function home(){
 
 function levelList(lv,el){
   const meta=D.levels.find(x=>x.id===lv);const ls=lessonsOf(lv);
-  let h=`<div class="section-h"><h2>${lv}</h2><span class="muted" style="font-size:.85rem">${meta.status==="ready"?"":"In Vorbereitung"}</span></div><div class="list">`;
+  const n=ls.length||(meta.lessons||[]).length;const doneN=ls.filter(l=>lessonPct(l)===100).length;
+  let h=`<div class="section-h"><h2>${lv}</h2><span class="muted" style="font-size:.85rem">${meta.status==="ready"?"":"In Vorbereitung"}</span></div>
+  <details class="vbox lek" data-lek="${lv}"${window.__lekOpen===lv?" open":""}><summary><span class="vi">📚</span><span class="vt"><b>Lektionen</b><small>${n} Lektionen${ls.length?" · "+doneN+" fertig":""}</small></span><span class="chev">⌄</span></summary><div class="list" style="margin-top:8px">`;
   if(ls.length){h+=ls.map(l=>{const p=lessonPct(l);return `<button class="row" data-go-lesson="${l.id}"><span class="num ${p===100?"done":""}">${l.n}</span><span class="t"><b>${esc(l.title)}</b><small${rtl()}>${esc(l.topic[L()])}</small></span><span class="pct">${p}%</span></button>`}).join("")}
   else{h+=(meta.lessons||[]).map((t,i)=>`<button class="row" disabled><span class="num">${i+1}</span><span class="t"><b>${esc(t)}</b><small>Bald verfügbar</small></span></button>`).join("")}
+  h+=`</div></details><div class="list">`;
   if(lv==="B2.2"&&D.telc)h+=`</div><div class="section-h"><h2>telc B2 · Prüfungstraining</h2><span class="muted" style="font-size:.85rem">5 Modelltests</span></div><div class="list">`+telcRows();
   const fo=FOLDERS[lv];
   if(fo)h+=`</div><div class="section-h"><h2>Materialien</h2></div><div class="mats"><button class="mat" data-p="drive" data-f="${fo[0]}" data-t="Buch ${lv}" data-lv="${lv}"><b>Buch</b><small>PDF zum ${lv}</small></button><button class="mat" data-p="drive" data-f="${fo[1]}" data-t="Dialoge ${lv}" data-lv="${lv}"><b>Dialoge</b><small>Dialoge zum ${lv}</small></button>${fo[2]?`<button class="mat" data-p="drive" data-f="${fo[2]}" data-t="Texte ${lv}" data-lv="${lv}"><b>Texte</b><small>Lesetexte zum ${lv}</small></button>`:""}`;
   el.innerHTML=h+"</div>"+videoSection(lv);
+  const dt=el.querySelector("details.lek");if(dt)dt.addEventListener("toggle",()=>{window.__lekOpen=dt.open?lv:""});
 }
 function level(lv){route={v:"home",lv};home()}
 
@@ -8234,7 +8238,7 @@ function installView(){
 const RO_SUB={"Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
  "Materialien":"Materiale","Buch":"Carte","Dialoge":"Dialoguri","Texte":"Texte","Videos":"Videoclipuri","Allgemeine Dialoge Grammatik":"Dialoguri generale de gramatică","telc B2 · Prüfungstraining":"Pregătire pentru examenul telc B2",
  "Wortschatz":"Vocabular","Grammatik":"Gramatică","Übungen":"Exerciții","Lesen":"Citire","Hören":"Ascultare","Sprechen":"Vorbire","Schreiben":"Scriere","Video":"Video",
- "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul","Heute":"Azi","Weitermachen":"Continuă","5 Minuten sprechen":"Vorbește 5 minute","Mission der Woche":"Misiunea săptămânii","Starte mit Lektion 1":"Începe cu lecția 1","Werkzeuge":"Instrumente","Leben in Deutschland":"Viața în Germania","Mehr üben":"Exersează mai mult","Meine Zertifikate":"Certificatele mele","Mehr":"Mai mult","Mein Beruf":"Meseria mea","Beruf":"Meserie","Missionen":"Misiuni","Zertifikate":"Certificate","Als App installieren":"Instalează ca aplicație"};
+ "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul","Heute":"Azi","Weitermachen":"Continuă","5 Minuten sprechen":"Vorbește 5 minute","Mission der Woche":"Misiunea săptămânii","Starte mit Lektion 1":"Începe cu lecția 1","Werkzeuge":"Instrumente","Lektionen":"Lecții","Leben in Deutschland":"Viața în Germania","Mehr üben":"Exersează mai mult","Meine Zertifikate":"Certificatele mele","Mehr":"Mai mult","Mein Beruf":"Meseria mea","Beruf":"Meserie","Missionen":"Misiuni","Zertifikate":"Certificate","Als App installieren":"Instalează ca aplicație"};
 function roSubs(root){if(!root)return;root.querySelectorAll(".section-h h2,.tool b,.mat b,.mod b,.vbox .vt b,.row .t b,.stat span,.quizcall b,.tabs button,.hrow .t b").forEach(el=>{if(el.dataset.ro)return;const t=el.textContent.trim();let ro=RO_SUB[t];if(!ro&&/^Quiz vor der Stunde/.test(t))ro="Quiz înainte de oră";el.dataset.ro="1";if(!ro)return;const s=document.createElement("small");s.className="ro-sub";s.lang="ro";s.textContent=ro;el.appendChild(s)})}
 new MutationObserver(()=>{roSubs(app);wrapWords(app)}).observe(app,{childList:true,subtree:true});
 
