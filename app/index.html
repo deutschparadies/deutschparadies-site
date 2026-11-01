@@ -7925,16 +7925,17 @@ function fbHtml(fb){if(!fb)return "";const cr=Object.keys(CRIT).filter(k=>fb.cri
   return `<div class="corr"><span class="kind">Korrektur von Saleh · ${fmtDate(fb.ts)}</span>${cr?`<div class="chips" style="margin:6px 0">${cr}</div>`:""}${fb.text?`<div class="ctext">${esc(fb.text)}</div>`:""}${fb.note?`<p><b>Kommentar:</b> ${esc(fb.note)}</p>`:""}</div>`}
 const hwMine=()=>{try{return JSON.parse(localStorage.getItem("dp_hw_mine"))||[]}catch(e){return []}};
 const hwAdd=x=>{const a=hwMine();a.unshift(x);try{localStorage.setItem("dp_hw_mine",JSON.stringify(a.slice(0,60)))}catch(e){}};
-function hwView(){
+function hwView(r){
   if(DEMO)return demoLocked();
-  const lv=S.hwLv||S.srsLv||"A1.1";
+  let mis=null,misLv="";if(r&&r.id){for(const k in MISSIONS){const m=MISSIONS[k].find(x=>x.id===r.id);if(m){mis=m;misLv=k}}}
+  const lv=mis?misLv:(S.hwLv||S.srsLv||"A1.1");
   const tasks=lessonsOf(lv).filter(l=>l.write).map(l=>`Lektion ${l.n}: ${l.write.title}`);
-  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Hausaufgaben</span><h1>Hausaufgabe abgeben</h1>
+  app.innerHTML=`${mis?`<button class="back" data-p="mis" data-lv="${misLv}">‹ Zurück</button><span class="kind" style="display:block">Mission ${misLv}</span><h1>${mis.ico} ${esc(mis.t)}</h1><div class="expl"${rtl()} style="margin-bottom:12px">${esc(mis.d[L()])}</div>`:`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Hausaufgaben</span><h1>Hausaufgabe abgeben</h1>`}
   <form id="hwf" class="card"><label class="kind">Dein Vor- und Nachname</label><input class="gap" id="hn" maxlength="60" autocomplete="name" value="${esc(myName())}">
    <label class="kind" style="display:block;margin-top:12px">Niveau</label><select class="gap" id="hlv">${levelIds().map(x=>`<option${x===lv?" selected":""}>${x}</option>`).join("")}</select>
-   <label class="kind" style="display:block;margin-top:12px">Aufgabe</label><input class="gap" id="ht" list="hwdl" maxlength="120" placeholder="z. B. Beschwerde an die Hausverwaltung"><datalist id="hwdl">${tasks.map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
+   <label class="kind" style="display:block;margin-top:12px">Aufgabe</label><input class="gap" id="ht" list="hwdl" maxlength="120" placeholder="z. B. Beschwerde an die Hausverwaltung" value="${mis?esc("Mission "+misLv+": "+mis.t):""}"><datalist id="hwdl">${tasks.map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
    <label class="kind" style="display:block;margin-top:12px">Dein Text</label><textarea class="wta" id="htx" rows="9" placeholder="Schreib deinen Text hier …"></textarea><div class="wcount"><span id="hwc">0</span> Wörter</div>
-   <label class="kind" style="display:block;margin-top:12px">Oder ein Foto (Heft / Blatt)</label><input type="file" id="himg" accept="image/*" class="gap" style="font-size:.95rem"><img id="hprev" alt="" hidden style="width:100%;margin-top:8px;border-radius:10px">
+   <label class="kind" style="display:block;margin-top:12px">${mis?"Oder ein Foto / Screenshot":"Oder ein Foto (Heft / Blatt)"}</label><input type="file" id="himg" accept="image/*" class="gap" style="font-size:.95rem"><img id="hprev" alt="" hidden style="width:100%;margin-top:8px;border-radius:10px">
    <label class="kind" style="display:block;margin-top:12px">Oder eine Sprachaufnahme (Sprechen, max. 3 Min.)</label><div id="hrec"></div>
    <button class="btn" type="submit" style="width:100%;margin-top:14px">Abgeben</button><div class="feedback" id="hfb" hidden></div></form>
   <div class="section-h"><h2>Meine Abgaben</h2></div><div id="hlist"><p class="muted">Lädt …</p></div>`;
@@ -7946,7 +7947,7 @@ function hwView(){
   app.querySelector("#hwf").onsubmit=async e=>{e.preventDefault();const name=app.querySelector("#hn").value.trim(),title=app.querySelector("#ht").value.trim(),text=ta.value.trim(),hlv=app.querySelector("#hlv").value;
     if(name.length<2)return msg("Bitte schreib deinen Namen.");if(!title)return msg("Bitte schreib, welche Aufgabe das ist.");if(!text&&!img&&!audio)return msg("Bitte schreib einen Text, füge ein Foto hinzu oder nimm etwas auf.");if(img&&audio)return msg("Bitte schick Foto und Aufnahme getrennt (zwei Abgaben).");
     setName(name);msg("Wird gesendet …",true);const j=await api("hw",{method:"POST",body:{name,lv:hlv,title,text,img,audio}});
-    if(j._ok){hwAdd(j.id+"."+j.tok);try{localStorage.removeItem(key)}catch(e){}addPts(20);msg("Abgegeben! Saleh korrigiert deine Aufgabe bald.",true);ta.value="";cnt();img=null;audio=null;recorderUI(app.querySelector("#hrec"),a=>{audio=a});app.querySelector("#hprev").hidden=true;app.querySelector("#ht").value="";app.querySelector("#himg").value="";loadList()}
+    if(j._ok){hwAdd(j.id+"."+j.tok);try{localStorage.removeItem(key)}catch(e){}addPts(20);if(mis){S.mis=S.mis||{};if(!S.mis[mis.id]){S.mis[mis.id]=Date.now();addPts(30)}save()}msg(mis?"Abgegeben! Mission erledigt 🎉 Saleh schaut sich deinen Beweis an.":"Abgegeben! Saleh korrigiert deine Aufgabe bald.",true);ta.value="";cnt();img=null;audio=null;recorderUI(app.querySelector("#hrec"),a=>{audio=a});app.querySelector("#hprev").hidden=true;if(!mis)app.querySelector("#ht").value="";app.querySelector("#himg").value="";loadList()}
     else msg(j._status===401?"Bitte öffne den Lernraum neu und gib das Passwort ein.":j.error==="big"?"Das Foto ist zu groß.":j._status===0?"Keine Verbindung. Dein Text ist gespeichert – versuch es später noch einmal.":"Senden fehlgeschlagen. Bitte noch einmal versuchen.")};
   async function loadList(){const box=app.querySelector("#hlist");const mine=hwMine();if(!mine.length){box.innerHTML=`<p class="muted">Noch keine Abgaben auf diesem Handy.</p>`;return}
     const j=await api("hw?mine="+encodeURIComponent(mine.join(",")));if(!box.isConnected)return;if(!j._ok){box.innerHTML=`<p class="muted">Konnte nicht geladen werden.</p>`;return}
@@ -8396,7 +8397,7 @@ async function certAdmin(body){
 // ---------- tabs: Lernen · Sprechen · Missionen · Ich ----------
 LIFE_RP.forEach(x=>RP.push(x));BERUF.forEach(b=>b.rp.forEach(x=>{x.job=b.id;RP.push(x)}));
 const TAB_OF={speak:"speak",pron:"speak",rp:"speak",rpp:"speak",mis:"mis",me:"me",final:"me",week:"me",install:"me"};
-function tabOf(r){if(r.v==="rpp"){const sc=RP.find(x=>x.id===r.id);if(sc&&sc.lv==="BERUF")return "home"}return TAB_OF[r.v]||"home"}
+function tabOf(r){if(r.v==="hw"&&r.id)return "mis";if(r.v==="rpp"){const sc=RP.find(x=>x.id===r.id);if(sc&&sc.lv==="BERUF")return "home"}return TAB_OF[r.v]||"home"}
 function setNav(show){let n=document.getElementById("tabbar");
   if(!show){if(n)n.hidden=true;document.body.classList.remove("has-tabs");return}
   if(!n){n=document.createElement("nav");n.id="tabbar";n.setAttribute("aria-label","Bereiche");
@@ -8461,13 +8462,14 @@ function misView(r){
   const lv=r.lv||myMisLv();if(r.lv){S.misLv=r.lv;save()}
   const list=MISSIONS[lv]||[];const d=S.mis||{};const n=list.filter(m=>d[m.id]).length;
   app.innerHTML=`<span class="kind" style="display:block">Mission Deutschland</span><h1>Deutsch im echten Leben</h1>
-  <p class="muted">Jede Mission ist eine echte Aufgabe – nicht aus dem Buch, sondern aus dem Leben. Mach sie, schick deinem Lehrer den Beweis und sammle Punkte.</p>
+  <p class="muted">Jede Mission ist eine echte Aufgabe – nicht aus dem Buch, sondern aus dem Leben. Mach sie, gib sie hier ab und sammle Punkte. Saleh sieht deine Abgabe und antwortet dir.</p>
   <div class="chips" style="margin-top:12px">${Object.keys(MISSIONS).map(id=>`<button class="chip" style="width:auto" data-p="mis" data-lv="${id}" aria-pressed="${id===lv}">${id}</button>`).join("")}</div>
   <div class="progress" style="margin-top:12px"><div class="goal"><i style="width:${list.length?n/list.length*100:0}%"></i></div><span>${n}/${list.length}</span></div>
   ${list.map(m=>{const ok=!!d[m.id];return `<div class="card mis${ok?" ok":""}" style="margin-top:12px"><div class="mh"><span class="ti">${ok?"✅":m.ico}</span><b>${esc(m.t)}</b></div>
    <p${rtl()} style="margin:8px 0 0">${esc(m.d[L()])}</p>
-   <div class="actions"><a class="btn gold" style="text-decoration:none;text-align:center" target="_blank" rel="noopener" href="https://wa.me/40771237705?text=${encodeURIComponent("Mission "+lv+": "+m.t+" – hier ist mein Beweis 👇")}">📲 Beweis an Saleh</a>
-   <button class="btn ${ok?"ghost":""}" data-misdone="${m.id}">${ok?"Erledigt ✓":"Als erledigt markieren"}</button></div></div>`}).join("")}`;
+   <div class="actions"><button class="btn gold" data-p="hw" data-id="${m.id}">✍️ Hier abgeben</button>
+   <button class="btn ${ok?"ghost":""}" data-misdone="${m.id}">${ok?"Erledigt ✓":"Als erledigt markieren"}</button></div>
+   <p class="note" style="margin:8px 0 0">Text, Foto/Screenshot oder Sprachaufnahme · oder <a target="_blank" rel="noopener" href="https://wa.me/40771237705?text=${encodeURIComponent("Mission "+lv+": "+m.t+" – hier ist mein Beweis 👇")}">per WhatsApp</a></p></div>`}).join("")}`;
   app.querySelectorAll("[data-misdone]").forEach(b=>b.onclick=()=>{if(DEMO)return demoLocked();S.mis=S.mis||{};const id=b.dataset.misdone;if(S.mis[id])delete S.mis[id];else{S.mis[id]=Date.now();addPts(30);toast("Super! +30 Punkte 🎉")}save();misView({lv})})}
 
 // ---------- Ich tab ----------
