@@ -6980,6 +6980,11 @@ function home(){
   const goal=Math.min(100,Math.round(S.todayPts/GOAL*100));
   const lastL=S.last&&findLesson(S.last);
   app.innerHTML=`${!realUnlocked()&&trialOk()?`<div class="demobar">Probezugang · noch ${Math.max(1,Math.ceil((trialExp()-Date.now())/3600000))} Std. · <a href="${WA}" target="_blank" rel="noopener">Kurs anfragen</a></div>`:""}
+  ${homeSwitch()}
+  ${S.homeTab==="beruf"?berufCards():`<div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
+  <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
+  <div id="lvlList"></div>
+`}
   <section class="hero">
     <div class="ph"><img src="${PHOTO}" alt="Saleh"></div>
     <div><h1>Hallo${myName()?", "+esc(myName().split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
@@ -6991,12 +6996,7 @@ function home(){
   </div>
   ${heuteCard(cur)}
   <div id="quizcalls"></div>
-  ${homeSwitch()}
-  ${S.homeTab==="beruf"?berufCards():`<div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
-  <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
-  <div id="lvlList"></div>
-  ${plusHome()}
-  ${allgDialoge()}`}
+  ${S.homeTab==="beruf"?"":plusHome()+allgDialoge()}
   ${lessonsOf(cur).length?`<button class="certbtn" data-p="cert" data-lv="${cur}"><span class="ti">🏅</span><span class="t"><b>${(S.certs||{})[cur]&&S.certs[cur].id?"Dein Zertifikat "+cur:"Beantrage dein Zertifikat"}<small class="ro-sub" lang="ro">${(S.certs||{})[cur]&&S.certs[cur].id?"Certificatul tău "+cur:"Solicită certificatul tău"}</small></b><small>${(S.certs||{})[cur]&&S.certs[cur].id?"Freigegeben · ansehen":(S.certreq||{})[cur]&&S.certreq[cur].status==="neu"?"⏳ Wartet auf Freigabe":"Abschlusstest "+cur+" · ab 60 %"}</small><small lang="ro" class="rol">${(S.certs||{})[cur]&&S.certs[cur].id?"Aprobat · vezi certificatul":(S.certreq||{})[cur]&&S.certreq[cur].status==="neu"?"Așteaptă aprobarea profesorului":"Test final "+cur+" · de la 60 %"}</small></span><span class="chev">›</span></button>`:""}
   <footer>Deutschparadies · deutschparadies.ro<br>${DEMO?`<a class="linkbtn" href="${WA}" target="_blank" rel="noopener">Kurs auf WhatsApp anfragen</a>`:`<button class="linkbtn" data-pw="1">${window.__DP_WEB?"Lehrerbereich":"Passwort ändern (Lehrer)"}</button>`}</footer>`;
   const ll=app.querySelector("#lvlList");if(ll)levelList(cur,ll);setTimeout(loadQuizCalls,0);
@@ -7708,6 +7708,7 @@ function plusHome(){
   const due=srsDue(S.srsLv||null);
   return `<div class="section-h"><h2>Werkzeuge</h2></div>
   <div class="tools">
+   ${t("art","🎨","der / die / das","Wort eingeben · Artikel sehen")}
    ${t("srs","🗂️","Wortschatz-Trainer",due?due+" Wörter heute fällig":"Karteikarten mit System")}
    ${t("gram","🔎","Grammatik & Verben","Suchen · Konjugieren · Artikel")}
    ${t("hw","📮","Hausaufgaben","Abgeben · Korrektur lesen")}
@@ -8018,6 +8019,27 @@ function gramView(r){
       out.innerHTML=items.length?`<div class="list">${items.slice(0,40).map(x=>`<div class="row"><span class="t"><b>${artHtml(x.v[0])}</b><small${rtl()}>${esc(tr(x.v))} · ${x.lv}</small></span>${sayBtn(x.v[0])}</div>`).join("")}</div>`:`<p class="muted">Nicht gefunden.</p>`}};
   inp.oninput=run;run();setTimeout(()=>inp.focus(),30)}
 
+
+// ---------- der / die / das ----------
+const ART_RULES=[[/(ung|heit|keit|schaft|ion|tät|ik|ur|enz|anz|ei|ie)$/,"die"],[/(chen|lein|ment|um|tum|ma|o)$/,"das"],[/(ling|ismus|or|ist|ant|ent|eur|ich|ig|en)$/,"der"],[/e$/,"die"]];
+function artIndex(){if(window.__artIx)return window.__artIx;const ix={};for(const lv of levelIds())for(const l of lessonsOf(lv))for(const v of l.vocab||[]){const m=v[0].match(/^(der|die|das) ([^,(]+)/);if(!m)continue;const w=norm(m[2]);if(!ix[w])ix[w]={v,lv,art:m[1],w:m[2].trim()}}return window.__artIx=ix}
+function artView(r){
+  if(DEMO)return demoLocked();
+  app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Artikel finden</span><h1>der / die / das?</h1>
+  <p class="muted">Schreib ein Nomen – du siehst sofort den richtigen Artikel. <span class="art-der">der</span> = maskulin · <span class="art-die">die</span> = feminin · <span class="art-das">das</span> = neutral</p>
+  <input class="gap" id="aq" type="search" autocomplete="off" autocapitalize="off" placeholder="z. B. Tisch, Wohnung, Kind" style="width:100%;font-size:1.15rem;margin-top:10px" value="${esc(r.q||"")}">
+  <div id="aout" style="margin-top:14px"></div>`;
+  const inp=app.querySelector("#aq"),out=app.querySelector("#aout"),ix=artIndex();
+  const run=()=>{const n=norm(inp.value).replace(/^(der|die|das) /,"");if(n.length<2){out.innerHTML=`<p class="muted">Tippe mindestens 2 Buchstaben.</p>`;return}
+    const hit=ix[n];
+    const list=Object.values(ix).filter(x=>{const w=norm(x.w);return w!==n&&(w.startsWith(n)||(n.length>=3&&w.includes(n)))}).sort((a,b)=>norm(b.w).startsWith(n)-norm(a.w).startsWith(n)).slice(0,25);
+    let h="";
+    if(hit)h+=`<div class="card" style="text-align:center"><div style="font-family:var(--display);font-size:2.3rem;margin:6px 0">${artHtml(hit.art+" "+hit.w)}</div><p class="muted" style="margin:0"${rtl()}>${esc(tr(hit.v))} · ${hit.lv}</p><div style="margin-top:8px">${sayBtn(hit.art+" "+hit.w)}</div></div>`;
+    else{const rule=ART_RULES.find(([re])=>re.test(n));const comp=Object.values(ix).find(x=>{const w=norm(x.w);return w.length>n.length&&w.endsWith(n)});const w=inp.value.trim().replace(/^(der|die|das) /i,"");const W=w.charAt(0).toUpperCase()+w.slice(1);
+      h+=`<div class="card" style="text-align:center"><p class="muted" style="margin:0">„${esc(W)}“ ist nicht in unseren Lektionen.</p>${comp?`<div style="font-family:var(--display);font-size:1.8rem;margin:8px 0">${artHtml(comp.art+" "+W)}</div><p class="note" style="margin:0">Wie ${artHtml(comp.art+" "+comp.w)} – das letzte Wort bestimmt den Artikel.</p>`:rule?`<div style="font-family:var(--display);font-size:1.8rem;margin:8px 0">${artHtml(rule[1]+" "+W)}?</div><p class="note" style="margin:0">Nur eine Regel nach der Endung – bitte im Wörterbuch prüfen.</p>`:""}</div>`}
+    if(list.length)h+=`<div class="section-h"><h2>Ähnliche Wörter</h2></div><div class="list">${list.map(x=>`<div class="row"><span class="t"><b>${artHtml(x.art+" "+x.w)}</b><small${rtl()}>${esc(tr(x.v))} · ${x.lv}</small></span>${sayBtn(x.art+" "+x.w)}</div>`).join("")}</div>`;
+    out.innerHTML=h};
+  inp.oninput=run;run();setTimeout(()=>inp.focus(),30)}
 // ---------- homework ----------
 function compressImage(file){return new Promise((ok,no)=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const max=1400;let w=img.width,h=img.height;if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s)}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);URL.revokeObjectURL(u);let q=0.75,d=c.toDataURL("image/jpeg",q);while(d.length>1200000&&q>0.3){q-=0.15;d=c.toDataURL("image/jpeg",q)}ok(d)};img.onerror=()=>no(new Error("img"));img.src=u})}
 const CRIT={I:"Aufgabenerfüllung",II:"Kommunikative Gestaltung",III:"Formale Richtigkeit"};
@@ -8323,7 +8345,7 @@ function installView(){
   const b=app.querySelector("#bip");if(b)b.onclick=async()=>{BIP.prompt();try{await BIP.userChoice}catch(e){}BIP=null;installView()}}
 
 // ---------- small Romanian subtitles under every section ----------
-const RO_SUB={"Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
+const RO_SUB={"der / die / das?":"Articolul","der / die / das":"Articolul","Ähnliche Wörter":"Cuvinte asemănătoare","Trainieren":"Exersează","Niveaus":"Niveluri","Wortschatz-Trainer":"Antrenor de vocabular","Aussprache":"Pronunție","Rollenspiele":"Jocuri de rol","Grammatik & Verben":"Gramatică și verbe","Hausaufgaben":"Teme","Abschlusstest":"Test final",
  "Materialien":"Materiale","Buch":"Carte","Dialoge":"Dialoguri","Texte":"Texte","Videos":"Videoclipuri","Allgemeine Dialoge Grammatik":"Dialoguri generale de gramatică","telc B2 · Prüfungstraining":"Pregătire pentru examenul telc B2",
  "Wortschatz":"Vocabular","Grammatik":"Gramatică","Übungen":"Exerciții","Lesen":"Citire","Hören":"Ascultare","Sprechen":"Vorbire","Schreiben":"Scriere","Video":"Video",
  "Punkte":"Puncte","Beschwerde-Trainer":"Antrenor pentru reclamații","Fehlerheft":"Caietul de greșeli","Wochen-Challenge":"Provocarea săptămânii","telc-Plan":"Plan pentru telc","Tage in Folge":"Zile la rând","Tagesziel":"Obiectiv zilnic","Meine Abgaben":"Temele mele","So funktioniert die Prüfung":"Cum funcționează examenul","Heute":"Azi","Weitermachen":"Continuă","5 Minuten sprechen":"Vorbește 5 minute","Mission der Woche":"Misiunea săptămânii","Starte mit Lektion 1":"Începe cu lecția 1","Werkzeuge":"Instrumente","🏅 Beantrage dein Zertifikat":"Solicită certificatul tău","🏅 Dein Zertifikat":"Certificatul tău","Lektionen":"Lecții","Leben in Deutschland":"Viața în Germania","Mehr üben":"Exersează mai mult","Meine Zertifikate":"Certificatele mele","Mehr":"Mai mult","Mein Beruf":"Meseria mea","Beruf":"Meserie","Missionen":"Misiuni","Zertifikate":"Certificate","Als App installieren":"Instalează ca aplicație"};
@@ -8651,7 +8673,7 @@ function meView(){
   app.querySelector("#mynok").onclick=()=>{const v=app.querySelector("#myn").value.trim();if(v.length>1){setName(v);toast("Gespeichert ✓");meView()}};
   app.querySelectorAll("[data-showcert]").forEach(b=>b.onclick=()=>{const id=b.dataset.showcert,c=certs[id];makeCert(id,c.pct,c.name,app.querySelector("#certbox"),c);setTimeout(()=>app.querySelector("#certbox").scrollIntoView({behavior:"smooth"}),300)})}
 
-const PLUS_VIEWS={cert:certView,speak:speakView,mis:misView,me:meView,beruf:berufView,bes:besView,fehler:fehlerView,week:weekView,plan:planView,install:installView,srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
+const PLUS_VIEWS={art:artView,cert:certView,speak:speakView,mis:misView,me:meView,beruf:berufView,bes:besView,fehler:fehlerView,week:weekView,plan:planView,install:installView,srs:srsView,pron:pronView,rp:rpList,rpp:rpPlay,gram:gramView,hw:hwView,quiz:quizView,final:finalView,drive:driveView};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-p]");if(!b)return;e.preventDefault();e.stopPropagation();
   const r={v:b.dataset.p};["lv","id","tab","q","go"].forEach(k=>{if(b.dataset[k]!==undefined)r[k]=b.dataset[k]});if(b.dataset.f){r.f=b.dataset.f;r.t=b.dataset.t;r.lv=b.dataset.lv}go(r)},true);
 // ===================== /Lernraum Plus =====================
