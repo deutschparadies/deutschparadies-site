@@ -6980,15 +6980,15 @@ function home(){
   const goal=Math.min(100,Math.round(S.todayPts/GOAL*100));
   const lastL=S.last&&findLesson(S.last);
   app.innerHTML=`${!realUnlocked()&&trialOk()?`<div class="demobar">Probezugang · noch ${Math.max(1,Math.ceil((trialExp()-Date.now())/3600000))} Std. · <a href="${WA}" target="_blank" rel="noopener">Kurs anfragen</a></div>`:""}
+  <section class="hero">
+    <div class="ph"><img src="${PHOTO}" alt="Saleh"></div>
+    <div><h1>Hallo${myName()?", "+esc(myName().split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
+  </section>
   ${homeSwitch()}
   ${S.homeTab==="beruf"?berufCards():`<div class="section-h"><h2>Niveaus</h2><span class="muted" style="font-size:.85rem">8 Stufen</span></div>
   <div class="levels">${D.levels.map(l=>`<button class="lvl" data-lv="${l.id}" aria-current="${l.id===cur}"><b>${l.id}</b><small>${l.status==="ready"?(lessonsOf(l.id).length+" Lektionen"):"bald"}</small></button>`).join("")}</div>
   <div id="lvlList"></div>
 `}
-  <section class="hero">
-    <div class="ph"><img src="${PHOTO}" alt="Saleh"></div>
-    <div><h1>Hallo${myName()?", "+esc(myName().split(" ")[0]):""}! Schön, dass du da bist.</h1><p class="muted">Dein Lehrer Saleh · Deutsch von A1.1 bis B2.2</p></div>
-  </section>
   <div class="stats">
     <div class="stat"><b>${S.points}</b><span>Punkte</span></div>
     <div class="stat"><b>${S.streak||0}</b><span>Tage in Folge</span></div>
