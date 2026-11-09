@@ -8045,23 +8045,49 @@ function profilView(){
 // ---------- der / die / das ----------
 const ART_RULES=[[/(ung|heit|keit|schaft|ion|tät|ik|ur|enz|anz|ei|ie)$/,"die"],[/(chen|lein|ment|um|tum|ma|o)$/,"das"],[/(ling|ismus|or|ist|ant|ent|eur|ich|ig|en)$/,"der"],[/e$/,"die"]];
 function artIndex(){if(window.__artIx)return window.__artIx;const ix={};for(const lv of levelIds())for(const l of lessonsOf(lv))for(const v of l.vocab||[]){const m=v[0].match(/^(der|die|das) ([^,(]+)/);if(!m)continue;const w=norm(m[2]);if(!ix[w])ix[w]={v,lv,art:m[1],w:m[2].trim()}}return window.__artIx=ix}
+// big noun list (Wiktionary, CC BY-SA 4.0) – compounds are resolved by their last word
+const ART_NAMES=["der","die","das"];
+function artDict(){if(window.__artD)return window.__artD;return window.__artD=fetch(window.__DP_WEB?"/app/artikel.txt":"artikel.txt",{cache:"force-cache"}).then(r=>{if(!r.ok)throw 0;return r.text()}).then(t=>{const [a,b]=t.split("\n#\n");const lem=new Map(),pl=new Map(),fold=new Map();const f=w=>w.toLowerCase().replace(/ä/g,"a").replace(/ö/g,"o").replace(/ü/g,"u").replace(/ß/g,"ss");
+  for(const l of a.split("\n")){const m=l.match(/^(.*?)([012]+)$/);if(m){lem.set(m[1],m[2]);const k=f(m[1]);if(!fold.has(k))fold.set(k,m[1])}}
+  for(const l of (b||"").split("\n")){const i=l.indexOf(">");if(i>0){pl.set(l.slice(0,i),l.slice(i+1));const k=f(l.slice(0,i));if(!fold.has(k))fold.set(k,l.slice(0,i))}}
+  return {lem,pl,fold,f}}).catch(e=>{window.__artD=null;throw e})}
+function artFind(D,raw){const cap=w=>w.charAt(0).toUpperCase()+w.slice(1);
+  const deU=w=>{const i=Math.max(w.lastIndexOf("ä"),w.lastIndexOf("ö"),w.lastIndexOf("ü"));return i<0?w:w.slice(0,i)+({"ä":"a","ö":"o","ü":"u"})[w[i]]+w.slice(i+1)};
+  const ex=w=>D.lem.has(w)?{w,c:D.lem.get(w)}:null;
+  const plur=w=>{for(const e of ["nen","en","er","n","e","s"]){if(w.length-e.length<3||!w.endsWith(e))continue;const b=w.slice(0,-e.length);const x=ex(b)||ex(deU(b));if(x)return Object.assign({pl:w},x)}return null};
+  const whole=w=>ex(w)||plur(w);
+  const comp=w=>{for(let i=3;i<=w.length-4;i++){const t=cap(w.slice(i));const x=whole(t);if(x){const head=w.slice(0,i);return {w:head+x.w.toLowerCase(),c:x.c,part:x.w,pl:x.pl?w:null,comp:true}}}return null};
+  const w=cap(raw.trim().replace(/^(der|die|das)\s+/i,""));if(w.length<2)return null;
+  let x=whole(w);if(x)return x;
+  const g=D.fold.get(D.f(w));if(g){x=whole(g);if(x)return Object.assign({fixed:g},x)}
+  x=comp(w);if(x)return x;
+  return null}
 function artView(r){
   if(DEMO)return demoLocked();
   app.innerHTML=`<button class="back" data-home="">‹ Zurück</button><span class="kind" style="display:block">Artikel finden</span><h1>der / die / das?</h1>
-  <p class="muted">Schreib ein Nomen – du siehst sofort den richtigen Artikel. <span class="art-der">der</span> = maskulin · <span class="art-die">die</span> = feminin · <span class="art-das">das</span> = neutral</p>
-  <input class="gap" id="aq" type="search" autocomplete="off" autocapitalize="off" placeholder="z. B. Tisch, Wohnung, Kind" style="width:100%;font-size:1.15rem;margin-top:10px" value="${esc(r.q||"")}">
-  <div id="aout" style="margin-top:14px"></div>`;
-  const inp=app.querySelector("#aq"),out=app.querySelector("#aout"),ix=artIndex();
-  const run=()=>{const n=norm(inp.value).replace(/^(der|die|das) /,"");if(n.length<2){out.innerHTML=`<p class="muted">Tippe mindestens 2 Buchstaben.</p>`;return}
-    const hit=ix[n];
-    const list=Object.values(ix).filter(x=>{const w=norm(x.w);return w!==n&&(w.startsWith(n)||(n.length>=3&&w.includes(n)))}).sort((a,b)=>norm(b.w).startsWith(n)-norm(a.w).startsWith(n)).slice(0,25);
-    let h="";
-    if(hit)h+=`<div class="card" style="text-align:center"><div style="font-family:var(--display);font-size:2.3rem;margin:6px 0">${artHtml(hit.art+" "+hit.w)}</div><p class="muted" style="margin:0"${rtl()}>${esc(tr(hit.v))} · ${hit.lv}</p><div style="margin-top:8px">${sayBtn(hit.art+" "+hit.w)}</div></div>`;
-    else{const rule=ART_RULES.find(([re])=>re.test(n));const comp=Object.values(ix).find(x=>{const w=norm(x.w);return w.length>n.length&&w.endsWith(n)});const w=inp.value.trim().replace(/^(der|die|das) /i,"");const W=w.charAt(0).toUpperCase()+w.slice(1);
-      h+=`<div class="card" style="text-align:center"><p class="muted" style="margin:0">„${esc(W)}“ ist nicht in unseren Lektionen.</p>${comp?`<div style="font-family:var(--display);font-size:1.8rem;margin:8px 0">${artHtml(comp.art+" "+W)}</div><p class="note" style="margin:0">Wie ${artHtml(comp.art+" "+comp.w)} – das letzte Wort bestimmt den Artikel.</p>`:rule?`<div style="font-family:var(--display);font-size:1.8rem;margin:8px 0">${artHtml(rule[1]+" "+W)}?</div><p class="note" style="margin:0">Nur eine Regel nach der Endung – bitte im Wörterbuch prüfen.</p>`:""}</div>`}
-    if(list.length)h+=`<div class="section-h"><h2>Ähnliche Wörter</h2></div><div class="list">${list.map(x=>`<div class="row"><span class="t"><b>${artHtml(x.art+" "+x.w)}</b><small${rtl()}>${esc(tr(x.v))} · ${x.lv}</small></span>${sayBtn(x.art+" "+x.w)}</div>`).join("")}</div>`;
+  <p class="muted">Schreib irgendein Nomen – du siehst sofort den richtigen Artikel. <span class="art-der">der</span> = maskulin · <span class="art-die">die</span> = feminin · <span class="art-das">das</span> = neutral</p>
+  <input class="gap" id="aq" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="z. B. Tisch, Wohnung, Kühlschrank" style="width:100%;font-size:1.15rem;margin-top:10px" value="${esc(r.q||"")}">
+  <div id="aout" style="margin-top:14px"></div><p class="note" style="margin-top:18px">Wörterliste: Wiktionary (CC BY-SA 4.0)</p>`;
+  const inp=app.querySelector("#aq"),out=app.querySelector("#aout"),ix=artIndex();let D=null,dErr=false;
+  artDict().then(d=>{D=d;run()}).catch(()=>{dErr=true;run()});
+  const big=(art,w)=>`<div style="font-family:var(--display);font-size:2.3rem;margin:6px 0;overflow-wrap:anywhere">${artHtml(art+" "+w)}</div>`;
+  const run=()=>{const typed=inp.value.trim();const n=norm(typed).replace(/^(der|die|das) /,"");if(n.length<2){out.innerHTML=`<p class="muted">Tippe ein Nomen, z. B. <b>Tisch</b>.</p>`;return}
+    const hit=ix[n];let h="";
+    if(hit)h=`<div class="card" style="text-align:center">${big(hit.art,hit.w)}<p class="muted" style="margin:0"${rtl()}>${esc(tr(hit.v))} · ${hit.lv}</p><div style="margin-top:8px">${sayBtn(hit.art+" "+hit.w)}</div></div>`;
+    else if(!D&&!dErr)h=`<p class="muted">Wörterbuch lädt …</p>`;
+    else{const x=D&&artFind(D,typed);
+      if(x){const arts=[...x.c].map(c=>ART_NAMES[c]);const word=x.w;
+        h=`<div class="card" style="text-align:center">${arts.map(a=>big(a,word)).join("")}
+        ${arts.length>1?`<p class="note" style="margin:0">Beide Artikel sind möglich – oft mit anderer Bedeutung.</p>`:""}
+        ${x.pl?`<p class="muted" style="margin:4px 0 0">„${esc(x.pl)}“ ist Plural – im Plural immer <span class="art-die">die</span> ${esc(x.pl)}.</p>`:""}
+        ${x.comp&&x.part&&!D.lem.has(x.w)?`<p class="muted" style="margin:4px 0 0">Das letzte Wort bestimmt den Artikel: ${artHtml(arts[0]+" "+x.part)}</p>`:""}
+        ${x.fixed&&norm(x.fixed)!==n?`<p class="note" style="margin:4px 0 0">Meintest du <b>${esc(x.fixed)}</b>?</p>`:""}
+        <div style="margin-top:8px">${sayBtn(arts[0]+" "+word)}</div></div>`}
+      else{const rule=ART_RULES.find(([re])=>re.test(n));const W=typed.replace(/^(der|die|das)\s+/i,"");const Wc=W.charAt(0).toUpperCase()+W.slice(1);
+        h=`<div class="card" style="text-align:center"><p class="muted" style="margin:0">${dErr?"Wörterbuch konnte nicht geladen werden – prüfe das Internet.":`„${esc(Wc)}“ kenne ich nicht. Ist es ein Nomen und richtig geschrieben?`}</p>${rule?`<div style="font-family:var(--display);font-size:1.8rem;margin:8px 0">${artHtml(rule[1]+" "+Wc)}?</div><p class="note" style="margin:0">Nur eine Regel nach der Endung – nicht sicher.</p>`:""}</div>`}}
     out.innerHTML=h};
   inp.oninput=run;run();setTimeout(()=>inp.focus(),30)}
+
 // ---------- homework ----------
 function compressImage(file){return new Promise((ok,no)=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const max=1400;let w=img.width,h=img.height;if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s)}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);URL.revokeObjectURL(u);let q=0.75,d=c.toDataURL("image/jpeg",q);while(d.length>1200000&&q>0.3){q-=0.15;d=c.toDataURL("image/jpeg",q)}ok(d)};img.onerror=()=>no(new Error("img"));img.src=u})}
 const CRIT={I:"Aufgabenerfüllung",II:"Kommunikative Gestaltung",III:"Formale Richtigkeit"};
