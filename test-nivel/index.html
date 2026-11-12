@@ -124,7 +124,7 @@ footer{text-align:center;font-size:.8rem;color:rgba(23,35,29,.5);padding:0 16px 
     <div class="parts">
       <div class="part"><span class="n">1</span><div><b>Nivel cu nivel: A1 → A2 → B1 → B2 → C1</b><small>10 întrebări pe nivel: gramatică, citire și ascultare</small></div></div>
       <div class="part"><span class="n">2</span><div><b>Treci la nivelul următor doar cu minimum 7/10</b><small>Dacă nu ai 7 răspunsuri corecte, testul se oprește și îți arată nivelul</small></div></div>
-      <div class="part"><span class="n">3</span><div><b>Rezultat pe subnivel: A1.1, A1.2, A2.1 …</b><small>Înregistrările se pot asculta de maximum 2 ori</small></div></div>
+      <div class="part"><span class="n">3</span><div><b>Nivelul tău = ultimul nivel trecut</b><small>Înregistrările se pot asculta de maximum 2 ori</small></div></div>
     </div>
     <div class="facts"><span>⏱ între 5 și 30 de minute</span><span>🎧 folosește căști</span><span>✍️ fără dicționar</span></div>
     <p class="note">Nu ghici: răspunde singur, fără dicționar și fără ajutor. Doar așa rezultatul arată nivelul tău real.</p>
@@ -309,13 +309,14 @@ function finish(){
   items.forEach(function(it,i){if(ans[i]===undefined)return;done[it.lv]=1;tot[it.type]++;if(ans[i]===it.correct){per[it.lv]++;sk[it.type]++;}});
   var stop=null;for(var i=0;i<LV.length;i++){if(per[LV[i]]<PASS){stop=LV[i];break;}}
   var level,course,title,text;
-  if(!stop){
-    level="C1.2";course="C1.2";title="Felicitări – nivel avansat!";text="Ai trecut toate nivelurile testului.";
+  var si=stop?LV.indexOf(stop):LV.length;
+  if(si===0){
+    level="Începător";course="A1.1";title="Ești la început – perfect pentru A1.1";text="Nu ai trecut încă nivelul A1. Cel mai potrivit este să începi cu A1.1.";
+  } else if(si===LV.length){
+    level="C1";course="C1";title="Felicitări – nivel avansat!";text="Ai trecut toate nivelurile testului.";
   } else {
-    var sub=per[stop]>=4?".2":".1";level=stop+sub;course=level;
-    title="Nivelul tău estimat: "+level;
-    text=sub===".1"?("Cel mai potrivit este să începi cu "+level+", prima parte a nivelului "+stop+"."):("Ai deja o parte din nivelul "+stop+". Cel mai potrivit este să continui cu "+level+".");
-    if(stop!=="A1")text="Ai trecut nivelurile anterioare. "+text;
+    level=LV[si-1];course=LV[si]+".1";title="Nivelul tău: "+level;
+    text="Ai trecut nivelul "+level+". Următorul pas este cursul "+course+".";
   }
   text+=" Rezultatul e orientativ: profesorul Saleh îți confirmă nivelul într-o scurtă discuție pe WhatsApp.";
   $("resLevel").textContent=level;$("resTitle").textContent=title;$("resText").textContent=text;
