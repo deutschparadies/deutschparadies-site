@@ -122,12 +122,12 @@ footer{text-align:center;font-size:.8rem;color:rgba(23,35,29,.5);padding:0 16px 
     <p class="lead">Construit după modelul testelor Goethe și telc: întrebările devin treptat mai grele, de la A1 până la C1. La final afli ce nivel ai și ce curs Deutschparadies ți se potrivește.</p>
     <div class="levels"><span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span></div>
     <div class="parts">
-      <div class="part"><span class="n">1</span><div><b>Sprachbausteine – gramatică și vocabular</b><small>30 de întrebări cu variante de răspuns</small></div></div>
-      <div class="part"><span class="n">2</span><div><b>Leseverstehen – citire</b><small>5 texte scurte, câte 2 întrebări</small></div></div>
-      <div class="part"><span class="n">3</span><div><b>Hörverstehen – ascultare</b><small>5 înregistrări, fiecare se poate asculta de maximum 2 ori</small></div></div>
+      <div class="part"><span class="n">1</span><div><b>Nivel cu nivel: A1 → A2 → B1 → B2 → C1</b><small>10 întrebări pe nivel: gramatică, citire și ascultare</small></div></div>
+      <div class="part"><span class="n">2</span><div><b>Treci la nivelul următor doar cu minimum 7/10</b><small>Dacă nu ai 7 răspunsuri corecte, testul se oprește și îți arată nivelul</small></div></div>
+      <div class="part"><span class="n">3</span><div><b>Rezultat pe subnivel: A1.1, A1.2, A2.1 …</b><small>Înregistrările se pot asculta de maximum 2 ori</small></div></div>
     </div>
-    <div class="facts"><span>⏱ aprox. 25–30 de minute</span><span>🎧 folosește căști</span><span>✍️ fără dicționar</span></div>
-    <p class="note">Dacă nu știi un răspuns, alege varianta care ți se pare cea mai potrivită. Nu e nicio problemă – testul își face treaba doar dacă răspunzi sincer.</p>
+    <div class="facts"><span>⏱ între 5 și 30 de minute</span><span>🎧 folosește căști</span><span>✍️ fără dicționar</span></div>
+    <p class="note">Nu ghici: răspunde singur, fără dicționar și fără ajutor. Doar așa rezultatul arată nivelul tău real.</p>
     <button class="btn btn-gold" id="startBtn" style="margin-top:14px">Începe testul</button>
   </section>
 
@@ -250,9 +250,15 @@ var LV=["A1","A2","B1","B2","C1"];
 function rnd(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function shuffle(a,r){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;}return a;}
 var R=rnd(20261023),items=[];
-G.forEach(function(g){items.push({sec:"Partea 1 · Gramatică și vocabular",type:"g",lv:g[0],stem:g[1],correct:g[2],opts:shuffle(g.slice(2),R)});});
-L.forEach(function(t){t.qs.forEach(function(q,qi){items.push({sec:"Partea 2 · Citire",type:"l",lv:t.lv,ptitle:t.title,text:t.text,stem:q[0],correct:q[1],opts:shuffle(q.slice(1),R),first:qi===0});});});
-H.forEach(function(h,hi){h.qs.forEach(function(q,qi){items.push({sec:"Partea 3 · Ascultare",type:"h",lv:h.lv,clip:hi,file:h.file,ptitle:h.title,stem:q[0],correct:q[1],opts:shuffle(q.slice(1),R),first:qi===0});});});
+var tmp=[];
+G.forEach(function(g){tmp.push({type:"g",lv:g[0],stem:g[1],correct:g[2],opts:shuffle(g.slice(2),R)});});
+L.forEach(function(t){t.qs.forEach(function(q,qi){tmp.push({type:"l",lv:t.lv,ptitle:t.title,text:t.text,stem:q[0],correct:q[1],opts:shuffle(q.slice(1),R),first:qi===0});});});
+H.forEach(function(h,hi){h.qs.forEach(function(q,qi){tmp.push({type:"h",lv:h.lv,clip:hi,file:h.file,ptitle:h.title,stem:q[0],correct:q[1],opts:shuffle(q.slice(1),R),first:qi===0});});});
+var TN={g:"Gramatică și vocabular",l:"Citire",h:"Ascultare"};
+LV.forEach(function(l){var n=0;["g","l","h"].forEach(function(t){tmp.forEach(function(it){if(it.lv===l&&it.type===t){n++;it.n=n;it.sec="Nivelul "+l+" · "+TN[t];items.push(it);}});});});
+var PASS=7;
+function lvScore(l){var c=0;items.forEach(function(it,i){if(it.lv===l&&ans[i]===it.correct)c++;});return c;}
+function lastOfLevel(i){return i===items.length-1||items[i+1].lv!==items[i].lv;}
 
 var $=function(id){return document.getElementById(id)};
 var idx=0,ans=[],plays={},audio=null,playing=false;
@@ -265,7 +271,7 @@ function setPlayIcon(){$("playIco").innerHTML=playing?'<path d="M6 5h4v14H6zM14 
 function render(){
   var it=items[idx];
   $("secLabel").textContent=it.sec;
-  $("counter").textContent=(idx+1)+" / "+items.length;
+  $("counter").textContent="Întrebarea "+it.n+" / 10";
   $("barFill").style.width=(idx/items.length*100)+"%";
   $("instr").textContent=it.type==="g"?"Alege varianta corectă pentru spațiul liber.":it.type==="l"?"Citește textul și alege răspunsul corect.":"Ascultă înregistrarea și alege răspunsul corect.";
   var p=$("passage");
@@ -277,7 +283,7 @@ function render(){
   var o=$("options");o.innerHTML="";
   it.opts.forEach(function(t,i){var b=document.createElement("button");b.className="opt"+(ans[idx]===t?" sel":"");b.innerHTML='<span class="k">'+"ABCD"[i]+'</span><span>'+t+'</span>';b.onclick=function(){ans[idx]=t;[].forEach.call(o.children,function(c){c.classList.remove("sel")});b.classList.add("sel");$("nextBtn").disabled=false;};o.appendChild(b);});
   $("nextBtn").disabled=ans[idx]===undefined;
-  $("nextBtn").textContent=idx===items.length-1?"Vezi rezultatul →":"Mai departe →";
+  $("nextBtn").textContent=lastOfLevel(idx)?(idx===items.length-1?"Vezi rezultatul →":"Termină nivelul "+it.lv+" →"):"Mai departe →";
   $("backBtn").style.visibility=idx===0?"hidden":"visible";
 }
 function updatePlays(it){var n=plays[it.clip]||0,left=2-n;$("audioPlays").textContent=left>0?("Poți asculta de încă "+left+(left===1?" dată":" ori")):"Ai ascultat înregistrarea de 2 ori";$("playBtn").disabled=left<=0&&!playing;}
@@ -292,39 +298,36 @@ $("playBtn").onclick=function(){
   audio.play().catch(function(){playing=false;setPlayIcon();});
 };
 $("startBtn").onclick=function(){idx=0;ans=[];plays={};show("quiz");render();track("TestNivelStart");};
-$("nextBtn").onclick=function(){if(ans[idx]===undefined)return;var cur=items[idx],nx=items[idx+1];if(!nx||nx.clip!==cur.clip)stopAudio();$("audioProg").style.width=playing?$("audioProg").style.width:"0";if(idx<items.length-1){idx++;render();window.scrollTo(0,0);}else finish();};
+$("nextBtn").onclick=function(){if(ans[idx]===undefined)return;var cur=items[idx],nx=items[idx+1];if(!nx||nx.clip!==cur.clip)stopAudio();$("audioProg").style.width=playing?$("audioProg").style.width:"0";if(lastOfLevel(idx)&&lvScore(cur.lv)<PASS){finish();return;}if(idx<items.length-1){idx++;render();window.scrollTo(0,0);}else finish();};
 $("backBtn").onclick=function(){if(idx>0){var cur=items[idx],pv=items[idx-1];if(pv.clip!==cur.clip)stopAudio();idx--;render();}};
 $("againBtn").onclick=function(){show("intro");};
 
 var RES=null;
 function finish(){
   stopAudio();
-  var per={},sk={g:0,l:0,h:0};LV.forEach(function(l){per[l]=0});
-  items.forEach(function(it,i){if(ans[i]===it.correct){per[it.lv]++;sk[it.type]++;}});
-  var passed=-1;for(var i=0;i<LV.length;i++){if(per[LV[i]]>=6)passed=i;else break;}
+  var per={},done={},sk={g:0,l:0,h:0},tot={g:0,l:0,h:0};LV.forEach(function(l){per[l]=0});
+  items.forEach(function(it,i){if(ans[i]===undefined)return;done[it.lv]=1;tot[it.type]++;if(ans[i]===it.correct){per[it.lv]++;sk[it.type]++;}});
+  var stop=null;for(var i=0;i<LV.length;i++){if(per[LV[i]]<PASS){stop=LV[i];break;}}
   var level,course,title,text;
-  if(passed<0){
-    level="A1";course=per.A1>=4?"A1.2":"A1.1";
-    title=per.A1>=4?"Ai primele noțiuni de germană":"Ești la început – perfect pentru A1.1";
-    text=per.A1>=4?"Recunoști deja câteva structuri de bază. Cel mai bine continui cu partea a doua a nivelului A1.":"Pornești de la zero sau aproape de zero. Cursul A1.1 te duce pas cu pas de la primele propoziții la conversații simple.";
-  } else if(passed===LV.length-1){
-    level="C1";course="C1.2";title="Felicitări – nivel avansat!";text="Înțelegi texte și înregistrări complexe și stăpânești gramatica la nivel înalt. Profesorul Saleh îți recomandă cursul potrivit pentru perfecționare.";
+  if(!stop){
+    level="C1.2";course="C1.2";title="Felicitări – nivel avansat!";text="Ai trecut toate nivelurile testului.";
   } else {
-    var nxt=LV[passed+1];level=LV[passed];var part=per[nxt]>=4;
-    course=nxt+(part?".2":".1");
-    title="Nivelul tău estimat: "+level+(part?" (spre "+nxt+")":"");
-    text=part?("Stăpânești nivelul "+level+" și ai deja o parte din "+nxt+". Cel mai potrivit e să continui cu "+nxt+".2."):("Stăpânești nivelul "+level+". Următorul pas firesc este cursul "+nxt+".1.");
+    var sub=per[stop]>=4?".2":".1";level=stop+sub;course=level;
+    title="Nivelul tău estimat: "+level;
+    text=sub===".1"?("Cel mai potrivit este să începi cu "+level+", prima parte a nivelului "+stop+"."):("Ai deja o parte din nivelul "+stop+". Cel mai potrivit este să continui cu "+level+".");
+    if(stop!=="A1")text="Ai trecut nivelurile anterioare. "+text;
   }
+  text+=" Rezultatul e orientativ: profesorul Saleh îți confirmă nivelul într-o scurtă discuție pe WhatsApp.";
   $("resLevel").textContent=level;$("resTitle").textContent=title;$("resText").textContent=text;
   $("resReco").innerHTML="Curs recomandat: <b>"+course+"</b> · live online, grupe de maximum 4 cursanți";
-  $("skG").textContent=sk.g+"/30";$("skL").textContent=sk.l+"/10";$("skH").textContent=sk.h+"/10";
-  var tb="";LV.forEach(function(l){var v=per[l];tb+='<tr><td>'+l+'</td><td><div class="meter'+(v>=6?" pass":"")+'"><i style="width:'+(v*10)+'%"></i></div></td><td>'+v+'/10</td></tr>';});
+  $("skG").textContent=sk.g+"/"+tot.g;$("skL").textContent=sk.l+"/"+tot.l;$("skH").textContent=sk.h+"/"+tot.h;
+  var tb="";LV.forEach(function(l){if(!done[l]){tb+='<tr><td>'+l+'</td><td><div class="meter"><i style="width:0"></i></div></td><td>—</td></tr>';return;}var v=per[l];tb+='<tr><td>'+l+'</td><td><div class="meter'+(v>=PASS?" pass":"")+'"><i style="width:'+(v*10)+'%"></i></div></td><td>'+v+'/10</td></tr>';});
   $("resTable").innerHTML=tb;
-  var msg="Bună! Am făcut testul de nivel pe deutschparadies.ro.\nRezultat: "+level+" – curs recomandat "+course+".\nScor: "+LV.map(function(l){return l+" "+per[l]+"/10"}).join(", ")+".\nAș vrea detalii despre curs.";
+  var msg="Bună! Am făcut testul de nivel pe deutschparadies.ro.\nRezultat: "+level+" – curs recomandat "+course+".\nScor: "+LV.filter(function(l){return done[l]}).map(function(l){return l+" "+per[l]+"/10"}).join(", ")+".\nAș vrea detalii despre curs.";
   $("waBtn").href="https://wa.me/40771237705?text="+encodeURIComponent(msg);
   $("waBtn").onclick=function(){track("TestNivelWhatsApp",{level:level});};
   $("barFill").style.width="100%";
-  var wrong=[];items.forEach(function(it,i){if(ans[i]!==it.correct)wrong.push((i+1)+". ["+it.lv+"] "+it.stem.replace("___","…")+" → ales: "+ans[i]+" | corect: "+it.correct);});
+  var wrong=[];items.forEach(function(it,i){if(ans[i]!==undefined&&ans[i]!==it.correct)wrong.push((i+1)+". ["+it.lv+"] "+it.stem.replace("___","…")+" → ales: "+ans[i]+" | corect: "+it.correct);});
   RES={level:level,course:course,per:per,sk:sk,wrong:wrong};
   show("gate");track("TestNivelFinal",{level:level,course:course});
 }
