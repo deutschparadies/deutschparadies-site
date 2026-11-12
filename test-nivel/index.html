@@ -311,20 +311,20 @@ function finish(){
   var level,course,title,text;
   var si=stop?LV.indexOf(stop):LV.length;
   if(si===0){
-    level="Începător";course="A1.1";title="Ești la început – perfect pentru A1.1";text="Nu ai trecut încă nivelul A1. Cel mai potrivit este să începi cu A1.1.";
+    level="A1.1";course=level;title="Nivelul tău: A1.1";text="Ești la început.";
   } else if(si===LV.length){
-    level="C1";course="C1";title="Felicitări – nivel avansat!";text="Ai trecut toate nivelurile testului.";
+    level="C1";course=level;title="Nivelul tău: C1";text="Ai trecut toate nivelurile testului.";
   } else {
-    level=LV[si-1];course=LV[si]+".1";title="Nivelul tău: "+level;
-    text="Ai trecut nivelul "+level+". Următorul pas este cursul "+course+".";
+    level=LV[si-1];course=level;title="Nivelul tău: "+level;
+    text="Ai trecut nivelul "+level+".";
   }
   text+=" Rezultatul e orientativ: profesorul Saleh îți confirmă nivelul într-o scurtă discuție pe WhatsApp.";
   $("resLevel").textContent=level;$("resTitle").textContent=title;$("resText").textContent=text;
-  $("resReco").innerHTML="Curs recomandat: <b>"+course+"</b> · live online, grupe de maximum 4 cursanți";
+  $("resReco").innerHTML="Live online · grupe de maximum 4 cursanți";
   $("skG").textContent=sk.g+"/"+tot.g;$("skL").textContent=sk.l+"/"+tot.l;$("skH").textContent=sk.h+"/"+tot.h;
   var tb="";LV.forEach(function(l){if(!done[l]){tb+='<tr><td>'+l+'</td><td><div class="meter"><i style="width:0"></i></div></td><td>—</td></tr>';return;}var v=per[l];tb+='<tr><td>'+l+'</td><td><div class="meter'+(v>=PASS?" pass":"")+'"><i style="width:'+(v*10)+'%"></i></div></td><td>'+v+'/10</td></tr>';});
   $("resTable").innerHTML=tb;
-  var msg="Bună! Am făcut testul de nivel pe deutschparadies.ro.\nRezultat: "+level+" – curs recomandat "+course+".\nScor: "+LV.filter(function(l){return done[l]}).map(function(l){return l+" "+per[l]+"/10"}).join(", ")+".\nAș vrea detalii despre curs.";
+  var msg="Bună! Am făcut testul de nivel pe deutschparadies.ro.\nNivelul meu: "+level+".\nScor: "+LV.filter(function(l){return done[l]}).map(function(l){return l+" "+per[l]+"/10"}).join(", ")+".\nAș vrea detalii despre curs.";
   $("waBtn").href="https://wa.me/40771237705?text="+encodeURIComponent(msg);
   $("waBtn").onclick=function(){track("TestNivelWhatsApp",{level:level});};
   $("barFill").style.width="100%";
@@ -337,8 +337,8 @@ $("gateForm").addEventListener("submit",function(e){
   if(nume.length<2||tel.replace(/\D/g,"").length<8){err.textContent="Te rugăm să scrii numele și un număr de telefon valid.";return;}
   err.textContent="";if(f._honey.value){show("result");return;}
   var b=$("gateBtn");b.disabled=true;b.textContent="Se încarcă rezultatul…";
-  var r=RES,body={_subject:"Test de nivel: "+nume+" – "+r.level+" (curs "+r.course+")",_template:"table",
-    Nume:nume,Telefon:tel,"Nivel estimat":r.level,"Curs recomandat":r.course,
+  var r=RES,body={_subject:"Test de nivel: "+nume+" – "+r.level,_template:"table",
+    Nume:nume,Telefon:tel,"Nivel":r.level,
     "Scor pe niveluri":LV.map(function(l){return l+" "+r.per[l]+"/10"}).join(" | "),
     "Gramatică":r.sk.g+"/30","Citire":r.sk.l+"/10","Ascultare":r.sk.h+"/10",
     "Greșeli":r.wrong.length?r.wrong.join("\n"):"niciuna",Pagina:location.href};
