@@ -57,6 +57,7 @@ const LERN_FOLDERS = {
   "B1.2": ["1CKZpAyMawCbT5o6OMARCSk86sG9coM9d", "1EgjCnfZomq7DP78v6H0KE-Oi3LUIubcH", "1dXBGJ1mtdD-GfUTg2Eoj_434irrX00aL"],
   "B2.1": ["1WgIO1w8O-3l1J9Sz-9lCqm_e2O-_cmlI", "1jSkgHe3EqOC0VmPQuBxD3SFNp9vycmuk", "141ZxEOG4lENrlVj8OrxKn4ueP7S82DN1"],
   "B2.2": ["1NDqe13FWldTnl3Gf9ZWX_pAcdSH2HYBB", "1xc-a0KxNUgP0LPILk4UzOgTM5QsmENSW", "11WEGl8CE15Z-y754cgue9ewiJxAQekaU"],
+  "C1.1": ["1GSw7sSkzYSKcpNdcvYtLxF-JayI7sXgB", "1wVBtEJQ_XcwU3OIYaGwe6KfVBEnQl4PN", "1cvMQGSfzRVvs53KKp7_0-MqO_E_VB7Zj"],
 };
 const TEXTE_SCRIPT = `<style>.mats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mat{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r,14px);padding:14px}.mat b{font-family:var(--display);font-size:1.05rem}.mat b::after{content:" \\2197";color:var(--gold)}.mat small{color:var(--muted)}</style>`;
 

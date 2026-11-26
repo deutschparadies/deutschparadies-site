@@ -34,7 +34,7 @@ function cookie(name, val, maxAge) {
   return `${name}=${val}; Max-Age=${maxAge}; Path=/app; HttpOnly; Secure; SameSite=Strict`;
 }
 async function body(request) { try { return await request.json(); } catch (e) { return null; } }
-const LEVELS = ["A1.1", "A1.2", "A2.1", "A2.2", "B1.1", "B1.2", "B2.1", "B2.2"];
+const LEVELS = ["A1.1", "A1.2", "A2.1", "A2.2", "B1.1", "B1.2", "B2.1", "B2.2", "C1.1"];
 const HWID = /^[a-z0-9]{6,12}-[a-f0-9]{8}$/;
 const str = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
