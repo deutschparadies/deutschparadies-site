@@ -9,7 +9,7 @@ ${course ? `<input type="hidden" name="curs" value="${course}">` : ""}
 <input type="tel" name="telefon" placeholder="Telefon / WhatsApp" autocomplete="tel" required>
 <select name="nivel"><option value="">Nivelul tău (opțional)</option>${opts}</select>
 <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off">
-<label class="chk"><input type="checkbox" name="acord" required> <span>Sunt de acord să fiu contactat de Deutschparadies. <a href="/confidentialitate.html">Detalii</a></span></label>
+<label class="chk"><input type="checkbox" name="acord" required> <span>Sunt de acord să fiu contactat de Deutschparadies. <a href="/confidentialitate">Detalii</a></span></label>
 <button type="submit">Trimite — profesorul Saleh îți scrie</button>
 <div class="lead-msg" role="status"></div>
 </form>`;
