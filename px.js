@@ -38,7 +38,7 @@
     d.setAttribute("aria-label", "Cookie-uri");
     d.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:9999;max-width:520px;margin:0 auto;background:rgba(23,50,38,.96);color:#fff;border-radius:12px;padding:10px 12px;font:13px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px";
     d.innerHTML = '<span style="flex:1">Folosim cookie-uri Meta ca să măsurăm reclamele. ' +
-      '<a href="/confidentialitate.html" style="color:#e3a72e">Detalii</a></span>' +
+      '<a href="/confidentialitate" style="color:#e3a72e">Detalii</a></span>' +
       '<button id="dp-no" style="border:1px solid rgba(255,255,255,.45);border-radius:100px;padding:7px 12px;background:transparent;color:#fff;font:inherit;font-weight:600;cursor:pointer">Refuz</button>' +
       '<button id="dp-yes" style="border:0;border-radius:100px;padding:8px 16px;background:#e3a72e;color:#17231d;font:inherit;font-weight:700;cursor:pointer">Accept</button>';
     document.body.appendChild(d);
